@@ -1,0 +1,22 @@
+{
+  "home": {
+    "hero_title": "Комфортный отдых и вкусные вечера - в одном месте",
+    "hero_subtitle": "Бронируй номер, столик и забирай купоны прямо в приложении.",
+    "btn_contact": "Связь",
+    "btn_directions": "Как добраться",
+    "quick_hotel": "Отель",
+    "quick_senator": "Ресторан\nSenator",
+    "quick_balkon": "Ресторан\nBalkon",
+    "quick_spa": "SPA",
+    "quick_conference": "Конференц\nзал",
+    "quick_vip": "VIP\nПереговорная",
+    "cards_hotel": "Отель Senator",
+    "cards_senator": "Ресторан Senator",
+    "cards_balkon": "Ресторан Balkon",
+    "cards_reserve": "Забронировать",
+    "coupons_senator_title": "Senator deals",
+    "coupons_balkon_title": "Balkon deals",
+    "coupon_get": "Получить",
+    "events_title": "События"
+  }
+}

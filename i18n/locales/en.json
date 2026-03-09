@@ -1,0 +1,22 @@
+{
+  "home": {
+    "hero_title": "Comfortable rest and delicious evenings - in one place",
+    "hero_subtitle": "Book a room, a table and get coupons right in the app.",
+    "btn_contact": "Contact",
+    "btn_directions": "Directions",
+    "quick_hotel": "Hotel",
+    "quick_senator": "Restaurant\nSenator",
+    "quick_balkon": "Restaurant\nBalkon",
+    "quick_spa": "SPA",
+    "quick_conference": "Conference\nHall",
+    "quick_vip": "VIP\nNegotiation",
+    "cards_hotel": "Hotel Senator",
+    "cards_senator": "Restaurant Senator",
+    "cards_balkon": "Restaurant Balkon",
+    "cards_reserve": "Reserve",
+    "coupons_senator_title": "Senator deals",
+    "coupons_balkon_title": "Balkon deals",
+    "coupon_get": "Get",
+    "events_title": "Events"
+  }
+}

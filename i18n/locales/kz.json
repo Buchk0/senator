@@ -1,0 +1,22 @@
+{
+  "home": {
+    "hero_title": "Жайлы демалыс және дәмді кештер — бір жерде",
+    "hero_subtitle": "Бөлме, үстел брондаңыз және қолданбадан тікелей купон алыңыз.",
+    "btn_contact": "Байланыс",
+    "btn_directions": "Қалай жетуге болады",
+    "quick_hotel": "Қонақ үй",
+    "quick_senator": "Мейрамхана\nSenator",
+    "quick_balkon": "Мейрамхана\nBalkon",
+    "quick_spa": "SPA",
+    "quick_conference": "Конференц\nзал",
+    "quick_vip": "VIP\nПереговорная",
+    "cards_hotel": "Қонақ үй Senator",
+    "cards_senator": "Мейрамхана Senator",
+    "cards_balkon": "Мейрамхана Balkon",
+    "cards_reserve": "Брондау",
+    "coupons_senator_title": "Senator deals",
+    "coupons_balkon_title": "Balkon deals",
+    "coupon_get": "Алу",
+    "events_title": "Оқиғалар"
+  }
+}

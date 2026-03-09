@@ -27,6 +27,16 @@ export const Colors = {
   },
 };
 
+export const BrandColors = {
+  black: '#000000',
+  white: '#FFFFFF',
+  gold: '#c69c6d',
+  blurDark: 'rgba(0, 0, 0, 0.45)',
+  blurLight: 'rgba(255, 255, 255, 0.1)',
+} as const;
+
+export type BrandColor = keyof typeof BrandColors;
+
 export const Fonts = Platform.select({
   ios: {
     /** iOS `UIFontDescriptorSystemDesignDefault` */
