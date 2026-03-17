@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { TextInput, View, Text, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Pressable, Keyboard, Alert, ScrollView, Modal, ImageBackground, Image } from "react-native";
-import { signInWithPhoneNumber, ConfirmationResult } from "firebase/auth";
+import { signInWithPhoneNumber } from "firebase/auth";
 import { auth, firebaseConfig } from "@/constants/firebase";
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import { router } from "expo-router";
@@ -24,7 +24,7 @@ function formatDate(date: Date): string {
 }
 
 export default function Reg() {
-    const { i18n } = useTranslation();
+    const { t, i18n } = useTranslation();
     const locale = i18n.language === 'kz' ? 'kk' : i18n.language;
     const insets = useSafeAreaInsets();
 
@@ -36,162 +36,155 @@ export default function Reg() {
     const [password, setPassword] = useState('');
     const phoneInput = useRef<PhoneInput>(null);
     const recaptchaVerifier = useRef(null);
-    const [confirmation, setConfirmation] = useState<ConfirmationResult | null>(null);
 
     const handleRegister = async () => {
-        const generatedEmail = `${formattedPhone.replace(/[^0-9]/g, '')}@senator.kz`;
-
-        if (!name.trim()) return Alert.alert('Ошибка', 'Введите имя');
-        if (!surname.trim()) return Alert.alert('Ошибка', 'Введите фамилию');
-        if (!birthDate) return Alert.alert('Ошибка', 'Введите дату рождения');
-        if (!formattedPhone) return Alert.alert('Ошибка', 'Введите номер телефона');
-        if (password.length < 6) return Alert.alert('Ошибка', 'Пароль должен содержать не менее 6 символов');
-        if (!recaptchaVerifier.current) return;
+        if (!name.trim()) return Alert.alert(t('profile.error'), t('register.enter_name'));
+        if (!surname.trim()) return Alert.alert(t('profile.error'), t('register.enter_surname'));
+        if (!birthDate) return Alert.alert(t('profile.error'), t('register.enter_birthdate'));
+        if (!formattedPhone) return Alert.alert(t('profile.error'), t('profile.enter_phone'));
+        if (password.length < 6) return Alert.alert(t('profile.error'), t('register.password_min'));
 
         try {
             setStoredCredentials(formattedPhone, password);
             setStoredProfile(name, surname, formatDate(birthDate));
-            const result = await signInWithPhoneNumber(auth, formattedPhone, recaptchaVerifier.current);
-            setConfirmation(result);
+            const result = await signInWithPhoneNumber(auth, formattedPhone, recaptchaVerifier.current!);
             setConfirmationResult(result);
             router.push("/auth/verify");
         } catch (e: any) {
-            Alert.alert('Ошибка', e?.message ?? 'Не удалось отправить код');
+            Alert.alert(t('profile.error'), e?.message ?? t('register.send_code_error'));
         }
     };
 
     return (
+        <>
+        <FirebaseRecaptchaVerifierModal ref={recaptchaVerifier} firebaseConfig={firebaseConfig} />
         <ImageBackground
             source={require('@/assets/images/restaurants-bc.png')}
             style={styles.bg}
             resizeMode="cover"
         >
             <View style={styles.overlay} />
-            <FirebaseRecaptchaVerifierModal
-                ref={recaptchaVerifier}
-                firebaseConfig={firebaseConfig}
-                attemptInvisibleVerification={true}
-            />
             <Pressable style={styles.flex} onPress={Keyboard.dismiss}>
-            <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-                <ScrollView
-                    contentContainerStyle={[styles.inner, { paddingTop: insets.top + 24, paddingBottom: insets.bottom + 24 }]}
-                    keyboardShouldPersistTaps="handled"
-                    showsVerticalScrollIndicator={false}
-                >
-                    <Image
-                        source={require('@/assets/images/logo.png')}
-                        style={styles.logo}
-                        resizeMode="contain"
-                    />
-
-                    <Text style={styles.title}>Регистрация</Text>
-
-                    <View style={styles.inputRow}>
-                        <MaterialIcons name="person" size={20} color={BrandColors.gold} style={styles.icon} />
-                        <TextInput
-                            style={styles.input}
-                            value={name}
-                            onChangeText={setName}
-                            placeholder="Имя"
-                            placeholderTextColor="rgba(255,255,255,0.5)"
+                <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+                    <ScrollView
+                        contentContainerStyle={[styles.inner, { paddingTop: insets.top + 24, paddingBottom: insets.bottom + 24 }]}
+                        keyboardShouldPersistTaps="handled"
+                        showsVerticalScrollIndicator={false}
+                    >
+                        <Image
+                            source={require('@/assets/images/logo.png')}
+                            style={styles.logo}
+                            resizeMode="contain"
                         />
-                    </View>
 
-                    <View style={styles.inputRow}>
-                        <MaterialIcons name="person-outline" size={20} color={BrandColors.gold} style={styles.icon} />
-                        <TextInput
-                            style={styles.input}
-                            value={surname}
-                            onChangeText={setSurname}
-                            placeholder="Фамилия"
-                            placeholderTextColor="rgba(255,255,255,0.5)"
-                        />
-                    </View>
+                        <Text style={styles.title}>{t('register.title')}</Text>
 
-                    <TouchableOpacity style={styles.inputRow} onPress={() => setShowPicker(true)} activeOpacity={0.7}>
-                        <MaterialIcons name="calendar-today" size={20} color={BrandColors.gold} style={styles.icon} />
-                        <Text style={birthDate ? styles.dateText : styles.datePlaceholder}>
-                            {birthDate ? formatDate(birthDate) : 'Дата рождения'}
-                        </Text>
-                    </TouchableOpacity>
+                        <View style={styles.inputRow}>
+                            <MaterialIcons name="person" size={20} color={BrandColors.gold} style={styles.icon} />
+                            <TextInput
+                                style={styles.input}
+                                value={name}
+                                onChangeText={setName}
+                                placeholder={t('register.name_placeholder')}
+                                placeholderTextColor="rgba(255,255,255,0.5)"
+                            />
+                        </View>
 
-                    <Modal visible={showPicker} transparent animationType="slide">
-                        <View style={styles.modalOverlay}>
-                            <View style={styles.modalSheet}>
-                                <TouchableOpacity onPress={() => setShowPicker(false)} style={styles.doneBtn}>
-                                    <Text style={styles.doneBtnText}>Готово</Text>
-                                </TouchableOpacity>
-                                <DateTimePicker
-                                    value={birthDate ?? new Date(2000, 0, 1)}
-                                    mode="date"
-                                    display="spinner"
-                                    maximumDate={new Date()}
-                                    onChange={(_, date) => { if (date) setBirthDate(date); }}
-                                    style={{ width: '100%' }}
-                                    textColor="#1a2035"
-                                    locale={locale}
-                                />
+                        <View style={styles.inputRow}>
+                            <MaterialIcons name="person-outline" size={20} color={BrandColors.gold} style={styles.icon} />
+                            <TextInput
+                                style={styles.input}
+                                value={surname}
+                                onChangeText={setSurname}
+                                placeholder={t('register.surname_placeholder')}
+                                placeholderTextColor="rgba(255,255,255,0.5)"
+                            />
+                        </View>
+
+                        <TouchableOpacity style={styles.inputRow} onPress={() => setShowPicker(true)} activeOpacity={0.7}>
+                            <MaterialIcons name="calendar-today" size={20} color={BrandColors.gold} style={styles.icon} />
+                            <Text style={birthDate ? styles.dateText : styles.datePlaceholder}>
+                                {birthDate ? formatDate(birthDate) : t('register.birthdate_placeholder')}
+                            </Text>
+                        </TouchableOpacity>
+
+                        <Modal visible={showPicker} transparent animationType="slide">
+                            <View style={styles.modalOverlay}>
+                                <View style={styles.modalSheet}>
+                                    <TouchableOpacity onPress={() => setShowPicker(false)} style={styles.doneBtn}>
+                                        <Text style={styles.doneBtnText}>{t('register.done')}</Text>
+                                    </TouchableOpacity>
+                                    <DateTimePicker
+                                        value={birthDate ?? new Date(2000, 0, 1)}
+                                        mode="date"
+                                        display="spinner"
+                                        maximumDate={new Date()}
+                                        onChange={(_, date) => { if (date) setBirthDate(date); }}
+                                        style={{ width: '100%' }}
+                                        textColor="#1a2035"
+                                        locale={locale}
+                                    />
+                                </View>
                             </View>
-                        </View>
-                    </Modal>
+                        </Modal>
 
-                    <PhoneInput
-                        ref={phoneInput}
-                        defaultCode="KZ"
-                        layout="first"
-                        onChangeFormattedText={setFormattedPhone}
-                        containerStyle={styles.phoneContainer}
-                        textContainerStyle={styles.phoneTextContainer}
-                        textInputStyle={styles.phoneInputText}
-                        codeTextStyle={styles.phoneCodeText}
-                        withShadow={false}
-                        placeholder="700 000 00 00"
-                        textInputProps={{ placeholderTextColor: 'rgba(255,255,255,0.5)', maxLength: 13 }}
-                        flagButtonStyle={{ width: 80 }}
-                        countryPickerProps={{
-                            withFilter: true,
-                            withFlag: true,
-                            withCountryNameButton: false,
-                            withAlphaFilter: true,
-                            withEmoji: true,
-                            renderFlagButton: ({ countryCode, onOpen }: { countryCode: string; onOpen: () => void }) => (
-                                <TouchableOpacity onPress={onOpen} style={styles.flagButton} activeOpacity={0.7}>
-                                    <Text style={styles.flagEmoji}>{getFlagEmoji(countryCode || 'KZ')}</Text>
-                                    <Text style={styles.flagChevron}>▾</Text>
-                                </TouchableOpacity>
-                            ),
-                        }}
-                    />
-
-                    <View style={styles.inputRow}>
-                        <MaterialIcons name="lock" size={20} color={BrandColors.gold} style={styles.icon} />
-                        <TextInput
-                            style={styles.input}
-                            value={password}
-                            onChangeText={setPassword}
-                            secureTextEntry
-                            placeholder="Пароль (минимум 6 символов)"
-                            placeholderTextColor="rgba(255,255,255,0.5)"
-                            maxLength={20}
+                        <PhoneInput
+                            ref={phoneInput}
+                            defaultCode="KZ"
+                            layout="first"
+                            onChangeFormattedText={setFormattedPhone}
+                            containerStyle={styles.phoneContainer}
+                            textContainerStyle={styles.phoneTextContainer}
+                            textInputStyle={styles.phoneInputText}
+                            codeTextStyle={styles.phoneCodeText}
+                            withShadow={false}
+                            placeholder="700 000 00 00"
+                            textInputProps={{ placeholderTextColor: 'rgba(255,255,255,0.5)', maxLength: 13 }}
+                            flagButtonStyle={{ width: 80 }}
+                            countryPickerProps={{
+                                withFilter: true,
+                                withFlag: true,
+                                withCountryNameButton: false,
+                                withAlphaFilter: true,
+                                withEmoji: true,
+                                renderFlagButton: ({ countryCode, onOpen }: { countryCode: string; onOpen: () => void }) => (
+                                    <TouchableOpacity onPress={onOpen} style={styles.flagButton} activeOpacity={0.7}>
+                                        <Text style={styles.flagEmoji}>{getFlagEmoji(countryCode || 'KZ')}</Text>
+                                        <Text style={styles.flagChevron}>▾</Text>
+                                    </TouchableOpacity>
+                                ),
+                            }}
                         />
-                    </View>
 
-                    <TouchableOpacity style={styles.btnOuter} onPress={handleRegister} activeOpacity={0.8}>
-                        <View style={styles.btnInner}>
-                            <BlurView intensity={60} tint="dark" style={StyleSheet.absoluteFillObject} />
-                            <Text style={styles.btnText}>Получить код</Text>
+                        <View style={styles.inputRow}>
+                            <MaterialIcons name="lock" size={20} color={BrandColors.gold} style={styles.icon} />
+                            <TextInput
+                                style={styles.input}
+                                value={password}
+                                onChangeText={setPassword}
+                                secureTextEntry
+                                placeholder={t('register.password_placeholder')}
+                                placeholderTextColor="rgba(255,255,255,0.5)"
+                                maxLength={20}
+                            />
                         </View>
-                    </TouchableOpacity>
 
-                    <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7}>
-                        <Text style={styles.backLink}>уже есть аккаунт?</Text>
-                    </TouchableOpacity>
+                        <TouchableOpacity style={styles.btnOuter} onPress={handleRegister} activeOpacity={0.8}>
+                            <View style={styles.btnInner}>
+                                <BlurView intensity={60} tint="dark" style={StyleSheet.absoluteFillObject} />
+                                <Text style={styles.btnText}>{t('register.get_code_btn')}</Text>
+                            </View>
+                        </TouchableOpacity>
 
-                </ScrollView>
-            </KeyboardAvoidingView>
+                        <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7}>
+                            <Text style={styles.backLink}>{t('register.have_account')}</Text>
+                        </TouchableOpacity>
+
+                    </ScrollView>
+                </KeyboardAvoidingView>
             </Pressable>
         </ImageBackground>
+        </>
     );
 }
 

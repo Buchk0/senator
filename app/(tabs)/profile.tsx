@@ -1,18 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ImageBackground, Image, TextInput, Alert, Pressable, Keyboard } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ImageBackground, Image, TextInput, Alert, Pressable, Keyboard, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BrandColors } from '@/constants/theme';
 import { router } from 'expo-router';
 import { useAuth } from '@/context/AuthContext';
 import { doc, getDoc } from 'firebase/firestore';
-import { db, firebaseConfig } from '@/constants/firebase';
-import { signInWithPhoneNumber, ConfirmationResult } from 'firebase/auth';
+import { db } from '@/constants/firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/constants/firebase';
-import { useLanguage, SUPPORTED_LANGUAGES } from '@/hooks/use-language';
+import { useLanguage } from '@/hooks/use-language';
+import { useTranslation } from 'react-i18next';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { BlurView } from 'expo-blur';
 import PhoneInput from 'react-native-phone-number-input';
-import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha';
+import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
 
 const getFlagEmoji = (code: string) =>
   code.toUpperCase().replace(/./g, (c) => String.fromCodePoint(127397 + c.charCodeAt(0)));
@@ -30,11 +31,9 @@ export default function ProfileTab() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const phoneInput = useRef<PhoneInput>(null);
   const [formattedPhone, setFormattedPhone] = useState('');
-  const [loginStep, setLoginStep] = useState<'phone' | 'otp'>('phone');
-  const [otp, setOtp] = useState('');
-  const [loginConfirmation, setLoginConfirmation] = useState<ConfirmationResult | null>(null);
-  const recaptchaVerifier = useRef<any>(null);
+  const [password, setPassword] = useState('');
   const { activeLanguage, changeLanguage } = useLanguage();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!user) return;
@@ -43,155 +42,154 @@ export default function ProfileTab() {
     });
   }, [user]);
 
-  const handleSendCode = async () => {
-    if (!formattedPhone) return Alert.alert('Ошибка', 'Введите номер телефона');
-    if (!recaptchaVerifier.current) return;
+  const handleLogin = async () => {
+    if (!formattedPhone) return Alert.alert(t('profile.error'), t('profile.enter_phone'));
+    if (!password) return Alert.alert(t('profile.error'), t('profile.enter_password'));
     try {
-      const confirmation = await signInWithPhoneNumber(auth, formattedPhone, recaptchaVerifier.current);
-      setLoginConfirmation(confirmation);
-      setLoginStep('otp');
-    } catch (e: any) {
-      Alert.alert('Ошибка', e?.message ?? 'Не удалось отправить код');
-    }
-  };
-
-  const handleVerifyOtp = async () => {
-    if (!otp || !loginConfirmation) return;
-    try {
-      await loginConfirmation.confirm(otp);
+      const email = `${formattedPhone.replace(/[^0-9]/g, '')}@senator.kz`;
+      await signInWithEmailAndPassword(auth, email, password);
     } catch {
-      Alert.alert('Ошибка', 'Неверный код');
+      Alert.alert(t('profile.error'), t('profile.wrong_credentials'));
     }
   };
 
   if (!user) {
     return (
       <Pressable style={{ flex: 1 }} onPress={Keyboard.dismiss}>
-      <ImageBackground
-        source={require('@/assets/images/restaurants-bc.png')}
-        style={styles.bg}
-        resizeMode="cover"
-      >
-        <View style={styles.overlay} />
-        <FirebaseRecaptchaVerifierModal
-          ref={recaptchaVerifier}
-          firebaseConfig={firebaseConfig}
-          attemptInvisibleVerification={true}
-        />
-        <View style={[styles.loginContainer, { paddingTop: insets.top + 24, paddingBottom: insets.bottom + 24 }]}>
+        <ImageBackground
+          source={require('@/assets/images/restaurants-bc.png')}
+          style={styles.bg}
+          resizeMode="cover"
+        >
+          <View style={styles.overlay} />
+          <View style={[styles.loginContainer, { paddingTop: insets.top + 24, paddingBottom: insets.bottom + 24 }]}>
 
-          <Image
-            source={require('@/assets/images/logo.png')}
-            style={styles.logo}
-            resizeMode="contain"
-          />
+            <Image
+              source={require('@/assets/images/logo.png')}
+              style={styles.logo}
+              resizeMode="contain"
+            />
 
-          <View style={styles.langSwitcher}>
-            {SUPPORTED_LANGUAGES.map((lang) => (
-              <TouchableOpacity
-                key={lang}
-                style={[styles.langBtn, activeLanguage === lang && styles.langBtnActive]}
-                onPress={() => changeLanguage(lang)}
-                activeOpacity={0.8}
-              >
-                <Text style={[styles.langText, activeLanguage === lang && styles.langTextActive]}>
-                  {lang.toUpperCase()}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+            <LanguageSwitcher
+              activeLanguage={activeLanguage}
+              onLanguageChange={changeLanguage}
+            />
 
-          {loginStep === 'phone' ? (
-            <>
-              <PhoneInput
-                ref={phoneInput}
-                defaultCode="KZ"
-                layout="first"
-                onChangeFormattedText={setFormattedPhone}
-                containerStyle={styles.phoneContainer}
-                textContainerStyle={styles.phoneTextContainer}
-                textInputStyle={styles.phoneInputText}
-                codeTextStyle={styles.phoneCodeText}
-                withShadow={false}
-                placeholder="700 000 00 00"
-                textInputProps={{ placeholderTextColor: 'rgba(255,255,255,0.5)', maxLength: 13 }}
-                flagButtonStyle={{ width: 80 }}
-                countryPickerProps={{
-                  withFilter: true,
-                  withFlag: true,
-                  withCountryNameButton: false,
-                  withAlphaFilter: true,
-                  withEmoji: true,
-                  renderFlagButton: ({ countryCode, onOpen }: { countryCode: string; onOpen: () => void }) => (
-                    <TouchableOpacity onPress={onOpen} style={styles.flagButton} activeOpacity={0.7}>
-                      <Text style={styles.flagEmoji}>{getFlagEmoji(countryCode || 'KZ')}</Text>
-                      <Text style={styles.flagChevron}>▾</Text>
-                    </TouchableOpacity>
-                  ),
-                }}
+            <PhoneInput
+              ref={phoneInput}
+              defaultCode="KZ"
+              layout="first"
+              onChangeFormattedText={setFormattedPhone}
+              containerStyle={styles.phoneContainer}
+              textContainerStyle={styles.phoneTextContainer}
+              textInputStyle={styles.phoneInputText}
+              codeTextStyle={styles.phoneCodeText}
+              withShadow={false}
+              placeholder="700 000 00 00"
+              textInputProps={{ placeholderTextColor: 'rgba(255,255,255,0.5)', maxLength: 13 }}
+              flagButtonStyle={{ width: 80 }}
+              countryPickerProps={{
+                withFilter: true,
+                withFlag: true,
+                withCountryNameButton: false,
+                withAlphaFilter: true,
+                withEmoji: true,
+                renderFlagButton: ({ countryCode, onOpen }: { countryCode: string; onOpen: () => void }) => (
+                  <TouchableOpacity onPress={onOpen} style={styles.flagButton} activeOpacity={0.7}>
+                    <Text style={styles.flagEmoji}>{getFlagEmoji(countryCode || 'KZ')}</Text>
+                    <Text style={styles.flagChevron}>▾</Text>
+                  </TouchableOpacity>
+                ),
+              }}
+            />
+
+            <View style={styles.inputRow}>
+              <MaterialIcons name="lock" size={20} color={BrandColors.gold} style={styles.icon} />
+              <TextInput
+                style={styles.input}
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+                placeholder={t('profile.password_placeholder')}
+                placeholderTextColor="rgba(255,255,255,0.5)"
+                maxLength={20}
               />
+            </View>
 
-              <TouchableOpacity style={styles.btnOuter} onPress={handleSendCode} activeOpacity={0.8}>
-                <View style={styles.btnInner}>
-                  <BlurView intensity={60} tint="dark" style={StyleSheet.absoluteFillObject} />
-                  <Text style={styles.btnText}>Получить код</Text>
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity onPress={() => router.push('/auth/register')} activeOpacity={0.7}>
-                <Text style={styles.registerLink}>нет аккаунта?</Text>
-              </TouchableOpacity>
-            </>
-          ) : (
-            <>
-              <Text style={styles.otpHint}>Введите код из SMS</Text>
-
-              <View style={styles.inputRow}>
-                <MaterialIcons name="sms" size={20} color={BrandColors.gold} style={styles.icon} />
-                <TextInput
-                  style={styles.input}
-                  value={otp}
-                  onChangeText={setOtp}
-                  placeholder="— — — — — —"
-                  placeholderTextColor="rgba(255,255,255,0.5)"
-                  keyboardType="number-pad"
-                  maxLength={6}
-                />
+            <TouchableOpacity style={styles.btnOuter} onPress={handleLogin} activeOpacity={0.8}>
+              <View style={styles.btnInner}>
+                <BlurView intensity={60} tint="dark" style={StyleSheet.absoluteFillObject} />
+                <Text style={styles.btnText}>{t('profile.login_btn')}</Text>
               </View>
+            </TouchableOpacity>
 
-              <TouchableOpacity style={styles.btnOuter} onPress={handleVerifyOtp} activeOpacity={0.8}>
-                <View style={styles.btnInner}>
-                  <BlurView intensity={60} tint="dark" style={StyleSheet.absoluteFillObject} />
-                  <Text style={styles.btnText}>Войти</Text>
-                </View>
-              </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/auth/register')} activeOpacity={0.7}>
+              <Text style={styles.registerLink}>{t('profile.no_account')}</Text>
+            </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => { setLoginStep('phone'); setOtp(''); }} activeOpacity={0.7}>
-                <Text style={styles.registerLink}>← Изменить номер</Text>
-              </TouchableOpacity>
-            </>
-          )}
-
-        </View>
-      </ImageBackground>
+          </View>
+        </ImageBackground>
       </Pressable>
     );
   }
 
   return (
-    <View style={[styles.profileContainer, { paddingTop: insets.top }]}>
-      <Text style={styles.title}>Профиль</Text>
-      {profile && (
-        <>
-          <Text style={styles.fullName}>{profile.name} {profile.surname}</Text>
-          <Text style={styles.info}>{profile.phone}</Text>
-          <Text style={styles.info}>{profile.birthDate}</Text>
-        </>
-      )}
-      <TouchableOpacity style={styles.logoutBtn} onPress={signOut}>
-        <Text style={styles.logoutBtnText}>Выйти</Text>
+    <ScrollView
+      style={styles.profileBg}
+      contentContainerStyle={[styles.profileContent, { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 24 }]}
+      showsVerticalScrollIndicator={false}
+    >
+      {/* Info card */}
+      <View style={styles.card}>
+        <Text style={styles.fullName}>{profile?.name} {profile?.surname}</Text>
+
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>{t('profile.phone_label')}</Text>
+          <Text style={styles.infoValue}>{profile?.phone}</Text>
+        </View>
+        <View style={styles.actionCardsRow}>
+          <TouchableOpacity style={styles.actionPill} onPress={() => router.push('/(tabs)/coupons')} activeOpacity={0.8}>
+            <MaterialIcons name="confirmation-number" size={18} color="#1a2035" />
+            <View style={{ flex: 1 }}>
+              <Text style={styles.actionCardTitle}>{t('profile.my_coupons')}</Text>
+              <Text style={styles.actionCardSub}>{t('profile.coupon_sub')}</Text>
+            </View>
+          </TouchableOpacity>
+
+          <View style={styles.actionPill}>
+            <MaterialIcons name="cake" size={18} color="#1a2035" />
+            <View style={{ flex: 1 }}>
+              <Text style={styles.actionCardTitle} numberOfLines={1}>{t('profile.birthday')}</Text>
+              <Text style={styles.actionCardSub}>{profile?.birthDate}</Text>
+            </View>
+          </View>
+        </View>
+      </View>
+
+      {/* Help section */}
+      <View style={styles.helpCard}>
+        <Text style={styles.sectionHeader}>{t('profile.help')}</Text>
+
+        <TouchableOpacity style={styles.helpRow} activeOpacity={0.8}>
+          <Text style={styles.helpCardText}>{t('profile.contact_reception')}</Text>
+          <View style={styles.chevronCircle}>
+            <MaterialIcons name="chevron-right" size={22} color="#1a2035" />
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.helpRow} activeOpacity={0.8}>
+          <Text style={styles.helpCardText}>{t('profile.directions')}</Text>
+          <View style={styles.chevronCircle}>
+            <MaterialIcons name="chevron-right" size={22} color="#1a2035" />
+          </View>
+        </TouchableOpacity>
+      </View>
+
+      {/* Logout */}
+      <TouchableOpacity style={styles.logoutBtn} onPress={signOut} activeOpacity={0.8}>
+        <Text style={styles.logoutBtnText}>{t('profile.logout')}</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -212,32 +210,6 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     marginBottom: 16,
-  },
-  langSwitcher: {
-    flexDirection: 'row',
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    borderRadius: 50,
-    borderWidth: 1,
-    borderColor: BrandColors.gold,
-    padding: 6,
-    alignSelf: 'center',
-    marginBottom: 8,
-  },
-  langBtn: {
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-    borderRadius: 50,
-  },
-  langBtnActive: {
-    backgroundColor: BrandColors.white,
-  },
-  langText: {
-    color: 'rgba(255,255,255,0.7)',
-    fontWeight: '600',
-    fontSize: 13,
-  },
-  langTextActive: {
-    color: '#1a2035',
   },
   phoneContainer: {
     backgroundColor: 'rgba(0,0,0,0.35)',
@@ -290,11 +262,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: BrandColors.white,
   },
-  otpHint: {
-    color: 'rgba(255,255,255,0.8)',
-    fontSize: 14,
-    textAlign: 'center',
-  },
   btnOuter: {
     width: '100%',
     marginTop: 8,
@@ -321,42 +288,123 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     marginTop: 4,
   },
-  profileContainer: {
+  profileBg: {
     flex: 1,
     backgroundColor: BrandColors.white,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 12,
-    paddingHorizontal: 32,
   },
-  title: {
-    color: '#1a2035',
-    fontSize: 24,
-    fontWeight: '600',
-    marginBottom: 8,
+  profileContent: {
+    paddingHorizontal: 16,
+    gap: 14,
+  },
+  card: {
+    backgroundColor: BrandColors.white,
+    borderRadius: 16,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 6,
   },
   fullName: {
-    color: '#1a2035',
     fontSize: 20,
     fontWeight: '700',
+    color: '#1a2035',
+    marginBottom: 10,
   },
-  info: {
-    color: '#555',
+  infoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingTop: 6,
+  },
+  infoLabel: {
+    fontSize: 13,
+    color: '#999',
+  },
+  infoValue: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#1a2035',
+  },
+  actionCardsRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 14,
+  },
+  actionPill: {
+    flex: 1,
+    backgroundColor: '#f2f2f7',
+    borderRadius: 14,
+    paddingVertical: 16,
+    paddingLeft: 14,
+    paddingRight: 8,
+    flexDirection: 'row',
+    gap: 10,
+    alignItems: 'center',
+  },
+  actionCardTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#1a2035',
+    marginBottom: 2,
+  },
+  actionCardSub: {
+    fontSize: 10,
+    color: '#999',
+    lineHeight: 14,
+  },
+  sectionHeader: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1a2035',
+    marginBottom: -2,
+  },
+  helpCard: {
+    backgroundColor: BrandColors.white,
+    borderRadius: 16,
+    padding: 16,
+    gap: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  helpRow: {
+    backgroundColor: '#f2f2f7',
+    borderRadius: 14,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  helpCardText: {
     fontSize: 15,
+    fontWeight: '600',
+    color: '#1a2035',
+  },
+  chevronCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    borderWidth: 1.5,
+    borderColor: '#1a2035',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   logoutBtn: {
-    backgroundColor: 'transparent',
-    borderWidth: 2,
+    borderWidth: 1.5,
     borderColor: '#1a2035',
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    marginTop: 16,
+    borderRadius: 50,
+    paddingVertical: 16,
+    alignItems: 'center',
+    marginTop: 4,
   },
   logoutBtnText: {
     color: '#1a2035',
     fontSize: 15,
     fontWeight: '700',
-    letterSpacing: 0.4,
   },
 });

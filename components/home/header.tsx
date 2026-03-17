@@ -1,17 +1,14 @@
 import { useState } from 'react';
 import {
   View,
-  Text,
   Image,
-  TouchableOpacity,
   StyleSheet,
   LayoutChangeEvent,
 } from 'react-native';
-import { BlurView } from 'expo-blur';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { BrandColors } from '@/constants/theme';
-import { SupportedLanguage, SUPPORTED_LANGUAGES } from '@/hooks/use-language';
+import { SupportedLanguage } from '@/hooks/use-language';
+import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
 
 export interface HeaderProps {
   activeLanguage: SupportedLanguage;
@@ -38,34 +35,12 @@ export function Header({ activeLanguage, onLanguageChange }: HeaderProps) {
         />
       </View>
 
-      {/* Language switcher — right side, 20px from logo */}
+      {/* Language switcher — right side */}
       <View style={[styles.switcherWrapper, { right: 20 }]}>
-        <BlurView
-          intensity={80}
-          tint="dark"
-          style={[styles.switcherBlur, { height: logoHeight }]}
-        >
-          {SUPPORTED_LANGUAGES.map((lang) => {
-            const isActive = lang === activeLanguage;
-            return (
-              <TouchableOpacity
-                key={lang}
-                onPress={() => onLanguageChange(lang)}
-                style={[styles.langButton, isActive && styles.langButtonActive]}
-                activeOpacity={0.7}
-              >
-                <Text
-                  style={[
-                    styles.langText,
-                    isActive ? styles.langTextActive : styles.langTextInactive,
-                  ]}
-                >
-                  {lang.toUpperCase()}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </BlurView>
+        <LanguageSwitcher
+          activeLanguage={activeLanguage}
+          onLanguageChange={onLanguageChange}
+        />
       </View>
     </View>
   );
@@ -91,31 +66,5 @@ const styles = StyleSheet.create({
   },
   switcherWrapper: {
     position: 'absolute',
-  },
-  switcherBlur: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 12,
-    overflow: 'hidden',
-    paddingHorizontal: 4,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-  },
-  langButton: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
-  },
-  langButtonActive: {
-    backgroundColor: BrandColors.white,
-  },
-  langText: {
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  langTextActive: {
-    color: BrandColors.black,
-  },
-  langTextInactive: {
-    color: 'rgba(255,255,255,0.6)',
   },
 });

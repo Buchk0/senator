@@ -34,7 +34,7 @@ export default function HomeScreen() {
       iconName: 'grid-view',
       title: t('home.cards_hotel'),
       reserveLabel: t('home.cards_reserve'),
-      onPress: () => router.push('/hotel'),
+      onPress: () => router.push('/(tabs)/hotel'),
     },
     {
       id: 'senator',
@@ -42,7 +42,7 @@ export default function HomeScreen() {
       iconName: 'restaurant',
       title: t('home.cards_senator'),
       reserveLabel: t('home.cards_reserve'),
-      onPress: () => router.push('/senator'),
+      onPress: () => router.push('/(tabs)/restaurants/senator'),
     },
     {
       id: 'balkon',
@@ -50,7 +50,7 @@ export default function HomeScreen() {
       iconName: 'restaurant',
       title: t('home.cards_balkon'),
       reserveLabel: t('home.cards_reserve'),
-      onPress: () => router.push('/balkon'),
+      onPress: () => router.push('/(tabs)/restaurants/balkon'),
     },
   ];
 

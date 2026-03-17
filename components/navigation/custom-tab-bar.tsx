@@ -4,27 +4,38 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { ComponentProps } from 'react';
 import { BrandColors } from '@/constants/theme';
+import { useTranslation } from 'react-i18next';
 
 const NAV_DARK = '#1a2035';
 
 type IconName = ComponentProps<typeof MaterialIcons>['name'];
 
-const TAB_CONFIG: Record<string, { icon: IconName; label: string }> = {
-  index:       { icon: 'home',                label: 'Главная' },
-  hotel:       { icon: 'apartment',           label: 'Отель' },
-  restaurants: { icon: 'restaurant',          label: 'Рестораны' },
-  coupons:     { icon: 'confirmation-number', label: 'Купоны' },
-  profile:     { icon: 'person',              label: 'Профиль' },
+const TAB_ICONS: Record<string, IconName> = {
+  index:       'home',
+  hotel:       'apartment',
+  restaurants: 'restaurant',
+  coupons:     'confirmation-number',
+  profile:     'person',
+};
+
+const TAB_I18N_KEYS: Record<string, string> = {
+  index:       'nav.home',
+  hotel:       'nav.hotel',
+  restaurants: 'nav.restaurants',
+  coupons:     'nav.coupons',
+  profile:     'nav.profile',
 };
 
 export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
 
   return (
     <View style={[styles.container, { paddingBottom: 15 }]}>
       {state.routes.map((route, index) => {
-        const config = TAB_CONFIG[route.name];
-        if (!config) return null;
+        const icon = TAB_ICONS[route.name];
+        const i18nKey = TAB_I18N_KEYS[route.name];
+        if (!icon || !i18nKey) return null;
 
         const isFocused = state.index === index;
 
@@ -48,12 +59,12 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
           >
             <View style={[styles.pill, isFocused && styles.pillActive]}>
               <MaterialIcons
-                name={config.icon}
+                name={icon}
                 size={22}
                 color={isFocused ? BrandColors.white : BrandColors.black}
               />
               <Text style={[styles.label, isFocused && styles.labelActive]} numberOfLines={1}>
-                {config.label}
+                {t(i18nKey)}
               </Text>
             </View>
           </TouchableOpacity>
@@ -69,7 +80,6 @@ const styles = StyleSheet.create({
     backgroundColor: BrandColors.white,
     paddingTop: 10,
     paddingHorizontal: 8,
-    // top shadow
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.06,
@@ -84,7 +94,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 6,
-    paddingHorizontal: 6,
+    paddingHorizontal: 10,
     borderRadius: 12,
     gap: 3,
   },

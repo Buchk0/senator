@@ -18,5 +18,44 @@
     "coupons_balkon_title": "Balkon deals",
     "coupon_get": "Получить",
     "events_title": "События"
+  },
+  "nav": {
+    "home": "Главная",
+    "hotel": "Отель",
+    "restaurants": "Рестораны",
+    "coupons": "Купоны",
+    "profile": "Профиль"
+  },
+  "register": {
+    "title": "Регистрация",
+    "name_placeholder": "Имя",
+    "surname_placeholder": "Фамилия",
+    "birthdate_placeholder": "Дата рождения",
+    "password_placeholder": "Пароль (минимум 6 символов)",
+    "get_code_btn": "Получить код",
+    "have_account": "Уже есть аккаунт?",
+    "done": "Готово",
+    "enter_name": "Введите имя",
+    "enter_surname": "Введите фамилию",
+    "enter_birthdate": "Введите дату рождения",
+    "password_min": "Пароль должен содержать не менее 6 символов",
+    "send_code_error": "Не удалось отправить код"
+  },
+  "profile": {
+    "error": "Ошибка",
+    "enter_phone": "Введите номер телефона",
+    "enter_password": "Введите пароль",
+    "wrong_credentials": "Неверный номер или пароль",
+    "password_placeholder": "Пароль",
+    "login_btn": "Войти",
+    "no_account": "Регистрация",
+    "phone_label": "Телефон",
+    "my_coupons": "Мои купоны",
+    "coupon_sub": "Активные и исполь-\nзованные купоны",
+    "birthday": "День рождения",
+    "help": "Помощь",
+    "contact_reception": "Связаться с Ресепшн",
+    "directions": "Как добраться",
+    "logout": "Выйти из аккаунта"
   }
 }

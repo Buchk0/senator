@@ -18,5 +18,44 @@
     "coupons_balkon_title": "Balkon deals",
     "coupon_get": "Алу",
     "events_title": "Оқиғалар"
+  },
+  "nav": {
+    "home": "Басты",
+    "hotel": "Қонақ үй",
+    "restaurants": "Мейрамхана",
+    "coupons": "Купондар",
+    "profile": "Профиль"
+  },
+  "register": {
+    "title": "Тіркелу",
+    "name_placeholder": "Аты",
+    "surname_placeholder": "Тегі",
+    "birthdate_placeholder": "Туған күні",
+    "password_placeholder": "Құпия сөз (кемінде 6 таңба)",
+    "get_code_btn": "Код алу",
+    "have_account": "Аккаунт бар ма?",
+    "done": "Дайын",
+    "enter_name": "Атыңызды енгізіңіз",
+    "enter_surname": "Тегіңізді енгізіңіз",
+    "enter_birthdate": "Туған күніңізді енгізіңіз",
+    "password_min": "Құпия сөз кемінде 6 таңбадан тұруы керек",
+    "send_code_error": "Код жіберілмеді"
+  },
+  "profile": {
+    "error": "Қате",
+    "enter_phone": "Телефон нөмірін енгізіңіз",
+    "enter_password": "Құпия сөзді енгізіңіз",
+    "wrong_credentials": "Телефон нөмірі немесе құпия сөз қате",
+    "password_placeholder": "Құпия сөз",
+    "login_btn": "Кіру",
+    "no_account": "Тіркелу",
+    "phone_label": "Телефон",
+    "my_coupons": "Менің купондарым",
+    "coupon_sub": "Белсенді және\nпайдаланылған купондар",
+    "birthday": "Туған күн",
+    "help": "Көмек",
+    "contact_reception": "Рецепциямен байланыс",
+    "directions": "Қалай жетуге болады",
+    "logout": "Аккаунттан шығу"
   }
 }

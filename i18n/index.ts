@@ -7,10 +7,10 @@ import ru from './locales/ru.json';
 import kz from './locales/kz.json';
 
 const SUPPORTED_LOCALES = ['en', 'ru', 'kz'] as const;
-const deviceLocale = Localization.getLocales()[0]?.languageCode ?? 'en';
+const deviceLocale = Localization.getLocales()[0]?.languageCode ?? 'kz';
 const detectedLanguage = SUPPORTED_LOCALES.includes(deviceLocale as any)
   ? deviceLocale
-  : 'en';
+  : 'kz';
 
 i18n.use(initReactI18next).init({
   compatibilityJSON: 'v4',
@@ -20,7 +20,7 @@ i18n.use(initReactI18next).init({
     kz: { translation: kz },
   },
   lng: detectedLanguage,
-  fallbackLng: 'en',
+  fallbackLng: 'kz',
   interpolation: {
     escapeValue: false,
   },

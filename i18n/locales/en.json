@@ -18,5 +18,44 @@
     "coupons_balkon_title": "Balkon deals",
     "coupon_get": "Get",
     "events_title": "Events"
+  },
+  "nav": {
+    "home": "Home",
+    "hotel": "Hotel",
+    "restaurants": "Restaurants",
+    "coupons": "Coupons",
+    "profile": "Profile"
+  },
+  "register": {
+    "title": "Registration",
+    "name_placeholder": "First name",
+    "surname_placeholder": "Last name",
+    "birthdate_placeholder": "Date of birth",
+    "password_placeholder": "Password (min 6 characters)",
+    "get_code_btn": "Get code",
+    "have_account": "Already have an account?",
+    "done": "Done",
+    "enter_name": "Enter your first name",
+    "enter_surname": "Enter your last name",
+    "enter_birthdate": "Enter your date of birth",
+    "password_min": "Password must be at least 6 characters",
+    "send_code_error": "Failed to send code"
+  },
+  "profile": {
+    "error": "Error",
+    "enter_phone": "Enter phone number",
+    "enter_password": "Enter password",
+    "wrong_credentials": "Wrong phone number or password",
+    "password_placeholder": "Password",
+    "login_btn": "Sign in",
+    "no_account": "Registration",
+    "phone_label": "Phone",
+    "my_coupons": "My coupons",
+    "coupon_sub": "Active and\nused coupons",
+    "birthday": "Birthday",
+    "help": "Help",
+    "contact_reception": "Contact Reception",
+    "directions": "Directions",
+    "logout": "Sign out"
   }
 }
