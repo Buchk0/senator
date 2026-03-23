@@ -9,6 +9,34 @@ import { I18nextProvider } from 'react-i18next';
 import i18n from '@/i18n';
 import AuthProvider, { useAuth } from '@/context/AuthContext';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { Asset } from 'expo-asset';
+
+const LOCAL_IMAGES = [
+  require('@/assets/images/restaurants-bc.png'),
+  require('@/assets/images/logo.png'),
+  require('@/assets/images/senator-bc.jpg'),
+  require('@/assets/images/grill-bc.jpg'),
+  require('@/assets/images/senator-photo-1.jpg'),
+  require('@/assets/images/senator-photo-2.jpg'),
+  require('@/assets/images/senator-photo-3.jpg'),
+  require('@/assets/images/grill-photo-1.jpg'),
+  require('@/assets/images/grill-photo-2.jpg'),
+  require('@/assets/images/grill-photo-3.jpg'),
+  require('@/assets/images/menu/senator/1.png'),
+  require('@/assets/images/menu/senator/2.png'),
+  require('@/assets/images/menu/senator/3.png'),
+  require('@/assets/images/menu/senator/4.png'),
+  require('@/assets/images/menu/senator/5.png'),
+  require('@/assets/images/menu/senator/6.png'),
+  require('@/assets/images/menu/senator/7.png'),
+  require('@/assets/images/menu/senator/8.png'),
+  require('@/assets/images/menu/balkon/1.png'),
+  require('@/assets/images/menu/balkon/2.png'),
+  require('@/assets/images/menu/balkon/3.png'),
+  require('@/assets/images/menu/balkon/4.png'),
+  require('@/assets/images/menu/balkon/5.png'),
+  require('@/assets/images/menu/balkon/6.png'),
+];
 
 const REMOTE_IMAGES = [
   'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800',
@@ -28,17 +56,19 @@ function InitialLayout() {
   const colorScheme = useColorScheme();
 
   useEffect(() => {
+    Asset.loadAsync(LOCAL_IMAGES);
     REMOTE_IMAGES.forEach((url) => Image.prefetch(url));
   }, []);
 
   useEffect(() => {
     if (loading) return;
-    const inAuth = segments[0] === 'auth';
-    if (!user && !inAuth) {
-      router.replace('/auth/login');
-    } else if (user && inAuth) {
-      router.replace('/(tabs)');
-    }
+    //   router.replace('/(tabs)');
+     const inAuth = segments[0] === 'auth';
+     if (!user && !inAuth) {
+       router.replace('/auth/login');
+     } else if (user && inAuth) {
+       router.replace('/(tabs)');
+     }
   }, [user, loading, segments]);
 
   return (

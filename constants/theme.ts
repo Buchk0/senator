@@ -31,6 +31,8 @@ export const BrandColors = {
   black: '#000000',
   white: '#FFFFFF',
   gold: '#c69c6d',
+  navy: '#0B1B2E',
+  textMuted: 'rgba(11,27,46,0.65)',
   blurDark: 'rgba(0, 0, 0, 0.45)',
   blurLight: 'rgba(255, 255, 255, 0.1)',
 } as const;

@@ -19,9 +19,9 @@ export default function HomeScreen() {
   const { activeLanguage, changeLanguage } = useLanguage();
 
   const quickAccessItems: QuickAccessItem[] = [
-    { id: 'hotel', iconName: 'bed', label: t('home.quick_hotel'), onPress: () => {} },
-    { id: 'senator', iconName: 'restaurant', label: t('home.quick_senator'), onPress: () => {} },
-    { id: 'balkon', iconName: 'lunch-dining', label: t('home.quick_balkon'), onPress: () => {} },
+    { id: 'hotel', iconName: 'bed', label: t('home.quick_hotel'), onPress: () => router.push('/(tabs)/hotel') },
+    { id: 'senator', iconName: 'restaurant', label: t('home.quick_senator'), onPress: () => router.push('/(tabs)/restaurants/senator') },
+    { id: 'balkon', iconName: 'lunch-dining', label: t('home.quick_balkon'), onPress: () => router.push('/(tabs)/restaurants/balkon') },
     { id: 'spa', iconName: 'spa', label: t('home.quick_spa'), onPress: () => {} },
     { id: 'conference', iconName: 'present-to-all', label: t('home.quick_conference'), onPress: () => {} },
     { id: 'vip', iconName: 'handshake', label: t('home.quick_vip'), onPress: () => {} },
