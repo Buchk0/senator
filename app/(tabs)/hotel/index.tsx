@@ -3,35 +3,22 @@ import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { BrandColors } from '@/constants/theme';
+import { useTranslation } from 'react-i18next';
 
 const ROOMS = [
-  {
-    type: 'standard',
-    label: 'Standard',
-    description: 'Уютный номер с видом на город',
-    image: require('@/assets/images/standart/standart-double/1.jpg'),
-  },
-  {
-    type: 'deluxe',
-    label: 'Deluxe',
-    description: 'Просторный номер с панорамным видом',
-    image: require('@/assets/images/deluxe/deluxe-double/1.jpg'),
-  },
-  {
-    type: 'suite',
-    label: 'Suite',
-    description: 'Эксклюзивный люкс с террасой',
-    image: require('@/assets/images/suite/executive/1.jpg'),
-  },
+  { type: 'standard', image: require('@/assets/images/standart/standart-double/1.jpg') },
+  { type: 'deluxe',   image: require('@/assets/images/deluxe/deluxe-double/1.jpg') },
+  { type: 'suite',    image: require('@/assets/images/suite/executive/1.jpg') },
 ] as const;
 
 export default function HotelTab() {
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
 
   return (
     <View style={[styles.container, { paddingTop: insets.top + 24 }]}>
-      <Text style={styles.heading}>Отель Senator</Text>
-      <Text style={styles.subheading}>Выберите категорию номера</Text>
+      <Text style={styles.heading}>{t('hotel.title')}</Text>
+      <Text style={styles.subheading}>{t('hotel.subtitle')}</Text>
 
       <View style={styles.list}>
         {ROOMS.map((room) => (
@@ -49,8 +36,7 @@ export default function HotelTab() {
               <View style={styles.overlay} />
               <View style={styles.cardContent}>
                 <View>
-                  <Text style={styles.cardLabel}>{room.label}</Text>
-                  <Text style={styles.cardDesc}>{room.description}</Text>
+                  <Text style={styles.cardLabel}>{t(`hotel.rooms.${room.type}.label`)}</Text>
                 </View>
                 <View style={styles.chevronCircle}>
                   <MaterialIcons name="chevron-right" size={22} color={BrandColors.white} />

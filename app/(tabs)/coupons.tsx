@@ -2,10 +2,12 @@ import {View, Text, StyleSheet, ScrollView, Pressable} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BrandColors } from '@/constants/theme';
 import {useState} from "react";
+import { useTranslation } from 'react-i18next';
 import {coupons} from "@/constants/coupons-data";
 
 export default function CouponsTab() {
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
     const [restaurant, setRestaurant] = useState<'All' | 'Senator' | 'Balkon'>('All')
     const filtered = coupons.filter(c =>
         restaurant === 'All' ? true : c.restaurant === 'All' || c.restaurant === restaurant
@@ -17,25 +19,25 @@ export default function CouponsTab() {
   return (
     <ScrollView style={styles.scroll}>
         <View style={[styles.container, { paddingTop: insets.top }]}>
-            <Text style={styles.title}>Coupons</Text>
-            <Text style={styles.subTitle}>Welcome, seasonal and permanent coupons.</Text>
+            <Text style={styles.title}>{t('coupons.title')}</Text>
+            <Text style={styles.subTitle}>{t('coupons.subtitle')}</Text>
         </View>
 
         <View style={styles.filterWrapper}>
             <View style={styles.card}>
                 <View style={styles.filterRow}>
-                    <Text style={styles.filterTitle}>Filter</Text>
+                    <Text style={styles.filterTitle}>{t('coupons.filter_title')}</Text>
                     <Pressable onPress={() => setRestaurant('All')}>
-                        <Text style={styles.resetBtn}>Reset</Text>
+                        <Text style={styles.resetBtn}>{t('coupons.filter_reset')}</Text>
                     </Pressable>
                 </View>
-                <Text style={styles.segmentLabel}>Restaurant</Text>
+                <Text style={styles.segmentLabel}>{t('coupons.segment_label')}</Text>
                 <View style={styles.segmentRow}>
                     <Pressable
                         style={[styles.segmentBtn, restaurant === 'All' && styles.segmentBtnActive]}
                         onPress={() => setRestaurant('All')}
                     >
-                        <Text style={[styles.segmentBtnText, restaurant === 'All' && styles.segmentBtnTextActive]}>All</Text>
+                        <Text style={[styles.segmentBtnText, restaurant === 'All' && styles.segmentBtnTextActive]}>{t('coupons.segment_all')}</Text>
                     </Pressable>
                     <Pressable
                         style={[styles.segmentBtn, restaurant === 'Senator' && styles.segmentBtnActive]}
@@ -57,34 +59,34 @@ export default function CouponsTab() {
             {welcome.length > 0 && (
                 <View>
                     <View style={styles.sectionTitles}>
-                        <Text style={styles.sectionTitle}>Welcome</Text>
-                        <Text style={styles.sectionSubtitle}>Coupons for new guests</Text>
+                        <Text style={styles.sectionTitle}>{t('coupons.section_welcome')}</Text>
+                        <Text style={styles.sectionSubtitle}>{t('coupons.section_welcome_sub')}</Text>
                     </View>
                     <View style={styles.couponsSection}>
                         {welcome.map((c) => (
                             <View style={styles.coupon} key={c.id}>
                                 <View style={styles.couponFilter}>
                                     <View style={styles.couponPill}>
-                                        <Text style={styles.couponPillText}>{c.restaurant}</Text>
+                                        <Text style={styles.couponPillText}>{c.restaurant === 'All' ? t('coupons.segment_all') : c.restaurant}</Text>
                                     </View>
                                     <View style={styles.couponTypePill}>
-                                        <Text style={styles.couponTypePillText}>{c.expiresText ?? '—'}</Text>
+                                        <Text style={styles.couponTypePillText}>{t(`coupons.expires_${c.type}`)}</Text>
                                     </View>
                                     {c.oneTime && (
                                         <View style={styles.couponOneTimePill}>
-                                            <Text style={styles.couponOneTimePillText}>1 time</Text>
+                                            <Text style={styles.couponOneTimePillText}>{t('coupons.one_time')}</Text>
                                         </View>
                                     )}
                                 </View>
-                                <Text style={styles.couponTitle}>{c.emoji} {c.title}</Text>
-                                <Text style={styles.couponDesc}>{c.description}</Text>
+                                <Text style={styles.couponTitle}>{c.emoji} {t(`coupons.data.${c.id}.title`)}</Text>
+                                <Text style={styles.couponDesc}>{t(`coupons.data.${c.id}.description`)}</Text>
                                 <View style={styles.couponDivider} />
                                 <Text style={styles.couponTerms}>
-                                    <Text style={styles.couponTermsLabel}>Terms: </Text>
-                                    {c.terms}
+                                    <Text style={styles.couponTermsLabel}>{t('coupons.terms_label')}: </Text>
+                                    {t(`coupons.data.${c.id}.terms`)}
                                 </Text>
                                 <Pressable style={styles.useBtn}>
-                                    <Text style={styles.useBtnText}>Use</Text>
+                                    <Text style={styles.useBtnText}>{t('coupons.use_btn')}</Text>
                                 </Pressable>
                             </View>
                         ))}
@@ -95,34 +97,34 @@ export default function CouponsTab() {
             {seasonal.length > 0 && (
                 <View>
                     <View style={styles.sectionTitles}>
-                        <Text style={styles.sectionTitle}>Seasonal</Text>
-                        <Text style={styles.sectionSubtitle}>Updated every 2–3 months</Text>
+                        <Text style={styles.sectionTitle}>{t('coupons.section_seasonal')}</Text>
+                        <Text style={styles.sectionSubtitle}>{t('coupons.section_seasonal_sub')}</Text>
                     </View>
                     <View style={styles.couponsSection}>
                         {seasonal.map((c) => (
                             <View style={styles.coupon} key={c.id}>
                                 <View style={styles.couponFilter}>
                                     <View style={styles.couponPill}>
-                                        <Text style={styles.couponPillText}>{c.restaurant}</Text>
+                                        <Text style={styles.couponPillText}>{c.restaurant === 'All' ? t('coupons.segment_all') : c.restaurant}</Text>
                                     </View>
                                     <View style={styles.couponTypePill}>
-                                        <Text style={styles.couponTypePillText}>{c.expiresText ?? '—'}</Text>
+                                        <Text style={styles.couponTypePillText}>{t(`coupons.expires_${c.type}`)}</Text>
                                     </View>
                                     {c.oneTime && (
                                         <View style={styles.couponOneTimePill}>
-                                            <Text style={styles.couponOneTimePillText}>1 time</Text>
+                                            <Text style={styles.couponOneTimePillText}>{t('coupons.one_time')}</Text>
                                         </View>
                                     )}
                                 </View>
-                                <Text style={styles.couponTitle}>{c.emoji} {c.title}</Text>
-                                <Text style={styles.couponDesc}>{c.description}</Text>
+                                <Text style={styles.couponTitle}>{c.emoji} {t(`coupons.data.${c.id}.title`)}</Text>
+                                <Text style={styles.couponDesc}>{t(`coupons.data.${c.id}.description`)}</Text>
                                 <View style={styles.couponDivider} />
                                 <Text style={styles.couponTerms}>
-                                    <Text style={styles.couponTermsLabel}>Terms: </Text>
-                                    {c.terms}
+                                    <Text style={styles.couponTermsLabel}>{t('coupons.terms_label')}: </Text>
+                                    {t(`coupons.data.${c.id}.terms`)}
                                 </Text>
                                 <Pressable style={styles.useBtn}>
-                                    <Text style={styles.useBtnText}>Use</Text>
+                                    <Text style={styles.useBtnText}>{t('coupons.use_btn')}</Text>
                                 </Pressable>
                             </View>
                         ))}
@@ -133,34 +135,34 @@ export default function CouponsTab() {
             {always.length > 0 && (
                 <View>
                     <View style={styles.sectionTitles}>
-                        <Text style={styles.sectionTitle}>Always Available</Text>
-                        <Text style={styles.sectionSubtitle}>Permanent coupons</Text>
+                        <Text style={styles.sectionTitle}>{t('coupons.section_always')}</Text>
+                        <Text style={styles.sectionSubtitle}>{t('coupons.section_always_sub')}</Text>
                     </View>
                     <View style={styles.couponsSection}>
                         {always.map((c) => (
                             <View style={styles.coupon} key={c.id}>
                                 <View style={styles.couponFilter}>
                                     <View style={styles.couponPill}>
-                                        <Text style={styles.couponPillText}>{c.restaurant}</Text>
+                                        <Text style={styles.couponPillText}>{c.restaurant === 'All' ? t('coupons.segment_all') : c.restaurant}</Text>
                                     </View>
                                     <View style={styles.couponTypePill}>
-                                        <Text style={styles.couponTypePillText}>{c.expiresText ?? '—'}</Text>
+                                        <Text style={styles.couponTypePillText}>{t(`coupons.expires_${c.type}`)}</Text>
                                     </View>
                                     {c.oneTime && (
                                         <View style={styles.couponOneTimePill}>
-                                            <Text style={styles.couponOneTimePillText}>1 time</Text>
+                                            <Text style={styles.couponOneTimePillText}>{t('coupons.one_time')}</Text>
                                         </View>
                                     )}
                                 </View>
-                                <Text style={styles.couponTitle}>{c.emoji} {c.title}</Text>
-                                <Text style={styles.couponDesc}>{c.description}</Text>
+                                <Text style={styles.couponTitle}>{c.emoji} {t(`coupons.data.${c.id}.title`)}</Text>
+                                <Text style={styles.couponDesc}>{t(`coupons.data.${c.id}.description`)}</Text>
                                 <View style={styles.couponDivider} />
                                 <Text style={styles.couponTerms}>
-                                    <Text style={styles.couponTermsLabel}>Terms: </Text>
-                                    {c.terms}
+                                    <Text style={styles.couponTermsLabel}>{t('coupons.terms_label')}: </Text>
+                                    {t(`coupons.data.${c.id}.terms`)}
                                 </Text>
                                 <Pressable style={styles.useBtn}>
-                                    <Text style={styles.useBtnText}>Use</Text>
+                                    <Text style={styles.useBtnText}>{t('coupons.use_btn')}</Text>
                                 </Pressable>
                             </View>
                         ))}

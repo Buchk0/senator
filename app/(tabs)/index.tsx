@@ -30,7 +30,8 @@ export default function HomeScreen() {
   const venueItems: VenueCardItem[] = [
     {
       id: 'hotel',
-      imageUrl: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800',
+      image: require('@/assets/images/deluxe/deluxe-double/1.jpg'),
+      imageStyle: { top: -30 },
       iconName: 'grid-view',
       title: t('home.cards_hotel'),
       reserveLabel: t('home.cards_reserve'),
@@ -38,7 +39,7 @@ export default function HomeScreen() {
     },
     {
       id: 'senator',
-      imageUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800',
+      image: require('@/assets/images/senator-bc.jpg'),
       iconName: 'restaurant',
       title: t('home.cards_senator'),
       reserveLabel: t('home.cards_reserve'),
@@ -46,7 +47,7 @@ export default function HomeScreen() {
     },
     {
       id: 'balkon',
-      imageUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800',
+      image: require('@/assets/images/grill-bc.jpg'),
       iconName: 'restaurant',
       title: t('home.cards_balkon'),
       reserveLabel: t('home.cards_reserve'),
@@ -57,7 +58,7 @@ export default function HomeScreen() {
   const senatorCoupons: CouponItem[] = [
     {
       id: 's1',
-      imageUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800',
+      imageUrl: require('@/assets/images/senator-photo-1.jpg'),
       categoryLabel: 'Ресторан',
       validUntil: 'до 28 фев',
       title: '-15% на бизнес-ланч',
@@ -65,7 +66,7 @@ export default function HomeScreen() {
     },
     {
       id: 's2',
-      imageUrl: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800',
+      imageUrl: require('@/assets/images/senator-photo-2.jpg'),
       categoryLabel: 'Ресторан',
       validUntil: 'до 14 мар',
       title: '-20% на романтический ужин',
@@ -73,7 +74,7 @@ export default function HomeScreen() {
     },
     {
       id: 's3',
-      imageUrl: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800',
+      imageUrl: require('@/assets/images/senator-photo-3.jpg'),
       categoryLabel: 'Ресторан',
       validUntil: 'до 31 мар',
       title: '-10% на завтрак',
@@ -81,7 +82,7 @@ export default function HomeScreen() {
     },
     {
       id: 's4',
-      imageUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800',
+      imageUrl: require('@/assets/images/senator-photo-4.jpg'),
       categoryLabel: 'Ресторан',
       validUntil: 'до 31 дек',
       title: '-25% в день рождения',
@@ -92,7 +93,7 @@ export default function HomeScreen() {
   const balkonCoupons: CouponItem[] = [
     {
       id: 'b1',
-      imageUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800',
+      imageUrl: require('@/assets/images/grill-photo-1.jpg'),
       categoryLabel: 'Ресторан',
       validUntil: 'до 5.04',
       title: '-15% на ужин в ресторане',
@@ -100,7 +101,7 @@ export default function HomeScreen() {
     },
     {
       id: 'b2',
-      imageUrl: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800',
+      imageUrl: require('@/assets/images/grill-photo-2.jpg'),
       categoryLabel: 'Ресторан',
       validUntil: 'до 31 мар',
       title: '-30% Happy Hour',
@@ -108,7 +109,7 @@ export default function HomeScreen() {
     },
     {
       id: 'b3',
-      imageUrl: 'https://images.unsplash.com/photo-1551218808-94e220e084d2?w=800',
+      imageUrl: require('@/assets/images/grill-photo-3.jpg'),
       categoryLabel: 'Ресторан',
       validUntil: 'до 30 апр',
       title: '-15% воскресный бранч',
@@ -116,7 +117,7 @@ export default function HomeScreen() {
     },
     {
       id: 'b4',
-      imageUrl: 'https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=800',
+      imageUrl: require('@/assets/images/grill-photo-4.jpg'),
       categoryLabel: 'Ресторан',
       validUntil: 'до 31 дек',
       title: '-20% для компании',

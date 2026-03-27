@@ -12,6 +12,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BlurView } from 'expo-blur';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { BrandColors } from '@/constants/theme';
+import { useTranslation } from 'react-i18next';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -34,6 +35,7 @@ const RESTAURANTS = [
 
 export default function RestaurantsTab() {
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
 
   return (
     <ImageBackground
@@ -54,8 +56,8 @@ export default function RestaurantsTab() {
 
       {/* Text + buttons */}
       <View style={[styles.content, { paddingBottom: insets.bottom + 32 }]}>
-        <Text style={styles.title}>Выберите ресторан</Text>
-        <Text style={styles.subtitle}>Меню, события, контакты</Text>
+        <Text style={styles.title}>{t('restaurants.title')}</Text>
+        <Text style={styles.subtitle}>{t('restaurants.subtitle')}</Text>
 
         <View style={styles.buttons}>
           {RESTAURANTS.map((r) => (

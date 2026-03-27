@@ -2,7 +2,8 @@ import {
   View,
   Text,
   StyleSheet,
-  ImageBackground,
+  Image,
+  ImageSourcePropType,
   Dimensions,
 } from 'react-native';
 import { BrandColors } from '@/constants/theme';
@@ -15,7 +16,7 @@ const CARD_HEIGHT = CARD_WIDTH * 1.8;
 
 export interface EventItem {
   id: string;
-  imageUrl: string;
+  imageUrl: ImageSourcePropType;
   subtitle: string;
   title: string;
 }
@@ -27,13 +28,12 @@ export interface EventsCarouselProps {
 
 export function EventCard({ imageUrl, subtitle, title }: EventItem) {
   return (
-    <ImageBackground
-      source={{ uri: imageUrl }}
-      style={styles.card}
-      imageStyle={styles.cardImage}
-      resizeMode="cover"
-    >
-      <View style={styles.overlay} />
+    <View style={styles.card}>
+      <Image
+        source={imageUrl}
+        style={styles.cardImage}
+        resizeMode="cover"
+      />
 
       {/* Subtitle at the top */}
       <Text style={styles.subtitleText}>{subtitle}</Text>
@@ -42,7 +42,7 @@ export function EventCard({ imageUrl, subtitle, title }: EventItem) {
       <View style={styles.titleWrap}>
         <Text style={styles.titleText}>{title}</Text>
       </View>
-    </ImageBackground>
+    </View>
   );
 }
 
@@ -97,12 +97,11 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   cardImage: {
-    borderRadius: 20,
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.45)',
-    borderRadius: 20,
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    height: CARD_HEIGHT,
+    width: CARD_HEIGHT,
   },
 
   // Subtitle pinned to top

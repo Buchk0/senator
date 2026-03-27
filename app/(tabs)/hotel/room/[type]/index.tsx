@@ -12,6 +12,7 @@ import {
   UIManager,
 } from 'react-native';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams } from 'expo-router';
 import { BlurView } from 'expo-blur';
 import { BrandColors } from '@/constants/theme';
@@ -30,6 +31,7 @@ const THUMB_HEIGHT = THUMB_WIDTH * 0.72;
 export default function RoomCategoryScreen() {
   const { type } = useLocalSearchParams<{ type: string }>();
   const category = ROOM_CATEGORIES[type as string] ?? ROOM_CATEGORIES.standard;
+  const { t } = useTranslation();
 
   const [expandedKey, setExpandedKey] = useState<string | null>(null);
 
@@ -53,14 +55,14 @@ export default function RoomCategoryScreen() {
         <View style={styles.heroOverlay} />
 
         <View style={styles.heroBody}>
-          <Text style={styles.heroTitle}>{category.label}</Text>
-          <Text style={styles.heroDesc}>{category.shortDescription}</Text>
+          <Text style={styles.heroTitle}>{t(`hotel.rooms.${category.key}.label`)}</Text>
+          <Text style={styles.heroDesc}>{t(`hotel.rooms.${category.key}.short_desc`)}</Text>
         </View>
 
         <View style={styles.heroBookWrap}>
           <TouchableOpacity style={styles.heroBookBtn} activeOpacity={0.85}>
             <BlurView intensity={55} style={StyleSheet.absoluteFill} tint="dark" />
-            <Text style={styles.heroBookBtnText}>Забронировать</Text>
+            <Text style={styles.heroBookBtnText}>{t('hotel.book_btn')}</Text>
           </TouchableOpacity>
         </View>
       </ImageBackground>
@@ -82,14 +84,14 @@ export default function RoomCategoryScreen() {
                 >
                   <View style={styles.subCardOverlay} />
                   <View style={styles.subCardTextWrap}>
-                    <Text style={styles.subCardName}>{sub.label}</Text>
+                    <Text style={styles.subCardName}>{t(`hotel.rooms.${category.key}.${sub.key}_label`)}</Text>
                     <Text style={styles.subCardPrice}>{sub.price}</Text>
                   </View>
                   {/* Strip button — hidden when expanded */}
                   {!isOpen && (
                     <TouchableOpacity style={styles.strip} activeOpacity={0.8} onPress={() => toggle(sub.key)}>
                       <BlurView intensity={70} tint="dark" style={StyleSheet.absoluteFillObject} />
-                      <Text style={styles.stripText}>Подробнее</Text>
+                      <Text style={styles.stripText}>{t('hotel.more_btn')}</Text>
                     </TouchableOpacity>
                   )}
                 </ImageBackground>
@@ -98,7 +100,7 @@ export default function RoomCategoryScreen() {
               {/* Expanded body */}
               {isOpen && (
                 <View style={styles.expandedBody}>
-                  <Text style={styles.description}>{sub.description}</Text>
+                  <Text style={styles.description}>{t(`hotel.rooms.${category.key}.${sub.key}_desc`)}</Text>
                   <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}

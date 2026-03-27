@@ -1,12 +1,13 @@
 import { ComponentProps } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ImageBackground, ImageSourcePropType } from 'react-native';
 import { BlurView } from 'expo-blur';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { BrandColors } from '@/constants/theme';
 
 export interface VenueCardItem {
   id: string;
-  imageUrl: string;
+  image: ImageSourcePropType;
+  imageStyle?: object;
   iconName: ComponentProps<typeof MaterialIcons>['name'];
   title: string;
   reserveLabel: string;
@@ -17,12 +18,13 @@ export interface VenueCardsProps {
   items: VenueCardItem[];
 }
 
-function VenueCard({ imageUrl, iconName, title, reserveLabel, onPress }: VenueCardItem) {
+function VenueCard({ image, imageStyle, iconName, title, reserveLabel, onPress }: VenueCardItem) {
   return (
     <TouchableOpacity onPress={onPress} style={styles.card} activeOpacity={0.9}>
       <ImageBackground
-        source={{ uri: imageUrl }}
+        source={image}
         style={styles.image}
+        imageStyle={imageStyle}
         resizeMode="cover"
       >
         {/* Dark overlay */}

@@ -12,6 +12,7 @@ import {
 import ImageViewing from 'react-native-image-viewing';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BrandColors } from '@/constants/theme';
+import { useTranslation } from 'react-i18next';
 import { EventsCarousel } from '@/components/home/events-carousel';
 import { HOTEL_EVENTS } from '@/constants/events-data';
 
@@ -38,16 +39,17 @@ const MENU_IMAGES_FOR_VIEWER = MENU_IMAGES.map((src) => ({
 
 type TabKey = 'menu' | 'photos' | 'events' | 'info';
 
-const TABS: { key: TabKey; label: string }[] = [
-  { key: 'menu',   label: 'Меню' },
-  { key: 'photos', label: 'Фото' },
-  { key: 'events', label: 'События' },
-  { key: 'info',   label: 'Инфо' },
-];
-
 export default function BalkonScreen() {
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<TabKey>('menu');
+
+  const TABS: { key: TabKey; label: string }[] = [
+    { key: 'menu',   label: t('restaurants.tab_menu') },
+    { key: 'photos', label: t('restaurants.tab_photos') },
+    { key: 'events', label: t('restaurants.tab_events') },
+    { key: 'info',   label: t('restaurants.tab_info') },
+  ];
   const [viewerIndex, setViewerIndex] = useState(0);
   const [viewerVisible, setViewerVisible] = useState(false);
 
@@ -72,8 +74,8 @@ export default function BalkonScreen() {
           </View>
 
           <View style={styles.heroContent}>
-            <Text style={styles.heroTitle}>Gastro Grill Balkon</Text>
-            <Text style={styles.heroSub}>Меню, события, контакты</Text>
+            <Text style={styles.heroTitle}>{t('restaurants.balkon_title')}</Text>
+            <Text style={styles.heroSub}>{t('restaurants.subtitle')}</Text>
           </View>
         </ImageBackground>
 
@@ -133,14 +135,14 @@ export default function BalkonScreen() {
         {activeTab === 'info' && (
           <View style={styles.infoWrap}>
             <View style={styles.scheduleCard}>
-              <Text style={styles.scheduleTitle}>Время Работы</Text>
+              <Text style={styles.scheduleTitle}>{t('restaurants.hours_title')}</Text>
               <View style={styles.scheduleDivider} />
               <View style={styles.scheduleRow}>
-                <Text style={styles.scheduleDay}>Пн – Чт</Text>
+                <Text style={styles.scheduleDay}>{t('restaurants.hours_weekdays')}</Text>
                 <Text style={styles.scheduleTime}>12:00 – 23:00</Text>
               </View>
               <View style={[styles.scheduleRow, { marginBottom: 0 }]}>
-                <Text style={styles.scheduleDay}>Пт – Вс</Text>
+                <Text style={styles.scheduleDay}>{t('restaurants.hours_weekend')}</Text>
                 <Text style={styles.scheduleTime}>12:00 – 00:00</Text>
               </View>
             </View>
@@ -153,7 +155,7 @@ export default function BalkonScreen() {
       {/* ─── Sticky Reservation Button ─── */}
       <View style={[styles.reserveBar, { paddingBottom: insets.bottom + 16 }]}>
         <TouchableOpacity style={styles.reserveBtn} activeOpacity={0.85}>
-          <Text style={styles.reserveText}>Забронировать столик</Text>
+          <Text style={styles.reserveText}>{t('restaurants.book_table')}</Text>
         </TouchableOpacity>
       </View>
     </View>

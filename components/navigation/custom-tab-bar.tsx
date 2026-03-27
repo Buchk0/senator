@@ -31,7 +31,7 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
   const { t } = useTranslation();
 
   return (
-    <View style={[styles.container, { paddingBottom: 15 }]}>
+    <View style={[styles.container, { paddingBottom: 24 }]}>
       {state.routes.map((route, index) => {
         const icon = TAB_ICONS[route.name];
         const i18nKey = TAB_I18N_KEYS[route.name];
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     backgroundColor: BrandColors.white,
-    paddingTop: 10,
+    paddingTop: 16,
     paddingHorizontal: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -2 },
@@ -97,12 +97,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 12,
     gap: 3,
+    width: '100%',
   },
   pillActive: {
     backgroundColor: NAV_DARK,
   },
   label: {
-    fontSize: 11,
+    fontSize: 9,
     fontWeight: '500',
     color: BrandColors.black,
   },

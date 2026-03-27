@@ -41,6 +41,92 @@
     "password_min": "Password must be at least 6 characters",
     "send_code_error": "Failed to send code"
   },
+  "coupons": {
+    "title": "Coupons",
+    "subtitle": "Welcome, seasonal and permanent coupons.",
+    "filter_title": "Filter",
+    "filter_reset": "Reset",
+    "segment_label": "RESTAURANT",
+    "segment_all": "All",
+    "terms_label": "Terms",
+    "use_btn": "Use",
+    "section_welcome": "Welcome",
+    "section_welcome_sub": "Coupons for new guests",
+    "section_seasonal": "Seasonal",
+    "section_seasonal_sub": "Updated every 2–3 months",
+    "section_always": "Always Available",
+    "section_always_sub": "Permanent coupons",
+    "expires_welcome": "1 time",
+    "expires_seasonal": "Seasonal • 2–3 mo.",
+    "expires_always": "Always",
+    "one_time": "1 time",
+    "data": {
+      "w1": { "title": "Welcome Drink",        "description": "Free signature cocktail at the bar.",                  "terms": "Available once after check-in. 18+." },
+      "w2": { "title": "Welcome Dessert",       "description": "Free dessert when ordering a main course.",            "terms": "Available once after check-in. 1 dessert per table." },
+      "w3": { "title": "−10% on First Dinner",  "description": "10% discount on your first dinner. One time only.",   "terms": "Cannot be combined with other offers. 1 use." },
+      "w4": { "title": "Breakfast Upgrade",     "description": "Free specialty coffee or fresh juice with breakfast.", "terms": "Available once after check-in." },
+      "s1": { "title": "Spring Taste – −15%",   "description": "15% off the seasonal menu.",                          "terms": "Valid during the season. Cannot be combined." },
+      "s2": { "title": "Strawberry Dessert Gift","description": "Free strawberry dessert with any main course.",       "terms": "When ordering a main course. 1 dessert per table." },
+      "s3": { "title": "Wine & Dinner",          "description": "Free glass of wine with dinner.",                    "terms": "18+. When ordering a main course. 1 glass." },
+      "s4": { "title": "Hot Chocolate Treat",    "description": "Free hot chocolate.",                                "terms": "1 per guest per visit." },
+      "a1": { "title": "Happy Hour – −20%",      "description": "20% off cocktails from 5 pm to 7 pm.",              "terms": "Valid daily during stated hours. 18+." },
+      "a2": { "title": "Romantic Dinner",        "description": "Free champagne for two when booking a table.",       "terms": "When booking a table for two. 18+." },
+      "a3": { "title": "Lunch Offer – −15%",     "description": "15% off business lunch on weekdays.",               "terms": "Valid on weekdays. Check hours in Info." },
+      "a4": { "title": "Chef's Recommendation",  "description": "Free compliment from the chef.",                    "terms": "Limited availability. At the restaurant's discretion." }
+    }
+  },
+  "hotel": {
+    "title": "Hotel Senator",
+    "subtitle": "Choose a room category",
+    "book_btn": "Book",
+    "more_btn": "More Details",
+    "rooms": {
+      "standard": {
+        "label": "Standard",
+        "short_desc": "Spacious and stylish Standard rooms have everything you need for a comfortable stay.",
+        "single_label": "Single",
+        "single_desc": "Spacious and stylish Standard rooms have everything needed for a comfortable stay. A harmonious blend of modern design with a thoughtfully crafted interior — perfect for both business and leisure travellers. All rooms feature a comfortable bed, workspace and cosy bathroom.\n\nThe hotel also has a specially equipped room for guests with limited mobility.",
+        "double_label": "Double",
+        "double_desc": "Spacious and stylish Standard rooms have everything needed for a comfortable stay. A harmonious blend of modern design with a thoughtfully crafted interior makes this room an ideal choice for both business travellers and tourists. All rooms feature a comfortable bed, workspace and cosy bathroom.",
+        "twin_label": "Twin",
+        "twin_desc": "Spacious and stylish Standard rooms have everything needed for a comfortable stay. The room features two separate beds, making it an ideal choice for two guests. Modern design and a thoughtful interior ensure a comfortable rest."
+      },
+      "deluxe": {
+        "label": "Deluxe",
+        "short_desc": "Spacious Deluxe rooms with panoramic city views and exquisite interiors for true comfort enthusiasts.",
+        "single_label": "Single",
+        "single_desc": "An elegant Deluxe room with a refined interior and all amenities for a comfortable stay. Spacious room with one large bed, workspace and premium bathroom.",
+        "double_label": "Double",
+        "double_desc": "A luxurious Deluxe room with a king-size bed and panoramic city views. Exquisite décor, soft lighting and premium materials create an incomparable atmosphere of comfort.",
+        "twin_label": "Twin",
+        "twin_desc": "A spacious Deluxe room with two separate beds. The ideal choice for business partners or friends. Premium interior and all Deluxe amenities.",
+        "premium_label": "Premium Deluxe",
+        "premium_desc": "The pinnacle of the Deluxe category — a Premium room with an expanded layout, designer furniture and exclusive finishing materials. A bathroom with jacuzzi and panoramic views make this room truly special."
+      },
+      "suite": {
+        "label": "Suite",
+        "short_desc": "Exclusive Suite apartments — the embodiment of luxury and impeccable service for the most discerning guests.",
+        "executive_label": "Executive",
+        "executive_desc": "The Executive Suite with a separate living room, bedroom and study. Impeccable service, designer interior and all amenities for the most discerning guests. Bathroom with jacuzzi and panoramic city views.",
+        "presidential_label": "Presidential",
+        "presidential_desc": "The Presidential Suite — the highest category at Hotel Senator. Spacious apartments with two bedrooms, a living room, terrace and personal butler. Exclusive interior and boundless comfort for the most special guests."
+      }
+    }
+  },
+  "restaurants": {
+    "title": "Choose a Restaurant",
+    "subtitle": "Menu, events, contacts",
+    "senator_title": "Restaurant Senator",
+    "balkon_title": "Gastro Grill Balkon",
+    "tab_menu": "Menu",
+    "tab_photos": "Photos",
+    "tab_events": "Events",
+    "tab_info": "Info",
+    "hours_title": "Working Hours",
+    "hours_weekdays": "Mon – Thu",
+    "hours_weekend": "Fri – Sun",
+    "book_table": "Book a Table"
+  },
   "profile": {
     "error": "Error",
     "enter_phone": "Enter phone number",

@@ -5,6 +5,7 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  ImageSourcePropType,
   NativeSyntheticEvent,
   NativeScrollEvent,
   Dimensions,
@@ -21,7 +22,7 @@ const CARD_WIDTH = SCREEN_WIDTH - CARD_SIDE_PADDING * 2;
 
 export interface CouponItem {
   id: string;
-  imageUrl: string;
+  imageUrl: ImageSourcePropType;
   categoryLabel: string;
   validUntil: string;
   title: string;
@@ -42,7 +43,7 @@ function CouponCard({ imageUrl, categoryLabel, validUntil, title, description, c
         {/* Image with inner padding — does NOT cover full width */}
         <View style={styles.imageContainer}>
           <Image
-            source={{ uri: imageUrl }}
+            source={imageUrl}
             style={styles.image}
             resizeMode="cover"
           />
