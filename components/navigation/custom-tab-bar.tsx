@@ -37,7 +37,9 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
         const i18nKey = TAB_I18N_KEYS[route.name];
         if (!icon || !i18nKey) return null;
 
-        const isFocused = state.index === index;
+        const currentRoute = state.routes[state.index].name;
+        const isActuallyFocused = state.index === index;
+        const isFocused = isActuallyFocused || (currentRoute === 'spa' && route.name === 'index');
 
         const onPress = () => {
           const event = navigation.emit({
@@ -45,7 +47,7 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
             target: route.key,
             canPreventDefault: true,
           });
-          if (!isFocused && !event.defaultPrevented) {
+          if (!isActuallyFocused && !event.defaultPrevented) {
             navigation.navigate(route.name);
           }
         };

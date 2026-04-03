@@ -127,6 +127,32 @@
     "hours_weekend": "Пт – Вс",
     "book_table": "Забронировать столик"
   },
+  "spa": {
+    "title": "Senator Spa",
+    "subtitle": "Расслабление, восстановление и забота о себе в атмосфере уюта и тишины.",
+    "tab_services": "Услуги",
+    "tab_photos": "Фото",
+    "tab_promos": "Акции",
+    "tab_info": "Инфо",
+    "section_categories": "Популярные категории",
+    "section_treatments": "Популярные процедуры",
+    "book_btn": "Записаться",
+    "price_from": "ОТ",
+    "min": "мин",
+    "hours_title": "Время работы",
+    "hours_daily": "Ежедневно",
+    "hours_time": "10:00 – 21:00",
+    "categories": {
+      "massages": { "title": "Массажи",        "subtitle": "Расслабляющие и восстановительные программы" },
+      "facial":   { "title": "Уход за лицом",  "subtitle": "Омолаживающие и уходовые процедуры" },
+      "body":     { "title": "Уход за телом",  "subtitle": "Скрабы, обёртывания и восстановление" },
+      "rituals":  { "title": "SPA-ритуалы",    "subtitle": "Комплексный уход для полного расслабления" }
+    },
+    "treatments": {
+      "t1": { "title": "Aroma Relax Massage" },
+      "t2": { "title": "Hot Stone Massage" }
+    }
+  },
   "profile": {
     "error": "Ошибка",
     "enter_phone": "Введите номер телефона",

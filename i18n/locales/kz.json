@@ -127,6 +127,32 @@
     "hours_weekend": "Жм – Жк",
     "book_table": "Үстел брондау"
   },
+  "spa": {
+    "title": "Senator Spa",
+    "subtitle": "Жайлылық пен тыныштық атмосферасында демалу, қалпына келу және өзіне күтім жасау.",
+    "tab_services": "Қызметтер",
+    "tab_photos": "Фото",
+    "tab_promos": "Акциялар",
+    "tab_info": "Ақпарат",
+    "section_categories": "Танымал санаттар",
+    "section_treatments": "Танымал процедуралар",
+    "book_btn": "Жазылу",
+    "price_from": "БАСТАП",
+    "min": "мин",
+    "hours_title": "Жұмыс уақыты",
+    "hours_daily": "Күн сайын",
+    "hours_time": "10:00 – 21:00",
+    "categories": {
+      "massages": { "title": "Массаждар",        "subtitle": "Демалдыратын және қалпына келтіретін бағдарламалар" },
+      "facial":   { "title": "Бет күтімі",       "subtitle": "Жасартатын және күтімдік процедуралар" },
+      "body":     { "title": "Дене күтімі",      "subtitle": "Скраб, орау және қалпына келтіру" },
+      "rituals":  { "title": "SPA-рәсімдері",    "subtitle": "Толық демалуға арналған кешенді күтім" }
+    },
+    "treatments": {
+      "t1": { "title": "Aroma Relax Massage" },
+      "t2": { "title": "Hot Stone Massage" }
+    }
+  },
   "profile": {
     "error": "Қате",
     "enter_phone": "Телефон нөмірін енгізіңіз",

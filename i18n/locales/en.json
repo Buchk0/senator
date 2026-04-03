@@ -127,6 +127,32 @@
     "hours_weekend": "Fri – Sun",
     "book_table": "Book a Table"
   },
+  "spa": {
+    "title": "Senator Spa",
+    "subtitle": "Relaxation, recovery and self-care in an atmosphere of comfort and tranquility.",
+    "tab_services": "Services",
+    "tab_photos": "Photos",
+    "tab_promos": "Promos",
+    "tab_info": "Info",
+    "section_categories": "Popular Categories",
+    "section_treatments": "Popular Procedures",
+    "book_btn": "Book Appointment",
+    "price_from": "FROM",
+    "min": "min",
+    "hours_title": "Working Hours",
+    "hours_daily": "Daily",
+    "hours_time": "10:00 – 21:00",
+    "categories": {
+      "massages": { "title": "Massages",    "subtitle": "Relaxing & restorative programs" },
+      "facial":   { "title": "Facial Care", "subtitle": "Rejuvenating & nourishing treatments" },
+      "body":     { "title": "Body Care",   "subtitle": "Scrubs, wraps & recovery" },
+      "rituals":  { "title": "SPA Rituals", "subtitle": "Complete relaxation programs" }
+    },
+    "treatments": {
+      "t1": { "title": "Aroma Relax Massage" },
+      "t2": { "title": "Hot Stone Massage" }
+    }
+  },
   "profile": {
     "error": "Error",
     "enter_phone": "Enter phone number",

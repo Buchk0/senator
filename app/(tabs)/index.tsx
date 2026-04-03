@@ -22,7 +22,7 @@ export default function HomeScreen() {
     { id: 'hotel', iconName: 'bed', label: t('home.quick_hotel'), onPress: () => router.push('/(tabs)/hotel') },
     { id: 'senator', iconName: 'restaurant', label: t('home.quick_senator'), onPress: () => router.push('/(tabs)/restaurants/senator') },
     { id: 'balkon', iconName: 'lunch-dining', label: t('home.quick_balkon'), onPress: () => router.push('/(tabs)/restaurants/balkon') },
-    { id: 'spa', iconName: 'spa', label: t('home.quick_spa'), onPress: () => {} },
+    { id: 'spa', iconName: 'spa', label: t('home.quick_spa'), onPress: () => router.push('/(tabs)/spa') },
     { id: 'conference', iconName: 'present-to-all', label: t('home.quick_conference'), onPress: () => {} },
     { id: 'vip', iconName: 'handshake', label: t('home.quick_vip'), onPress: () => {} },
   ];

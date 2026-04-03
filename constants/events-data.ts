@@ -1,9 +1,5 @@
 import { EventItem } from '@/components/home/events-carousel';
 
-/**
- * Single source of truth for event cards.
- * Update here → updates automatically on every screen that shows these cards.
- */
 export const HOTEL_EVENTS: [EventItem, EventItem] = [
   {
     id: 'e1',
