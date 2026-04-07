@@ -10,11 +10,12 @@ import {
     Dimensions,
 } from 'react-native';
 import ImageViewing from 'react-native-image-viewing';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BrandColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import {spaCategories, spaTreatments} from "@/constants/spa-data";
+import { spaCategories, spaTreatments } from '@/constants/spa-data';
+import { Header } from '@/components/home/header';
+import { useLanguage } from '@/hooks/use-language';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -36,11 +37,11 @@ const SPA_PHOTOS_FOR_VIEWER = SPA_PHOTOS.map((src) => ({
     uri: Image.resolveAssetSource(src).uri,
 }));
 
-type TabKey = 'services' | 'photos' | 'promos' | 'info';
+type TabKey = 'services' | 'photos' | 'price';
 
 export default function SpaScreen() {
-    const insets = useSafeAreaInsets();
     const { t } = useTranslation();
+    const { activeLanguage, changeLanguage } = useLanguage();
     const [activeTab, setActiveTab] = useState<TabKey>('services');
     const [viewerIndex, setViewerIndex] = useState(0);
     const [viewerVisible, setViewerVisible] = useState(false);
@@ -48,8 +49,7 @@ export default function SpaScreen() {
     const TABS: { key: TabKey; label: string }[] = [
         { key: 'services', label: t('spa.tab_services') },
         { key: 'photos',   label: t('spa.tab_photos') },
-        { key: 'promos',   label: t('spa.tab_promos') },
-        { key: 'info',     label: t('spa.tab_info') },
+        { key: 'price',    label: t('spa.tab_price') },
     ];
 
     return (
@@ -64,13 +64,10 @@ export default function SpaScreen() {
                 >
                     <View style={styles.heroOverlay} />
 
-                    <View style={[styles.logoWrap, { top: insets.top + 16 }]}>
-                        <Image
-                            source={require('@/assets/images/logo.png')}
-                            style={styles.logo}
-                            resizeMode="contain"
-                        />
-                    </View>
+                    <Header
+                        activeLanguage={activeLanguage}
+                        onLanguageChange={changeLanguage}
+                    />
 
                     <View style={styles.heroContent}>
                         <Text style={styles.heroTitle}>{t('spa.title')}</Text>
@@ -135,7 +132,15 @@ export default function SpaScreen() {
                 )}
 
                 {/* ─── Photos ─── */}
-
+                {activeTab === 'photos' && (
+                    <View style={styles.photosWrap}>
+                        {SPA_PHOTOS.map((img, i) => (
+                            <TouchableOpacity key={i} onPress={() => { setViewerIndex(i); setViewerVisible(true); }}>
+                                <Image source={img} style={styles.photo} resizeMode="cover" />
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                )}
 
                 <ImageViewing
                     images={SPA_PHOTOS_FOR_VIEWER}
@@ -144,15 +149,8 @@ export default function SpaScreen() {
                     onRequestClose={() => setViewerVisible(false)}
                 />
 
-                {/* ─── Promos ─── */}
-                {activeTab === 'promos' && (
-                    <View style={styles.infoWrap}>
-                        <Text style={styles.sectionTitle}>{t('spa.tab_promos')}</Text>
-                    </View>
-                )}
-
-                {/* ─── Info ─── */}
-                {activeTab === 'info' && (
+                {/* ─── Price ─── */}
+                {activeTab === 'price' && (
                     <View style={styles.infoWrap}>
                         <View style={styles.scheduleCard}>
                             <Text style={styles.scheduleTitle}>{t('spa.hours_title')}</Text>
@@ -180,21 +178,11 @@ const styles = StyleSheet.create({
     /* ── Hero ── */
     hero: {
         minHeight: 280,
-        justifyContent: 'flex-end',
+        justifyContent: 'space-between',
     },
     heroOverlay: {
         ...StyleSheet.absoluteFillObject,
         backgroundColor: 'rgba(0,0,0,0.52)',
-    },
-    logoWrap: {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        alignItems: 'center',
-    },
-    logo: {
-        width: 72,
-        height: 40,
     },
     heroContent: {
         paddingHorizontal: 24,
@@ -263,15 +251,15 @@ const styles = StyleSheet.create({
         width: '48%',
         minHeight: 110,
         backgroundColor: BrandColors.white,
-        borderRadius: 16,
+        borderRadius: 6,
         borderWidth: 1,
         borderColor: 'rgba(11,27,46,0.08)',
         padding: 14,
         shadowColor: BrandColors.navy,
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.12,
-        shadowRadius: 16,
-        elevation: 6,
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.15,
+        shadowRadius: 2,
+        elevation: 3,
     },
     cardTitleContainer: {
         flexDirection: 'row',
@@ -309,17 +297,18 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         borderWidth: 1,
         borderColor: 'rgba(11,27,46,0.08)',
-        overflow: 'hidden',
         marginBottom: 16,
         shadowColor: BrandColors.navy,
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.10,
-        shadowRadius: 16,
-        elevation: 5,
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.15,
+        shadowRadius: 2,
+        elevation: 3,
     },
     treatmentImage: {
         width: '100%',
-        height: 190,
+        height: 140,
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
     },
     treatmentBody: {
         paddingHorizontal: 16,

@@ -55,8 +55,8 @@ export default function RoomCategoryScreen() {
         <View style={styles.heroOverlay} />
 
         <View style={styles.heroBody}>
-          <Text style={styles.heroTitle}>{t(`hotel.rooms.${category.key}.label`)}</Text>
-          <Text style={styles.heroDesc}>{t(`hotel.rooms.${category.key}.short_desc`)}</Text>
+          <Text style={styles.heroTitle}>{t(`hotel.rooms.${category.key}.label` as any)}</Text>
+          <Text style={styles.heroDesc}>{t(`hotel.rooms.${category.key}.short_desc` as any)}</Text>
         </View>
 
         <View style={styles.heroBookWrap}>
@@ -84,7 +84,7 @@ export default function RoomCategoryScreen() {
                 >
                   <View style={styles.subCardOverlay} />
                   <View style={styles.subCardTextWrap}>
-                    <Text style={styles.subCardName}>{t(`hotel.rooms.${category.key}.${sub.key}_label`)}</Text>
+                    <Text style={styles.subCardName}>{t(`hotel.rooms.${category.key}.${sub.key}_label` as any)}</Text>
                     <Text style={styles.subCardPrice}>{sub.price}</Text>
                   </View>
                   {/* Strip button — hidden when expanded */}
@@ -100,7 +100,7 @@ export default function RoomCategoryScreen() {
               {/* Expanded body */}
               {isOpen && (
                 <View style={styles.expandedBody}>
-                  <Text style={styles.description}>{t(`hotel.rooms.${category.key}.${sub.key}_desc`)}</Text>
+                  <Text style={styles.description}>{t(`hotel.rooms.${category.key}.${sub.key}_desc` as any)}</Text>
                   <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
