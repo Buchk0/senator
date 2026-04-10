@@ -329,16 +329,15 @@ const styles = StyleSheet.create({
         marginRight: 8,
     },
     pricePill: {
-        borderWidth: 1,
-        borderColor: 'rgba(11,27,46,0.18)',
+        backgroundColor: '#F5EFE0',
         borderRadius: 999,
-        paddingHorizontal: 10,
-        paddingVertical: 4,
+        paddingHorizontal: 12,
+        paddingVertical: 5,
     },
     priceText: {
         fontSize: 11,
         fontWeight: '700',
-        color: BrandColors.navy,
+        color: BrandColors.gold,
     },
     treatmentDuration: {
         fontSize: 13,

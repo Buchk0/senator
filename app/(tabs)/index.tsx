@@ -23,8 +23,8 @@ export default function HomeScreen() {
     { id: 'senator', iconName: 'restaurant', label: t('home.quick_senator'), onPress: () => router.push('/(tabs)/restaurants/senator') },
     { id: 'balkon', iconName: 'lunch-dining', label: t('home.quick_balkon'), onPress: () => router.push('/(tabs)/restaurants/balkon') },
     { id: 'spa', iconName: 'spa', label: t('home.quick_spa'), onPress: () => router.push('/(tabs)/spa') },
-    { id: 'conference', iconName: 'present-to-all', label: t('home.quick_conference'), onPress: () => {} },
-    { id: 'vip', iconName: 'handshake', label: t('home.quick_vip'), onPress: () => {} },
+    { id: 'conference', iconName: 'present-to-all', label: t('home.quick_conference'), onPress: () => router.push('/(tabs)/conference') },
+    { id: 'vip', iconName: 'handshake', label: t('home.quick_vip'), onPress: () => router.push('/(tabs)/vip') },
   ];
 
   const venueItems: VenueCardItem[] = [

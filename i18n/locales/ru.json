@@ -60,6 +60,7 @@
     "expires_seasonal": "Сезонное • 2–3 мес.",
     "expires_always": "Всегда",
     "one_time": "1 раз",
+    "used": "Использован",
     "data": {
       "w1": { "title": "Welcome Drink",          "description": "Бесплатный фирменный коктейль в рестробаре.",              "terms": "Доступен один раз после регистрации. 18+." },
       "w2": { "title": "Welcome Dessert",         "description": "Бесплатный десерт при заказе основного блюда.",            "terms": "Один раз после регистрации. 1 десерт на стол." },
@@ -151,6 +152,30 @@
       "t1": { "title": "Aroma Relax Massage" },
       "t2": { "title": "Hot Stone Massage" }
     }
+  },
+  "conference": {
+    "title": "Конференц-зал",
+    "subtitle": "Встречи, презентации, мероприятия",
+    "tab_photos": "Фото",
+    "tab_info": "Инфо",
+    "book_btn": "Забронировать зал",
+    "capacity_title": "Вместимость",
+    "capacity_value": "До 50 человек",
+    "hours_title": "Время работы",
+    "hours_daily": "Ежедневно",
+    "hours_time": "09:00 – 21:00"
+  },
+  "vip": {
+    "title": "VIP Переговорная",
+    "subtitle": "Приватные встречи в эксклюзивной обстановке",
+    "tab_photos": "Фото",
+    "tab_info": "Инфо",
+    "book_btn": "Забронировать комнату",
+    "capacity_title": "Вместимость",
+    "capacity_value": "До 12 человек",
+    "hours_title": "Время работы",
+    "hours_daily": "Ежедневно",
+    "hours_time": "09:00 – 21:00"
   },
   "profile": {
     "error": "Ошибка",

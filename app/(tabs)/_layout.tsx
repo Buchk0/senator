@@ -11,6 +11,8 @@ export default function TabLayout() {
       <Tabs.Screen name="hotel" />
       <Tabs.Screen name="restaurants" />
       <Tabs.Screen name="spa" />
+      <Tabs.Screen name="conference" />
+      <Tabs.Screen name="vip" />
       <Tabs.Screen name="coupons" />
       <Tabs.Screen name="profile" />
     </Tabs>

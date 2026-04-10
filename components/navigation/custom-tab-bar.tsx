@@ -39,7 +39,8 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
 
         const currentRoute = state.routes[state.index].name;
         const isActuallyFocused = state.index === index;
-        const isFocused = isActuallyFocused || (currentRoute === 'spa' && route.name === 'index');
+        const isFocused = isActuallyFocused ||
+          (['spa', 'conference', 'vip'].includes(currentRoute) && route.name === 'index');
 
         const onPress = () => {
           const event = navigation.emit({

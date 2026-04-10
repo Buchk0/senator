@@ -60,6 +60,7 @@
     "expires_seasonal": "Seasonal • 2–3 mo.",
     "expires_always": "Always",
     "one_time": "1 time",
+    "used": "Used",
     "data": {
       "w1": { "title": "Welcome Drink",        "description": "Free signature cocktail at the bar.",                  "terms": "Available once after check-in. 18+." },
       "w2": { "title": "Welcome Dessert",       "description": "Free dessert when ordering a main course.",            "terms": "Available once after check-in. 1 dessert per table." },
@@ -151,6 +152,30 @@
       "t1": { "title": "Aroma Relax Massage" },
       "t2": { "title": "Hot Stone Massage" }
     }
+  },
+  "conference": {
+    "title": "Conference Hall",
+    "subtitle": "Meetings, presentations, events",
+    "tab_photos": "Photos",
+    "tab_info": "Info",
+    "book_btn": "Book the Hall",
+    "capacity_title": "Capacity",
+    "capacity_value": "Up to 50 people",
+    "hours_title": "Working Hours",
+    "hours_daily": "Daily",
+    "hours_time": "09:00 – 21:00"
+  },
+  "vip": {
+    "title": "VIP Negotiation Room",
+    "subtitle": "Private meetings in an exclusive atmosphere",
+    "tab_photos": "Photos",
+    "tab_info": "Info",
+    "book_btn": "Book the Room",
+    "capacity_title": "Capacity",
+    "capacity_value": "Up to 12 people",
+    "hours_title": "Working Hours",
+    "hours_daily": "Daily",
+    "hours_time": "09:00 – 21:00"
   },
   "profile": {
     "error": "Error",

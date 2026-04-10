@@ -60,6 +60,7 @@
     "expires_seasonal": "Маусымдық • 2–3 ай",
     "expires_always": "Әрқашан",
     "one_time": "1 рет",
+    "used": "Пайдаланылды",
     "data": {
       "w1": { "title": "Welcome Drink",          "description": "Мейрамханада тегін фирмалық коктейль.",                   "terms": "Тіркелгеннен кейін бір рет қол жетімді. 18+." },
       "w2": { "title": "Welcome Dessert",         "description": "Негізгі тағам тапсырыс берген кезде тегін десерт.",      "terms": "Тіркелгеннен кейін бір рет. Үстелге 1 десерт." },
@@ -151,6 +152,30 @@
       "t1": { "title": "Aroma Relax Massage" },
       "t2": { "title": "Hot Stone Massage" }
     }
+  },
+  "conference": {
+    "title": "Конференц-зал",
+    "subtitle": "Кездесулер, презентациялар, іс-шаралар",
+    "tab_photos": "Фото",
+    "tab_info": "Ақпарат",
+    "book_btn": "Залды брондау",
+    "capacity_title": "Сыйымдылық",
+    "capacity_value": "50 адамға дейін",
+    "hours_title": "Жұмыс уақыты",
+    "hours_daily": "Күн сайын",
+    "hours_time": "09:00 – 21:00"
+  },
+  "vip": {
+    "title": "VIP Келіссөз бөлмесі",
+    "subtitle": "Эксклюзивті ортадағы жеке кездесулер",
+    "tab_photos": "Фото",
+    "tab_info": "Ақпарат",
+    "book_btn": "Бөлмені брондау",
+    "capacity_title": "Сыйымдылық",
+    "capacity_value": "12 адамға дейін",
+    "hours_title": "Жұмыс уақыты",
+    "hours_daily": "Күн сайын",
+    "hours_time": "09:00 – 21:00"
   },
   "profile": {
     "error": "Қате",

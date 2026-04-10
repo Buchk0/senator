@@ -1,386 +1,478 @@
-import {View, Text, StyleSheet, ScrollView, Pressable} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BrandColors } from '@/constants/theme';
-import {useState} from "react";
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {coupons} from "@/constants/coupons-data";
+import { coupons, Coupon } from '@/constants/coupons-data';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+
+// ─── Helpers ────────────────────────────────────────────────────────────────
+
+function formatTime(seconds: number): string {
+  const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+  const s = (seconds % 60).toString().padStart(2, '0');
+  return `${m}:${s}`;
+}
+
+// ─── Coupon Card ─────────────────────────────────────────────────────────────
+
+type CouponCardProps = {
+  c: Coupon;
+  timerSeconds: number | null;
+  onUse: (id: string) => void;
+};
+
+function CouponCard({ c, timerSeconds, onUse }: CouponCardProps) {
+  const { t } = useTranslation();
+
+  const isActive  = timerSeconds !== null;
+  const isExpired = timerSeconds === 0;
+
+  return (
+    <View style={styles.coupon}>
+      {/* ── Pills ── */}
+      <View style={styles.couponFilter}>
+        <View style={styles.couponPill}>
+          <Text style={styles.couponPillText}>
+            {c.restaurant === 'All' ? t('coupons.segment_all') : c.restaurant}
+          </Text>
+        </View>
+        <View style={styles.couponTypePill}>
+          <Text style={styles.couponTypePillText}>{t(`coupons.expires_${c.type}`)}</Text>
+        </View>
+        {c.oneTime && (
+          <View style={styles.couponOneTimePill}>
+            <Text style={styles.couponOneTimePillText}>{t('coupons.one_time')}</Text>
+          </View>
+        )}
+      </View>
+
+      {/* ── Title & description ── */}
+      <Text style={styles.couponTitle}>{c.emoji} {t(`coupons.data.${c.id}.title` as any)}</Text>
+      <Text style={styles.couponDesc}>{t(`coupons.data.${c.id}.description` as any)}</Text>
+
+      <View style={styles.couponDivider} />
+
+      {/* ── Terms ── */}
+      <Text style={styles.couponTerms}>
+        <Text style={styles.couponTermsLabel}>{t('coupons.terms_label')}: </Text>
+        {t(`coupons.data.${c.id}.terms` as any)}
+      </Text>
+
+      {/* ── Action area (one-time coupons only) ── */}
+      {c.oneTime && (
+        isExpired ? (
+          /* Coupon expired */
+          <View style={styles.expiredBadge}>
+            <MaterialIcons name="check-circle" size={16} color="rgba(11,27,46,0.4)" />
+            <Text style={styles.expiredText}>{t('coupons.used')}</Text>
+          </View>
+        ) : isActive ? (
+          /* Timer is running */
+          <View style={styles.timerDisplay}>
+            <MaterialIcons name="timer" size={18} color={BrandColors.gold} />
+            <Text style={styles.timerText}>{formatTime(timerSeconds!)}</Text>
+          </View>
+        ) : (
+          /* Ready to use */
+          <Pressable style={styles.useBtn} onPress={() => onUse(c.id)}>
+            <Text style={styles.useBtnText}>{t('coupons.use_btn')}</Text>
+          </Pressable>
+        )
+      )}
+    </View>
+  );
+}
+
+// ─── Section ─────────────────────────────────────────────────────────────────
+
+type SectionProps = {
+  titleKey: string;
+  subtitleKey: string;
+  items: Coupon[];
+  timers: Record<string, number | null>;
+  onUse: (id: string) => void;
+};
+
+function CouponSection({ titleKey, subtitleKey, items, timers, onUse }: SectionProps) {
+  const { t } = useTranslation();
+  if (items.length === 0) return null;
+  return (
+    <View>
+      <View style={styles.sectionTitles}>
+        <Text style={styles.sectionTitle}>{t(titleKey)}</Text>
+        <Text style={styles.sectionSubtitle}>{t(subtitleKey)}</Text>
+      </View>
+      <View style={styles.couponsSection}>
+        {items.map((c) => (
+          <CouponCard
+            key={c.id}
+            c={c}
+            timerSeconds={timers[c.id] ?? null}
+            onUse={onUse}
+          />
+        ))}
+      </View>
+    </View>
+  );
+}
+
+// ─── Screen ──────────────────────────────────────────────────────────────────
 
 export default function CouponsTab() {
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
-    const [restaurant, setRestaurant] = useState<'All' | 'Senator' | 'Balkon'>('All')
-    const filtered = coupons.filter(c =>
-        restaurant === 'All' ? true : c.restaurant === 'All' || c.restaurant === restaurant
-    )
-    const welcome  = filtered.filter(c => c.type === 'welcome')
-    const seasonal = filtered.filter(c => c.type === 'seasonal')
-    const always   = filtered.filter(c => c.type === 'always')
+
+  const [restaurant, setRestaurant] = useState<'All' | 'Senator' | 'Balkon'>('All');
+
+  // timers: coupon id → seconds remaining (null = not started, 0 = expired)
+  const [timers, setTimers] = useState<Record<string, number | null>>({});
+
+  function startTimer(id: string) {
+    setTimers(prev => ({ ...prev, [id]: 3600 }));
+
+    // ─── YOUR COUNTER LOGIC GOES HERE ───────────────────────────────────────
+    // You have access to:
+    //   id          — the coupon id to update
+    //   setTimers   — state setter, use functional form: setTimers(prev => ...)
+    //
+    // What to do:
+    //   1. Start a setInterval that fires every 1000ms
+    //   2. Each tick: decrement seconds for this coupon by 1
+    //   3. When seconds reach 0: clear the interval, set timers[id] = 0
+    //
+    // Example skeleton:
+    //   const interval = setInterval(() => {
+    //     setTimers(prev => {
+    //       const remaining = (prev[id] ?? 1) - 1;
+    //       if (remaining <= 0) {
+    //         clearInterval(interval);
+    //         return { ...prev, [id]: 0 };
+    //       }
+    //       return { ...prev, [id]: remaining };
+    //     });
+    //   }, 1000);
+    // ────────────────────────────────────────────────────────────────────────
+  }
+
+  const filtered = coupons.filter(c =>
+    restaurant === 'All' ? true : c.restaurant === 'All' || c.restaurant === restaurant
+  );
+  const welcome  = filtered.filter(c => c.type === 'welcome');
+  const seasonal = filtered.filter(c => c.type === 'seasonal');
+  const always   = filtered.filter(c => c.type === 'always');
 
   return (
     <ScrollView style={styles.scroll}>
-        <View style={[styles.container, { paddingTop: insets.top }]}>
-            <Text style={styles.title}>{t('coupons.title')}</Text>
-            <Text style={styles.subTitle}>{t('coupons.subtitle')}</Text>
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        <Text style={styles.title}>{t('coupons.title')}</Text>
+        <Text style={styles.subTitle}>{t('coupons.subtitle')}</Text>
+      </View>
+
+      {/* ── Filter ── */}
+      <View style={styles.filterWrapper}>
+        <View style={styles.card}>
+          <View style={styles.filterRow}>
+            <Text style={styles.filterTitle}>{t('coupons.filter_title')}</Text>
+            <Pressable onPress={() => setRestaurant('All')}>
+              <Text style={styles.resetBtn}>{t('coupons.filter_reset')}</Text>
+            </Pressable>
+          </View>
+          <Text style={styles.segmentLabel}>{t('coupons.segment_label')}</Text>
+          <View style={styles.segmentRow}>
+            {(['All', 'Senator', 'Balkon'] as const).map((r) => (
+              <Pressable
+                key={r}
+                style={[styles.segmentBtn, restaurant === r && styles.segmentBtnActive]}
+                onPress={() => setRestaurant(r)}
+              >
+                <Text style={[styles.segmentBtnText, restaurant === r && styles.segmentBtnTextActive]}>
+                  {r === 'All' ? t('coupons.segment_all') : r}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
         </View>
+      </View>
 
-        <View style={styles.filterWrapper}>
-            <View style={styles.card}>
-                <View style={styles.filterRow}>
-                    <Text style={styles.filterTitle}>{t('coupons.filter_title')}</Text>
-                    <Pressable onPress={() => setRestaurant('All')}>
-                        <Text style={styles.resetBtn}>{t('coupons.filter_reset')}</Text>
-                    </Pressable>
-                </View>
-                <Text style={styles.segmentLabel}>{t('coupons.segment_label')}</Text>
-                <View style={styles.segmentRow}>
-                    <Pressable
-                        style={[styles.segmentBtn, restaurant === 'All' && styles.segmentBtnActive]}
-                        onPress={() => setRestaurant('All')}
-                    >
-                        <Text style={[styles.segmentBtnText, restaurant === 'All' && styles.segmentBtnTextActive]}>{t('coupons.segment_all')}</Text>
-                    </Pressable>
-                    <Pressable
-                        style={[styles.segmentBtn, restaurant === 'Senator' && styles.segmentBtnActive]}
-                        onPress={() => setRestaurant('Senator')}
-                    >
-                        <Text style={[styles.segmentBtnText, restaurant === 'Senator' && styles.segmentBtnTextActive]}>Senator</Text>
-                    </Pressable>
-                    <Pressable
-                        style={[styles.segmentBtn, restaurant === 'Balkon' && styles.segmentBtnActive]}
-                        onPress={() => setRestaurant('Balkon')}
-                    >
-                        <Text style={[styles.segmentBtnText, restaurant === 'Balkon' && styles.segmentBtnTextActive]}>Balkon</Text>
-                    </Pressable>
-                </View>
-            </View>
-        </View>
-
-        <View style={styles.couponsWrapper}>
-            {welcome.length > 0 && (
-                <View>
-                    <View style={styles.sectionTitles}>
-                        <Text style={styles.sectionTitle}>{t('coupons.section_welcome')}</Text>
-                        <Text style={styles.sectionSubtitle}>{t('coupons.section_welcome_sub')}</Text>
-                    </View>
-                    <View style={styles.couponsSection}>
-                        {welcome.map((c) => (
-                            <View style={styles.coupon} key={c.id}>
-                                <View style={styles.couponFilter}>
-                                    <View style={styles.couponPill}>
-                                        <Text style={styles.couponPillText}>{c.restaurant === 'All' ? t('coupons.segment_all') : c.restaurant}</Text>
-                                    </View>
-                                    <View style={styles.couponTypePill}>
-                                        <Text style={styles.couponTypePillText}>{t(`coupons.expires_${c.type}`)}</Text>
-                                    </View>
-                                    {c.oneTime && (
-                                        <View style={styles.couponOneTimePill}>
-                                            <Text style={styles.couponOneTimePillText}>{t('coupons.one_time')}</Text>
-                                        </View>
-                                    )}
-                                </View>
-                                <Text style={styles.couponTitle}>{c.emoji} {t(`coupons.data.${c.id}.title`)}</Text>
-                                <Text style={styles.couponDesc}>{t(`coupons.data.${c.id}.description`)}</Text>
-                                <View style={styles.couponDivider} />
-                                <Text style={styles.couponTerms}>
-                                    <Text style={styles.couponTermsLabel}>{t('coupons.terms_label')}: </Text>
-                                    {t(`coupons.data.${c.id}.terms`)}
-                                </Text>
-                                <Pressable style={styles.useBtn}>
-                                    <Text style={styles.useBtnText}>{t('coupons.use_btn')}</Text>
-                                </Pressable>
-                            </View>
-                        ))}
-                    </View>
-                </View>
-            )}
-
-            {seasonal.length > 0 && (
-                <View>
-                    <View style={styles.sectionTitles}>
-                        <Text style={styles.sectionTitle}>{t('coupons.section_seasonal')}</Text>
-                        <Text style={styles.sectionSubtitle}>{t('coupons.section_seasonal_sub')}</Text>
-                    </View>
-                    <View style={styles.couponsSection}>
-                        {seasonal.map((c) => (
-                            <View style={styles.coupon} key={c.id}>
-                                <View style={styles.couponFilter}>
-                                    <View style={styles.couponPill}>
-                                        <Text style={styles.couponPillText}>{c.restaurant === 'All' ? t('coupons.segment_all') : c.restaurant}</Text>
-                                    </View>
-                                    <View style={styles.couponTypePill}>
-                                        <Text style={styles.couponTypePillText}>{t(`coupons.expires_${c.type}`)}</Text>
-                                    </View>
-                                    {c.oneTime && (
-                                        <View style={styles.couponOneTimePill}>
-                                            <Text style={styles.couponOneTimePillText}>{t('coupons.one_time')}</Text>
-                                        </View>
-                                    )}
-                                </View>
-                                <Text style={styles.couponTitle}>{c.emoji} {t(`coupons.data.${c.id}.title`)}</Text>
-                                <Text style={styles.couponDesc}>{t(`coupons.data.${c.id}.description`)}</Text>
-                                <View style={styles.couponDivider} />
-                                <Text style={styles.couponTerms}>
-                                    <Text style={styles.couponTermsLabel}>{t('coupons.terms_label')}: </Text>
-                                    {t(`coupons.data.${c.id}.terms`)}
-                                </Text>
-                                <Pressable style={styles.useBtn}>
-                                    <Text style={styles.useBtnText}>{t('coupons.use_btn')}</Text>
-                                </Pressable>
-                            </View>
-                        ))}
-                    </View>
-                </View>
-            )}
-
-            {always.length > 0 && (
-                <View>
-                    <View style={styles.sectionTitles}>
-                        <Text style={styles.sectionTitle}>{t('coupons.section_always')}</Text>
-                        <Text style={styles.sectionSubtitle}>{t('coupons.section_always_sub')}</Text>
-                    </View>
-                    <View style={styles.couponsSection}>
-                        {always.map((c) => (
-                            <View style={styles.coupon} key={c.id}>
-                                <View style={styles.couponFilter}>
-                                    <View style={styles.couponPill}>
-                                        <Text style={styles.couponPillText}>{c.restaurant === 'All' ? t('coupons.segment_all') : c.restaurant}</Text>
-                                    </View>
-                                    <View style={styles.couponTypePill}>
-                                        <Text style={styles.couponTypePillText}>{t(`coupons.expires_${c.type}`)}</Text>
-                                    </View>
-                                    {c.oneTime && (
-                                        <View style={styles.couponOneTimePill}>
-                                            <Text style={styles.couponOneTimePillText}>{t('coupons.one_time')}</Text>
-                                        </View>
-                                    )}
-                                </View>
-                                <Text style={styles.couponTitle}>{c.emoji} {t(`coupons.data.${c.id}.title`)}</Text>
-                                <Text style={styles.couponDesc}>{t(`coupons.data.${c.id}.description`)}</Text>
-                                <View style={styles.couponDivider} />
-                                <Text style={styles.couponTerms}>
-                                    <Text style={styles.couponTermsLabel}>{t('coupons.terms_label')}: </Text>
-                                    {t(`coupons.data.${c.id}.terms`)}
-                                </Text>
-                                <Pressable style={styles.useBtn}>
-                                    <Text style={styles.useBtnText}>{t('coupons.use_btn')}</Text>
-                                </Pressable>
-                            </View>
-                        ))}
-                    </View>
-                </View>
-            )}
-        </View>
+      {/* ── Coupon sections ── */}
+      <View style={styles.couponsWrapper}>
+        <CouponSection
+          titleKey="coupons.section_welcome"
+          subtitleKey="coupons.section_welcome_sub"
+          items={welcome}
+          timers={timers}
+          onUse={startTimer}
+        />
+        <CouponSection
+          titleKey="coupons.section_seasonal"
+          subtitleKey="coupons.section_seasonal_sub"
+          items={seasonal}
+          timers={timers}
+          onUse={startTimer}
+        />
+        <CouponSection
+          titleKey="coupons.section_always"
+          subtitleKey="coupons.section_always_sub"
+          items={always}
+          timers={timers}
+          onUse={startTimer}
+        />
+      </View>
     </ScrollView>
   );
 }
 
+// ─── Styles ──────────────────────────────────────────────────────────────────
+
 const styles = StyleSheet.create({
-    scroll: {
-      flex: 1,
-        backgroundColor: BrandColors.white,
-    },
-  container: {
-      paddingHorizontal: 24,
-      paddingTop: 18,
+  scroll: {
+    flex: 1,
+    backgroundColor: BrandColors.white,
   },
-    title: {
-      fontSize: 26,
-        fontWeight: '700',
-        color: BrandColors.navy,
-        letterSpacing: -0.5,
-    },
-    subTitle: {
-      fontSize: 13,
-        fontWeight: '600',
-        color: 'rgba(11,27,46,0.65)',
-        marginTop: 4,
-    },
-    filterWrapper: {
-      paddingHorizontal: 18,
-      marginTop: 16,
-    },
-    card: {
-      backgroundColor: BrandColors.white,
-      borderRadius: 20,
-      borderWidth: 1,
-      borderColor: 'rgba(11,27,46,0.10)',
-      padding: 16,
-      shadowColor: BrandColors.navy,
-      shadowOffset: { width: 0, height: 6 },
-      shadowOpacity: 0.08,
-      shadowRadius: 14,
-      elevation: 4,
-    },
-    filterRow: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    },
-    filterTitle: {
-      fontSize: 14,
-      fontWeight: '700',
-      color: BrandColors.navy,
-    },
-    resetBtn: {
-      fontSize: 13,
-      fontWeight: '600',
-      color: 'rgba(11,27,46,0.65)',
-    },
-    segmentLabel: {
-      fontSize: 11,
-      fontWeight: '700',
-      color: 'rgba(11,27,46,0.55)',
-      letterSpacing: 1,
-      textTransform: 'uppercase',
-      marginTop: 12,
-      marginBottom: 8,
-    },
-    segmentRow: {
-      flexDirection: 'row',
-      gap: 8,
-    },
-    segmentBtn: {
-      height: 36,
-      paddingHorizontal: 14,
-      borderRadius: 999,
-      borderWidth: 1,
-      borderColor: 'rgba(11,27,46,0.10)',
-      backgroundColor: 'rgba(11,27,46,0.03)',
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    segmentBtnActive: {
-      backgroundColor: BrandColors.navy,
-      borderColor: 'rgba(201,165,106,0.45)',
-    },
-    segmentBtnText: {
-      fontSize: 13,
-      fontWeight: '700',
-      color: 'rgba(11,27,46,0.78)',
-    },
-    segmentBtnTextActive: {
-      color: BrandColors.white,
-    },
-    couponsWrapper: {
-      paddingHorizontal: 18,
-      marginTop: 20,
-      gap: 20,
-      paddingBottom: 110,
-    },
-    sectionTitles: {
-      marginBottom: 10,
-    },
-    sectionTitle: {
-      fontSize: 16,
-      fontWeight: '700',
-      color: BrandColors.navy,
-    },
-    sectionSubtitle: {
-      fontSize: 12,
-      fontWeight: '600',
-      color: 'rgba(11,27,46,0.65)',
-      marginTop: 2,
-    },
-    couponsSection: {
-      gap: 12,
-    },
-    coupon: {
-      backgroundColor: BrandColors.white,
-      borderRadius: 20,
-      borderWidth: 1,
-      borderColor: 'rgba(11,27,46,0.10)',
-      padding: 16,
-      shadowColor: BrandColors.navy,
-      shadowOffset: { width: 0, height: 6 },
-      shadowOpacity: 0.08,
-      shadowRadius: 14,
-      elevation: 4,
-    },
-    couponFilter: {
-      flexDirection: 'row',
-      gap: 6,
-      flexWrap: 'wrap',
-    },
-    couponPill: {
-      paddingHorizontal: 10,
-      paddingVertical: 4,
-      borderRadius: 999,
-      borderWidth: 1,
-      borderColor: 'rgba(201,165,106,0.45)',
-      backgroundColor: 'rgba(201,165,106,0.12)',
-    },
-    couponPillText: {
-      fontSize: 12,
-      fontWeight: '700',
-      color: BrandColors.navy,
-    },
-    couponTypePill: {
-        paddingHorizontal: 10,
-        paddingVertical: 4,
-        borderRadius: 999,
-        borderWidth: 1,
-        borderColor: 'rgba(11,27,46,0.12)',
-        backgroundColor: 'rgba(11,27,46,0.06)',
-    },
-    couponTypePillText: {
-        fontSize: 12,
-        fontWeight: '700',
-        color: BrandColors.navy,
-    },
-    couponOneTimePill: {
-        paddingHorizontal: 10,
-        paddingVertical: 4,
-        borderRadius: 999,
-        borderWidth: 1,
-        borderColor: 'rgba(11,27,46,0.12)',
-        backgroundColor: 'rgba(11,27,46,0.03)',
-    },
-    couponOneTimePillText: {
-        fontSize: 12,
-        fontWeight: '700',
-        color: 'rgba(11,27,46,0.70)',
-    },
-    couponTitle: {
-      fontSize: 16,
-      fontWeight: '700',
-      color: BrandColors.navy,
-      marginTop: 10,
-    },
-    couponDesc: {
-      fontSize: 13,
-      fontWeight: '600',
-      color: 'rgba(11,27,46,0.72)',
-      marginTop: 6,
-      lineHeight: 18,
-    },
-    couponDivider: {
-      height: 1,
-      backgroundColor: 'rgba(11,27,46,0.08)',
-      marginVertical: 12,
-    },
-    couponTerms: {
-      fontSize: 12,
-      fontWeight: '600',
-      color: 'rgba(11,27,46,0.62)',
-      lineHeight: 17,
-    },
-    couponTermsLabel: {
-      fontWeight: '700',
-      color: 'rgba(11,27,46,0.75)',
-    },
-    useBtn: {
-        height: 50,
-        borderRadius: 999,
-        borderWidth: 1,
-        borderColor: 'rgba(201,165,106,0.55)',
-        backgroundColor: BrandColors.navy,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 12,
-    },
-    useBtnText: {
-        color: BrandColors.gold,
-        fontWeight: '700',
-        fontSize: 14,
-    },
+  container: {
+    paddingHorizontal: 24,
+    paddingTop: 18,
+  },
+  title: {
+    fontSize: 26,
+    fontWeight: '700',
+    color: BrandColors.navy,
+    letterSpacing: -0.5,
+  },
+  subTitle: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: 'rgba(11,27,46,0.65)',
+    marginTop: 4,
+  },
+  filterWrapper: {
+    paddingHorizontal: 18,
+    marginTop: 16,
+  },
+  card: {
+    backgroundColor: BrandColors.white,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(11,27,46,0.10)',
+    padding: 16,
+    shadowColor: BrandColors.navy,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.08,
+    shadowRadius: 14,
+    elevation: 4,
+  },
+  filterRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  filterTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: BrandColors.navy,
+  },
+  resetBtn: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: 'rgba(11,27,46,0.65)',
+  },
+  segmentLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: 'rgba(11,27,46,0.55)',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+    marginTop: 12,
+    marginBottom: 8,
+  },
+  segmentRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  segmentBtn: {
+    height: 36,
+    paddingHorizontal: 14,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: 'rgba(11,27,46,0.10)',
+    backgroundColor: 'rgba(11,27,46,0.03)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  segmentBtnActive: {
+    backgroundColor: BrandColors.navy,
+    borderColor: 'rgba(201,165,106,0.45)',
+  },
+  segmentBtnText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: 'rgba(11,27,46,0.78)',
+  },
+  segmentBtnTextActive: {
+    color: BrandColors.white,
+  },
+  couponsWrapper: {
+    paddingHorizontal: 18,
+    marginTop: 20,
+    gap: 20,
+    paddingBottom: 110,
+  },
+  sectionTitles: {
+    marginBottom: 10,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: BrandColors.navy,
+  },
+  sectionSubtitle: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: 'rgba(11,27,46,0.65)',
+    marginTop: 2,
+  },
+  couponsSection: {
+    gap: 12,
+  },
+  coupon: {
+    backgroundColor: BrandColors.white,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(11,27,46,0.10)',
+    padding: 16,
+    shadowColor: BrandColors.navy,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.08,
+    shadowRadius: 14,
+    elevation: 4,
+  },
+  couponFilter: {
+    flexDirection: 'row',
+    gap: 6,
+    flexWrap: 'wrap',
+  },
+  couponPill: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: 'rgba(201,165,106,0.45)',
+    backgroundColor: 'rgba(201,165,106,0.12)',
+  },
+  couponPillText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: BrandColors.navy,
+  },
+  couponTypePill: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: 'rgba(11,27,46,0.12)',
+    backgroundColor: 'rgba(11,27,46,0.06)',
+  },
+  couponTypePillText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: BrandColors.navy,
+  },
+  couponOneTimePill: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: 'rgba(11,27,46,0.12)',
+    backgroundColor: 'rgba(11,27,46,0.03)',
+  },
+  couponOneTimePillText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: 'rgba(11,27,46,0.70)',
+  },
+  couponTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: BrandColors.navy,
+    marginTop: 10,
+  },
+  couponDesc: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: 'rgba(11,27,46,0.72)',
+    marginTop: 6,
+    lineHeight: 18,
+  },
+  couponDivider: {
+    height: 1,
+    backgroundColor: 'rgba(11,27,46,0.08)',
+    marginVertical: 12,
+  },
+  couponTerms: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: 'rgba(11,27,46,0.62)',
+    lineHeight: 17,
+  },
+  couponTermsLabel: {
+    fontWeight: '700',
+    color: 'rgba(11,27,46,0.75)',
+  },
+
+  /* Use button */
+  useBtn: {
+    height: 50,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: 'rgba(201,165,106,0.55)',
+    backgroundColor: BrandColors.navy,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 12,
+  },
+  useBtnText: {
+    color: BrandColors.gold,
+    fontWeight: '700',
+    fontSize: 14,
+  },
+
+  /* Timer display (replaces button while countdown is running) */
+  timerDisplay: {
+    height: 50,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: 'rgba(201,165,106,0.55)',
+    backgroundColor: 'rgba(201,165,106,0.08)',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 12,
+  },
+  timerText: {
+    color: BrandColors.navy,
+    fontWeight: '700',
+    fontSize: 18,
+    letterSpacing: 1,
+  },
+
+  /* Expired / used state */
+  expiredBadge: {
+    height: 50,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: 'rgba(11,27,46,0.12)',
+    backgroundColor: 'rgba(11,27,46,0.04)',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 12,
+  },
+  expiredText: {
+    color: 'rgba(11,27,46,0.4)',
+    fontWeight: '700',
+    fontSize: 14,
+  },
 });
