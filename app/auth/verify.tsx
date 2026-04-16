@@ -22,6 +22,7 @@ export default function Verify() {
                 surname: storedSurname,
                 birthDate: storedBirthDate,
                 phone: storedPhone,
+                usedCouponIds: [],
             });
             router.replace("/(tabs)");
         } catch (e: any) {

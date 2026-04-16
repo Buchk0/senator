@@ -8,6 +8,7 @@ import {
     ScrollView,
     TouchableOpacity,
     Dimensions,
+    Linking,
 } from 'react-native';
 import ImageViewing from 'react-native-image-viewing';
 import { BrandColors } from '@/constants/theme';
@@ -121,7 +122,7 @@ export default function SpaScreen() {
                                             </View>
                                         </View>
                                         <Text style={styles.treatmentDuration}>{c.duration} {t('spa.min')}</Text>
-                                        <TouchableOpacity style={styles.bookBtn} activeOpacity={0.85}>
+                                        <TouchableOpacity style={styles.bookBtn} activeOpacity={0.85} onPress={() => Linking.openURL('tel:+7777777777')}>
                                             <Text style={styles.bookBtnText}>{t('spa.book_btn')}</Text>
                                         </TouchableOpacity>
                                     </View>

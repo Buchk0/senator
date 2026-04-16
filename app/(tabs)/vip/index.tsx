@@ -8,6 +8,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
+  Linking,
 } from 'react-native';
 import ImageViewing from 'react-native-image-viewing';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -135,7 +136,7 @@ export default function VipScreen() {
 
       {/* ─── Sticky Book Button ─── */}
       <View style={[styles.reserveBar, { paddingBottom: insets.bottom + 16 }]}>
-        <TouchableOpacity style={styles.reserveBtn} activeOpacity={0.85}>
+        <TouchableOpacity style={styles.reserveBtn} activeOpacity={0.85} onPress={() => Linking.openURL('tel:+7777777777')}>
           <Text style={styles.reserveText}>{t('vip.book_btn')}</Text>
         </TouchableOpacity>
       </View>

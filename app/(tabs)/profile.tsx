@@ -1,11 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ImageBackground, Image, TextInput, Alert, Pressable, Keyboard, ScrollView } from 'react-native';
+import { useRef, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ImageBackground, Image, TextInput, Alert, Pressable, Keyboard, ScrollView, Linking } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BrandColors } from '@/constants/theme';
 import { router } from 'expo-router';
 import { useAuth } from '@/context/AuthContext';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '@/constants/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/constants/firebase';
 import { useLanguage } from '@/hooks/use-language';
@@ -18,29 +16,14 @@ import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
 const getFlagEmoji = (code: string) =>
   code.toUpperCase().replace(/./g, (c) => String.fromCodePoint(127397 + c.charCodeAt(0)));
 
-interface UserProfile {
-  name: string;
-  surname: string;
-  birthDate: string;
-  phone: string;
-}
-
 export default function ProfileTab() {
   const insets = useSafeAreaInsets();
-  const { user, signOut } = useAuth();
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const { user, profile, signOut } = useAuth();
   const phoneInput = useRef<PhoneInput>(null);
   const [formattedPhone, setFormattedPhone] = useState('');
   const [password, setPassword] = useState('');
   const { activeLanguage, changeLanguage } = useLanguage();
   const { t } = useTranslation();
-
-  useEffect(() => {
-    if (!user) return;
-    getDoc(doc(db, 'users', user.uid)).then((snap) => {
-      if (snap.exists()) setProfile(snap.data() as UserProfile);
-    });
-  }, [user]);
 
   const handleLogin = async () => {
     if (!formattedPhone) return Alert.alert(t('profile.error'), t('profile.enter_phone'));
@@ -170,14 +153,14 @@ export default function ProfileTab() {
       <View style={styles.helpCard}>
         <Text style={styles.sectionHeader}>{t('profile.help')}</Text>
 
-        <TouchableOpacity style={styles.helpRow} activeOpacity={0.8}>
+        <TouchableOpacity style={styles.helpRow} activeOpacity={0.8} onPress={() => Linking.openURL('tel:+7777777777')}>
           <Text style={styles.helpCardText}>{t('profile.contact_reception')}</Text>
           <View style={styles.chevronCircle}>
             <MaterialIcons name="chevron-right" size={22} color="#1a2035" />
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.helpRow} activeOpacity={0.8}>
+        <TouchableOpacity style={styles.helpRow} activeOpacity={0.8} onPress={() => Linking.openURL('https://maps.app.goo.gl/kRDshYUDDvmSryyX6?g_st=ic')}>
           <Text style={styles.helpCardText}>{t('profile.directions')}</Text>
           <View style={styles.chevronCircle}>
             <MaterialIcons name="chevron-right" size={22} color="#1a2035" />

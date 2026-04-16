@@ -1,4 +1,4 @@
-import { ScrollView, View, StyleSheet, ImageBackground } from 'react-native';
+import { ScrollView, View, StyleSheet, ImageBackground, Linking } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { router } from 'expo-router';
 
@@ -149,8 +149,8 @@ export default function HomeScreen() {
             subtitle={t('home.hero_subtitle')}
           />
           <ActionButtons
-            primary={{ label: t('home.btn_contact'), onPress: () => {} }}
-            secondary={{ label: t('home.btn_directions'), onPress: () => {} }}
+            primary={{ label: t('home.btn_contact'), onPress: () => Linking.openURL('tel:+7777777777') }}
+            secondary={{ label: t('home.btn_directions'), onPress: () => Linking.openURL('https://maps.app.goo.gl/kRDshYUDDvmSryyX6?g_st=ic') }}
           />
           <QuickAccess items={quickAccessItems} />
         </ImageBackground>

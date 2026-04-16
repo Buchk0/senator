@@ -1,10 +1,15 @@
 import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BrandColors } from '@/constants/theme';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { coupons, Coupon } from '@/constants/coupons-data';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { auth, db } from '@/constants/firebase';
+import {
+  doc, getDoc, setDoc, deleteDoc, updateDoc,
+  arrayUnion, collection, getDocs, serverTimestamp, Timestamp,
+} from 'firebase/firestore';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -125,34 +130,98 @@ export default function CouponsTab() {
 
   const [restaurant, setRestaurant] = useState<'All' | 'Senator' | 'Balkon'>('All');
 
-  // timers: coupon id → seconds remaining (null = not started, 0 = expired)
+  // timers: coupon id → seconds remaining (null = not started, 0 = used/expired)
   const [timers, setTimers] = useState<Record<string, number | null>>({});
+  const intervalRefs = useRef<Record<string, ReturnType<typeof setInterval>>>({});
 
-  function startTimer(id: string) {
+  // ─── Load state from Firebase on mount ───────────────────────────────────
+  useEffect(() => {
+    loadCouponState();
+    return () => {
+      Object.values(intervalRefs.current).forEach(clearInterval);
+    };
+  }, []);
+
+  async function loadCouponState() {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    try {
+      const initialTimers: Record<string, number> = {};
+
+      // 1. Permanently used coupons → show "Used" badge
+      const userSnap = await getDoc(doc(db, 'users', user.uid));
+      const usedIds: string[] = userSnap.data()?.usedCouponIds ?? [];
+      usedIds.forEach(id => { initialTimers[id] = 0; });
+
+      // 2. Active coupon timers → resume countdown
+      const activeCoupons = await getDocs(collection(db, 'users', user.uid, 'coupons'));
+      const now = Date.now();
+
+      for (const snap of activeCoupons.docs) {
+        const activatedAt: Timestamp = snap.data().activatedAt;
+        if (!activatedAt) continue;
+
+        const elapsed = (now - activatedAt.toMillis()) / 1000;
+        const remaining = Math.floor(3600 - elapsed);
+
+        if (remaining <= 0) {
+          // Expired while app was closed — clean up and mark as used
+          await deleteDoc(snap.ref);
+          await updateDoc(doc(db, 'users', user.uid), { usedCouponIds: arrayUnion(snap.id) });
+          initialTimers[snap.id] = 0;
+        } else {
+          initialTimers[snap.id] = remaining;
+          setTimers(prev => ({ ...prev, [snap.id]: remaining }));
+          runInterval(snap.id);
+        }
+      }
+
+      setTimers(prev => ({ ...prev, ...initialTimers }));
+    } catch {
+      // Offline or error — timers stay at null (show Use button)
+    }
+  }
+
+  // ─── Interval runner (shared by startTimer and resume on load) ───────────
+  function runInterval(id: string) {
+    if (intervalRefs.current[id]) clearInterval(intervalRefs.current[id]);
+
+    intervalRefs.current[id] = setInterval(() => {
+      setTimers(prev => {
+        const remaining = (prev[id] ?? 1) - 1;
+        if (remaining <= 0) {
+          clearInterval(intervalRefs.current[id]);
+          delete intervalRefs.current[id];
+          // Clean up Firebase: delete active doc, mark permanently used
+          const user = auth.currentUser;
+          if (user) {
+            deleteDoc(doc(db, 'users', user.uid, 'coupons', id));
+            updateDoc(doc(db, 'users', user.uid), { usedCouponIds: arrayUnion(id) });
+          }
+          return { ...prev, [id]: 0 };
+        }
+        return { ...prev, [id]: remaining };
+      });
+    }, 1000);
+  }
+
+  // ─── Called when user presses "Use" ──────────────────────────────────────
+  async function startTimer(id: string) {
     setTimers(prev => ({ ...prev, [id]: 3600 }));
+    runInterval(id);
 
-    // ─── YOUR COUNTER LOGIC GOES HERE ───────────────────────────────────────
-    // You have access to:
-    //   id          — the coupon id to update
-    //   setTimers   — state setter, use functional form: setTimers(prev => ...)
-    //
-    // What to do:
-    //   1. Start a setInterval that fires every 1000ms
-    //   2. Each tick: decrement seconds for this coupon by 1
-    //   3. When seconds reach 0: clear the interval, set timers[id] = 0
-    //
-    // Example skeleton:
-    //   const interval = setInterval(() => {
-    //     setTimers(prev => {
-    //       const remaining = (prev[id] ?? 1) - 1;
-    //       if (remaining <= 0) {
-    //         clearInterval(interval);
-    //         return { ...prev, [id]: 0 };
-    //       }
-    //       return { ...prev, [id]: remaining };
-    //     });
-    //   }, 1000);
-    // ────────────────────────────────────────────────────────────────────────
+    // Persist to Firebase (best-effort — works offline via Firestore queue)
+    try {
+      const user = auth.currentUser;
+      if (user) {
+        await setDoc(doc(db, 'users', user.uid, 'coupons', id), {
+          activatedAt: serverTimestamp(),
+        });
+      }
+    } catch {
+      // Continue with local timer if Firebase write fails
+    }
   }
 
   const filtered = coupons.filter(c =>

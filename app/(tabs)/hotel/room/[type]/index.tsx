@@ -10,6 +10,7 @@ import {
   LayoutAnimation,
   Platform,
   UIManager,
+  Linking,
 } from 'react-native';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -60,7 +61,7 @@ export default function RoomCategoryScreen() {
         </View>
 
         <View style={styles.heroBookWrap}>
-          <TouchableOpacity style={styles.heroBookBtn} activeOpacity={0.85}>
+          <TouchableOpacity style={styles.heroBookBtn} activeOpacity={0.85} onPress={() => Linking.openURL('tel:+7777777777')}>
             <BlurView intensity={55} style={StyleSheet.absoluteFill} tint="dark" />
             <Text style={styles.heroBookBtnText}>{t('hotel.book_btn')}</Text>
           </TouchableOpacity>
