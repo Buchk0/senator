@@ -14,7 +14,8 @@ import ImageViewing from 'react-native-image-viewing';
 import { BrandColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { spaCategories, spaTreatments } from '@/constants/spa-data';
+import { spaCategories } from '@/constants/spa-data';
+import { useSpaServices } from '@/hooks/use-spa-services';
 import { Header } from '@/components/home/header';
 import { useLanguage } from '@/hooks/use-language';
 
@@ -43,6 +44,7 @@ type TabKey = 'services' | 'photos' | 'price';
 export default function SpaScreen() {
     const { t } = useTranslation();
     const { activeLanguage, changeLanguage } = useLanguage();
+    const { services } = useSpaServices();
     const [activeTab, setActiveTab] = useState<TabKey>('services');
     const [viewerIndex, setViewerIndex] = useState(0);
     const [viewerVisible, setViewerVisible] = useState(false);
@@ -111,17 +113,21 @@ export default function SpaScreen() {
                         </View>
                         <View style={styles.treatmentsWrap}>
                             <Text style={styles.sectionTitle}>{t('spa.section_treatments')}</Text>
-                            {spaTreatments.map(c => (
+                            {services.map(c => (
                                 <View key={c.id} style={styles.treatmentCard}>
-                                    <Image source={c.image} style={styles.treatmentImage} resizeMode="cover" />
+                                    {c.imageUrl ? (
+                                        <Image source={{ uri: c.imageUrl }} style={styles.treatmentImage} resizeMode="cover" />
+                                    ) : (
+                                        <View style={[styles.treatmentImage, { backgroundColor: '#f0ece4' }]} />
+                                    )}
                                     <View style={styles.treatmentBody}>
                                         <View style={styles.treatmentTitleRow}>
-                                            <Text style={styles.treatmentTitle}>{c.title}</Text>
+                                            <Text style={styles.treatmentTitle}>{c.name}</Text>
                                             <View style={styles.pricePill}>
-                                                <Text style={styles.priceText}>{t('spa.price_from')} {c.priceFrom.toLocaleString()} Т</Text>
+                                                <Text style={styles.priceText}>{c.price}</Text>
                                             </View>
                                         </View>
-                                        <Text style={styles.treatmentDuration}>{c.duration} {t('spa.min')}</Text>
+                                        <Text style={styles.treatmentDuration}>{c.duration}</Text>
                                         <TouchableOpacity style={styles.bookBtn} activeOpacity={0.85} onPress={() => Linking.openURL('tel:+7777777777')}>
                                             <Text style={styles.bookBtnText}>{t('spa.book_btn')}</Text>
                                         </TouchableOpacity>

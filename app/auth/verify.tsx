@@ -4,7 +4,7 @@ import { router } from "expo-router";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Pressable, Keyboard, Alert } from "react-native";
 import { BrandColors } from "@/constants/theme";
 import { EmailAuthProvider, linkWithCredential } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/constants/firebase";
 
 export default function Verify() {
@@ -17,12 +17,20 @@ export default function Verify() {
             const result = await confirmationResult.confirm(code);
             const credential = EmailAuthProvider.credential(generatedEmail, storedPassword);
             await linkWithCredential(result.user, credential);
+
+            // Fetch all active welcome coupon IDs to assign to the new user
+            const welcomeSnap = await getDocs(
+                query(collection(db, 'coupons'), where('type', '==', 'welcome'), where('active', '==', true))
+            );
+            const welcomeCouponIds = welcomeSnap.docs.map(d => d.id);
+
             await setDoc(doc(db, "users", result.user.uid), {
                 name: storedName,
                 surname: storedSurname,
                 birthDate: storedBirthDate,
                 phone: storedPhone,
                 usedCouponIds: [],
+                welcomeCouponIds,
             });
             router.replace("/(tabs)");
         } catch (e: any) {

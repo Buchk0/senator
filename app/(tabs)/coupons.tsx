@@ -9,7 +9,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { auth, db } from '@/constants/firebase';
 import {
   doc, getDoc, setDoc, deleteDoc, updateDoc,
-  arrayUnion, collection, getDocs, serverTimestamp, Timestamp,
+  arrayUnion, arrayRemove, collection, getDocs, serverTimestamp, Timestamp,
 } from 'firebase/firestore';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -132,6 +132,8 @@ export default function CouponsTab() {
 
   const [restaurant, setRestaurant] = useState<'All' | 'Senator' | 'Balkon'>('All');
   const [allCoupons, setAllCoupons] = useState<Coupon[]>([]);
+  const [welcomeCouponIds, setWelcomeCouponIds] = useState<string[]>([]);
+  const welcomeCouponIdsRef = useRef<string[]>([]);
 
   // timers: coupon id → seconds remaining (null = not started, 0 = used/expired)
   const [timers, setTimers] = useState<Record<string, number | null>>({});
@@ -139,6 +141,7 @@ export default function CouponsTab() {
 
   // ─── Load state from Firebase on mount ───────────────────────────────────
   useEffect(() => {
+    if (!auth.currentUser) return;
     // Fetch coupons from Firestore
     getDocs(query(collection(db, 'coupons'), where('active', '==', true)))
       .then((snap) => {
@@ -163,6 +166,9 @@ export default function CouponsTab() {
       // 1. Permanently used coupons → show "Used" badge
       const userSnap = await getDoc(doc(db, 'users', user.uid));
       const usedIds: string[] = userSnap.data()?.usedCouponIds ?? [];
+      const wIds: string[] = userSnap.data()?.welcomeCouponIds ?? [];
+      welcomeCouponIdsRef.current = wIds;
+      setWelcomeCouponIds(wIds);
       usedIds.forEach(id => { initialTimers[id] = 0; });
 
       // 2. Active coupon timers → resume countdown
@@ -177,9 +183,15 @@ export default function CouponsTab() {
         const remaining = Math.floor(3600 - elapsed);
 
         if (remaining <= 0) {
-          // Expired while app was closed — clean up and mark as used
+          // Expired while app was closed — clean up
           await deleteDoc(snap.ref);
-          await updateDoc(doc(db, 'users', user.uid), { usedCouponIds: arrayUnion(snap.id) });
+          const isWelcome = wIds.includes(snap.id);
+          if (isWelcome) {
+            await updateDoc(doc(db, 'users', user.uid), { welcomeCouponIds: arrayRemove(snap.id) });
+            wIds.splice(wIds.indexOf(snap.id), 1);
+          } else {
+            await updateDoc(doc(db, 'users', user.uid), { usedCouponIds: arrayUnion(snap.id) });
+          }
           initialTimers[snap.id] = 0;
         } else {
           initialTimers[snap.id] = remaining;
@@ -204,11 +216,19 @@ export default function CouponsTab() {
         if (remaining <= 0) {
           clearInterval(intervalRefs.current[id]);
           delete intervalRefs.current[id];
-          // Clean up Firebase: delete active doc, mark permanently used
+          // Clean up Firebase: delete active doc
           const user = auth.currentUser;
           if (user) {
             deleteDoc(doc(db, 'users', user.uid, 'coupons', id));
-            updateDoc(doc(db, 'users', user.uid), { usedCouponIds: arrayUnion(id) });
+            const isWelcome = welcomeCouponIdsRef.current.includes(id);
+            if (isWelcome) {
+              // Welcome coupon: remove from profile → fully disappears
+              updateDoc(doc(db, 'users', user.uid), { welcomeCouponIds: arrayRemove(id) });
+              welcomeCouponIdsRef.current = welcomeCouponIdsRef.current.filter(w => w !== id);
+              setWelcomeCouponIds(prev => prev.filter(w => w !== id));
+            } else {
+              updateDoc(doc(db, 'users', user.uid), { usedCouponIds: arrayUnion(id) });
+            }
           }
           return { ...prev, [id]: 0 };
         }
@@ -238,7 +258,7 @@ export default function CouponsTab() {
   const filtered = allCoupons.filter(c =>
     restaurant === 'All' ? true : c.restaurant === 'All' || c.restaurant === restaurant
   );
-  const welcome  = filtered.filter(c => c.type === 'welcome');
+  const welcome  = filtered.filter(c => c.type === 'welcome' && welcomeCouponIds.includes(c.id));
   const seasonal = filtered.filter(c => c.type === 'seasonal');
   const always   = filtered.filter(c => c.type === 'always');
 

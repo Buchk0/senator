@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { collection, getDocs, query, where } from 'firebase/firestore';
-import { db } from '@/constants/firebase';
+import { db, auth } from '@/constants/firebase';
 import { EventItem } from '@/components/home/events-carousel';
 import { useTranslation } from 'react-i18next';
 
@@ -12,6 +12,7 @@ export function useEvents() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!auth.currentUser) return;
     getDocs(query(collection(db, 'events'), where('active', '==', true)))
       .then((snap) => {
         const items: EventItem[] = snap.docs.map((d) => {

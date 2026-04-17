@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { useTranslation } from 'react-i18next';
-import { router } from 'expo-router';
-import { db } from '@/constants/firebase';
+import { useRouter } from 'expo-router';
+import { db, auth } from '@/constants/firebase';
 import { Coupon } from '@/constants/coupons-data';
 import { CouponItem } from '@/components/home/coupon-carousel';
 
@@ -41,6 +41,7 @@ function toCouponItem(
 
 export function useHomeCoupons() {
   const { t, i18n } = useTranslation();
+  const router = useRouter();
   const lang = (i18n.language === 'kz' ? 'kz' : i18n.language === 'ru' ? 'ru' : 'en') as 'en' | 'ru' | 'kz';
 
   const [senatorCoupons, setSenatorCoupons] = useState<CouponItem[]>([]);
@@ -48,6 +49,7 @@ export function useHomeCoupons() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!auth.currentUser) return;
     getDocs(query(collection(db, 'coupons'), where('active', '==', true)))
       .then((snap) => {
         const all = snap.docs
