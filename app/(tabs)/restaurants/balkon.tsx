@@ -15,7 +15,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BrandColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
 import { EventsCarousel } from '@/components/home/events-carousel';
-import { HOTEL_EVENTS } from '@/constants/events-data';
+import { useEvents } from '@/hooks/use-events';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -44,6 +44,7 @@ export default function BalkonScreen() {
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<TabKey>('menu');
+  const { events } = useEvents();
 
   const TABS: { key: TabKey; label: string }[] = [
     { key: 'menu',   label: t('restaurants.tab_menu') },
@@ -129,7 +130,7 @@ export default function BalkonScreen() {
 
         {/* ─── Events ─── */}
         {activeTab === 'events' && (
-          <EventsCarousel items={HOTEL_EVENTS} />
+          <EventsCarousel items={events} />
         )}
 
         {/* ─── Info ─── */}

@@ -3,7 +3,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BrandColors } from '@/constants/theme';
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { coupons, Coupon } from '@/constants/coupons-data';
+import { Coupon } from '@/constants/coupons-data';
+import { query, where } from 'firebase/firestore';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { auth, db } from '@/constants/firebase';
 import {
@@ -28,7 +29,8 @@ type CouponCardProps = {
 };
 
 function CouponCard({ c, timerSeconds, onUse }: CouponCardProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const lang = (i18n.language === 'kz' ? 'kz' : i18n.language === 'ru' ? 'ru' : 'en') as 'en' | 'ru' | 'kz';
 
   const isActive  = timerSeconds !== null;
   const isExpired = timerSeconds === 0;
@@ -53,15 +55,15 @@ function CouponCard({ c, timerSeconds, onUse }: CouponCardProps) {
       </View>
 
       {/* ── Title & description ── */}
-      <Text style={styles.couponTitle}>{c.emoji} {t(`coupons.data.${c.id}.title` as any)}</Text>
-      <Text style={styles.couponDesc}>{t(`coupons.data.${c.id}.description` as any)}</Text>
+      <Text style={styles.couponTitle}>{c.emoji} {c.title[lang]}</Text>
+      <Text style={styles.couponDesc}>{c.description[lang]}</Text>
 
       <View style={styles.couponDivider} />
 
       {/* ── Terms ── */}
       <Text style={styles.couponTerms}>
         <Text style={styles.couponTermsLabel}>{t('coupons.terms_label')}: </Text>
-        {t(`coupons.data.${c.id}.terms` as any)}
+        {c.terms[lang]}
       </Text>
 
       {/* ── Action area (one-time coupons only) ── */}
@@ -129,6 +131,7 @@ export default function CouponsTab() {
   const { t } = useTranslation();
 
   const [restaurant, setRestaurant] = useState<'All' | 'Senator' | 'Balkon'>('All');
+  const [allCoupons, setAllCoupons] = useState<Coupon[]>([]);
 
   // timers: coupon id → seconds remaining (null = not started, 0 = used/expired)
   const [timers, setTimers] = useState<Record<string, number | null>>({});
@@ -136,6 +139,14 @@ export default function CouponsTab() {
 
   // ─── Load state from Firebase on mount ───────────────────────────────────
   useEffect(() => {
+    // Fetch coupons from Firestore
+    getDocs(query(collection(db, 'coupons'), where('active', '==', true)))
+      .then((snap) => {
+        const items = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Coupon));
+        setAllCoupons(items);
+      })
+      .catch(console.error);
+
     loadCouponState();
     return () => {
       Object.values(intervalRefs.current).forEach(clearInterval);
@@ -224,7 +235,7 @@ export default function CouponsTab() {
     }
   }
 
-  const filtered = coupons.filter(c =>
+  const filtered = allCoupons.filter(c =>
     restaurant === 'All' ? true : c.restaurant === 'All' || c.restaurant === restaurant
   );
   const welcome  = filtered.filter(c => c.type === 'welcome');

@@ -9,7 +9,7 @@ import { QuickAccess, QuickAccessItem } from '@/components/home/quick-access';
 import { VenueCards, VenueCardItem } from '@/components/home/venue-cards';
 import { CouponCarousel, CouponItem } from '@/components/home/coupon-carousel';
 import { EventsCarousel } from '@/components/home/events-carousel';
-import { HOTEL_EVENTS } from '@/constants/events-data';
+import { useEvents } from '@/hooks/use-events';
 import { useLanguage } from '@/hooks/use-language';
 import { BrandColors } from '@/constants/theme';
 
@@ -17,6 +17,7 @@ import { BrandColors } from '@/constants/theme';
 export default function HomeScreen() {
   const { t } = useTranslation();
   const { activeLanguage, changeLanguage } = useLanguage();
+  const { events } = useEvents();
 
   const quickAccessItems: QuickAccessItem[] = [
     { id: 'hotel', iconName: 'bed', label: t('home.quick_hotel'), onPress: () => router.push('/(tabs)/hotel') },
@@ -169,7 +170,7 @@ export default function HomeScreen() {
         />
         <EventsCarousel
           sectionTitle={t('home.events_title')}
-          items={HOTEL_EVENTS}
+          items={events}
         />
       </ScrollView>
     </View>

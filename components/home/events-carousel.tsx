@@ -3,7 +3,6 @@ import {
   Text,
   StyleSheet,
   Image,
-  ImageSourcePropType,
   Dimensions,
 } from 'react-native';
 import { BrandColors } from '@/constants/theme';
@@ -16,29 +15,27 @@ const CARD_HEIGHT = CARD_WIDTH * 1.8;
 
 export interface EventItem {
   id: string;
-  imageUrl: ImageSourcePropType;
+  imageUrl: string;   // Firebase Storage URL or local URI
   subtitle: string;
   title: string;
 }
 
 export interface EventsCarouselProps {
   sectionTitle?: string;
-  items: [EventItem, EventItem];
+  items: EventItem[];
 }
 
 export function EventCard({ imageUrl, subtitle, title }: EventItem) {
   return (
     <View style={styles.card}>
       <Image
-        source={imageUrl}
+        source={{ uri: imageUrl }}
         style={styles.cardImage}
         resizeMode="cover"
       />
 
-      {/* Subtitle at the top */}
       <Text style={styles.subtitleText}>{subtitle}</Text>
 
-      {/* Title absolutely centred in the card */}
       <View style={styles.titleWrap}>
         <Text style={styles.titleText}>{title}</Text>
       </View>
@@ -47,10 +44,11 @@ export function EventCard({ imageUrl, subtitle, title }: EventItem) {
 }
 
 export function EventsCarousel({ sectionTitle, items }: EventsCarouselProps) {
+  if (items.length === 0) return null;
+
   return (
     <View style={styles.section}>
       {sectionTitle ? <Text style={styles.sectionTitle}>{sectionTitle}</Text> : null}
-
       <View style={styles.row}>
         {items.map((item) => (
           <EventCard key={item.id} {...item} />
@@ -76,20 +74,17 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: GAP,
     paddingTop: 20,
   },
-
-  // Card
   card: {
     width: CARD_WIDTH,
     height: CARD_HEIGHT,
     borderRadius: 20,
     overflow: 'hidden',
-    // layout: column so subtitle sits at top, titleWrap fills remaining space
     flexDirection: 'column',
     padding: 14,
-    // shadow
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.22,
@@ -103,8 +98,6 @@ const styles = StyleSheet.create({
     height: CARD_HEIGHT,
     width: CARD_HEIGHT,
   },
-
-  // Subtitle pinned to top
   subtitleText: {
     color: BrandColors.white,
     fontSize: 15,
@@ -114,8 +107,6 @@ const styles = StyleSheet.create({
     opacity: 0.85,
     marginTop: 20,
   },
-
-  // Title absolutely centred in the card
   titleWrap: {
     position: 'absolute',
     top: 0,
