@@ -11,6 +11,7 @@ export type Coupon = {
   restaurant: 'All' | 'Senator' | 'Balkon';
   oneTime: boolean;
   active: boolean;
+  imageUrl?: string;
   title: LocalizedText;
   description: LocalizedText;
   terms: LocalizedText;

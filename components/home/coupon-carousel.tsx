@@ -5,6 +5,7 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Pressable,
   ImageSourcePropType,
   NativeSyntheticEvent,
   NativeScrollEvent,
@@ -27,6 +28,7 @@ export interface CouponItem {
   validUntil: string;
   title: string;
   description: string;
+  onPress?: () => void;
 }
 
 export interface CouponCarouselProps {
@@ -36,9 +38,12 @@ export interface CouponCarouselProps {
   cardBottomPadding?: number;
 }
 
-function CouponCard({ imageUrl, categoryLabel, validUntil, title, description, cardBottomPadding }: CouponItem & { cardBottomPadding?: number }) {
+function CouponCard({ imageUrl, categoryLabel, validUntil, title, description, onPress, cardBottomPadding }: CouponItem & { cardBottomPadding?: number }) {
   return (
-    <View style={[styles.cardWrapper, cardBottomPadding !== undefined && { paddingBottom: cardBottomPadding }]}>
+    <Pressable
+      style={[styles.cardWrapper, cardBottomPadding !== undefined && { paddingBottom: cardBottomPadding }]}
+      onPress={onPress}
+    >
       <View style={styles.card}>
         {/* Image with inner padding — does NOT cover full width */}
         <View style={styles.imageContainer}>
@@ -72,7 +77,7 @@ function CouponCard({ imageUrl, categoryLabel, validUntil, title, description, c
           </View>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 }
 

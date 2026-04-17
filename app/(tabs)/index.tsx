@@ -7,9 +7,10 @@ import { HeroText } from '@/components/home/hero-text';
 import { ActionButtons } from '@/components/home/action-buttons';
 import { QuickAccess, QuickAccessItem } from '@/components/home/quick-access';
 import { VenueCards, VenueCardItem } from '@/components/home/venue-cards';
-import { CouponCarousel, CouponItem } from '@/components/home/coupon-carousel';
+import { CouponCarousel } from '@/components/home/coupon-carousel';
 import { EventsCarousel } from '@/components/home/events-carousel';
 import { useEvents } from '@/hooks/use-events';
+import { useHomeCoupons } from '@/hooks/use-home-coupons';
 import { useLanguage } from '@/hooks/use-language';
 import { BrandColors } from '@/constants/theme';
 
@@ -18,6 +19,7 @@ export default function HomeScreen() {
   const { t } = useTranslation();
   const { activeLanguage, changeLanguage } = useLanguage();
   const { events } = useEvents();
+  const { senatorCoupons, balkonCoupons } = useHomeCoupons();
 
   const quickAccessItems: QuickAccessItem[] = [
     { id: 'hotel', iconName: 'bed', label: t('home.quick_hotel'), onPress: () => router.push('/(tabs)/hotel') },
@@ -56,77 +58,6 @@ export default function HomeScreen() {
     },
   ];
 
-  const senatorCoupons: CouponItem[] = [
-    {
-      id: 's1',
-      imageUrl: require('@/assets/images/senator-photo-1.jpg'),
-      categoryLabel: 'Ресторан',
-      validUntil: 'до 28 фев',
-      title: '-15% на бизнес-ланч',
-      description: 'Действует по будням с 12:00 до 15:00. Купон доступен в разделе «Купоны»',
-    },
-    {
-      id: 's2',
-      imageUrl: require('@/assets/images/senator-photo-2.jpg'),
-      categoryLabel: 'Ресторан',
-      validUntil: 'до 14 мар',
-      title: '-20% на романтический ужин',
-      description: 'Ужин на двоих при свечах с бокалом вина в подарок',
-    },
-    {
-      id: 's3',
-      imageUrl: require('@/assets/images/senator-photo-3.jpg'),
-      categoryLabel: 'Ресторан',
-      validUntil: 'до 31 мар',
-      title: '-10% на завтрак',
-      description: 'Скидка на завтрак с 8:00 до 11:00 для гостей отеля',
-    },
-    {
-      id: 's4',
-      imageUrl: require('@/assets/images/senator-photo-4.jpg'),
-      categoryLabel: 'Ресторан',
-      validUntil: 'до 31 дек',
-      title: '-25% в день рождения',
-      description: 'Специальная скидка в ваш особый день',
-    },
-  ];
-
-  const balkonCoupons: CouponItem[] = [
-    {
-      id: 'b1',
-      imageUrl: require('@/assets/images/grill-photo-1.jpg'),
-      categoryLabel: 'Ресторан',
-      validUntil: 'до 5.04',
-      title: '-15% на ужин в ресторане',
-      description: 'Действует по будня после 18:00. Купон доступен в разделе «Купоны»',
-    },
-    {
-      id: 'b2',
-      imageUrl: require('@/assets/images/grill-photo-2.jpg'),
-      categoryLabel: 'Ресторан',
-      validUntil: 'до 31 мар',
-      title: '-30% Happy Hour',
-      description: 'Скидка на все напитки с 17:00 до 19:00 каждый день',
-    },
-    {
-      id: 'b3',
-      imageUrl: require('@/assets/images/grill-photo-3.jpg'),
-      categoryLabel: 'Ресторан',
-      validUntil: 'до 30 апр',
-      title: '-15% воскресный бранч',
-      description: 'Бранч с живой музыкой каждое воскресенье с 11:00',
-    },
-    {
-      id: 'b4',
-      imageUrl: require('@/assets/images/grill-photo-4.jpg'),
-      categoryLabel: 'Ресторан',
-      validUntil: 'до 31 дек',
-      title: '-20% для компании',
-      description: 'Скидка при заказе столика для группы от 10 человек',
-    },
-  ];
-
-
   return (
     <View style={styles.background}>
       <ScrollView
@@ -158,16 +89,20 @@ export default function HomeScreen() {
 
         {/* White content below */}
         <VenueCards items={venueItems} />
-        <CouponCarousel
-          sectionTitle={t('home.coupons_senator_title')}
-          items={senatorCoupons}
-        />
-        <CouponCarousel
-          sectionTitle={t('home.coupons_balkon_title')}
-          items={balkonCoupons}
-          topSpacing={30}
-          cardBottomPadding={16}
-        />
+        {senatorCoupons.length > 0 && (
+          <CouponCarousel
+            sectionTitle={t('home.coupons_senator_title')}
+            items={senatorCoupons}
+          />
+        )}
+        {balkonCoupons.length > 0 && (
+          <CouponCarousel
+            sectionTitle={t('home.coupons_balkon_title')}
+            items={balkonCoupons}
+            topSpacing={30}
+            cardBottomPadding={16}
+          />
+        )}
         <EventsCarousel
           sectionTitle={t('home.events_title')}
           items={events}
