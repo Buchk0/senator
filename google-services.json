@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "874707319629",
+    "project_id": "senator-d2fe9",
+    "storage_bucket": "senator-d2fe9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:874707319629:android:866293da58707c62f59504",
+        "android_client_info": {
+          "package_name": "com.buchk0.senator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjdh2xKoOXiZ-F4OIe0cLp7QJkPQybLsg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
