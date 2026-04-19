@@ -1,10 +1,9 @@
 import { useState, useRef } from "react";
 import { TextInput, View, Text, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Pressable, Keyboard, Alert, ScrollView, Modal, ImageBackground, Image } from "react-native";
-import { signInWithPhoneNumber } from "firebase/auth";
-import { auth, firebaseConfig } from "@/constants/firebase";
-import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth, db } from "@/constants/firebase";
+import { doc, setDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { router } from "expo-router";
-import { setConfirmationResult, setStoredCredentials, setStoredProfile } from "@/constants/auth-store";
 import { BrandColors } from "@/constants/theme";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useTranslation } from "react-i18next";
@@ -35,7 +34,6 @@ export default function Reg() {
     const [formattedPhone, setFormattedPhone] = useState('');
     const [password, setPassword] = useState('');
     const phoneInput = useRef<PhoneInput>(null);
-    const recaptchaVerifier = useRef(null);
 
     const handleRegister = async () => {
         if (!name.trim()) return Alert.alert(t('profile.error'), t('register.enter_name'));
@@ -45,19 +43,34 @@ export default function Reg() {
         if (password.length < 6) return Alert.alert(t('profile.error'), t('register.password_min'));
 
         try {
-            setStoredCredentials(formattedPhone, password);
-            setStoredProfile(name, surname, formatDate(birthDate));
-            const result = await signInWithPhoneNumber(auth, formattedPhone, recaptchaVerifier.current!);
-            setConfirmationResult(result);
-            router.push("/auth/verify");
+            const generatedEmail = `${formattedPhone.replace(/[^0-9]/g, '')}@senator.kz`;
+            const credential = await createUserWithEmailAndPassword(auth, generatedEmail, password);
+
+            const welcomeSnap = await getDocs(
+                query(collection(db, 'coupons'), where('type', '==', 'welcome'), where('active', '==', true))
+            );
+            const welcomeCouponIds = welcomeSnap.docs.map(d => d.id);
+
+            await setDoc(doc(db, "users", credential.user.uid), {
+                name: name.trim(),
+                surname: surname.trim(),
+                birthDate: formatDate(birthDate),
+                phone: formattedPhone,
+                usedCouponIds: [],
+                welcomeCouponIds,
+            });
+            router.replace("/(tabs)");
         } catch (e: any) {
-            Alert.alert(t('profile.error'), e?.message ?? t('register.send_code_error'));
+            if (e?.code === 'auth/email-already-in-use') {
+                Alert.alert(t('profile.error'), 'Этот номер уже зарегистрирован');
+            } else {
+                Alert.alert(t('profile.error'), e?.message ?? t('register.send_code_error'));
+            }
         }
     };
 
     return (
         <>
-        <FirebaseRecaptchaVerifierModal ref={recaptchaVerifier} firebaseConfig={firebaseConfig} />
         <ImageBackground
             source={require('@/assets/images/restaurants-bc.png')}
             style={styles.bg}

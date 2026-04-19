@@ -9,7 +9,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { auth, db } from '@/constants/firebase';
 import {
   doc, getDoc, setDoc, deleteDoc, updateDoc,
-  arrayUnion, arrayRemove, collection, getDocs, serverTimestamp, Timestamp,
+  arrayUnion, collection, getDocs, serverTimestamp, Timestamp,
 } from 'firebase/firestore';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -132,10 +132,9 @@ export default function CouponsTab() {
 
   const [restaurant, setRestaurant] = useState<'All' | 'Senator' | 'Balkon'>('All');
   const [allCoupons, setAllCoupons] = useState<Coupon[]>([]);
-  const [welcomeCouponIds, setWelcomeCouponIds] = useState<string[]>([]);
-  const welcomeCouponIdsRef = useRef<string[]>([]);
+  const [usedCouponIds, setUsedCouponIds] = useState<string[]>([]);
 
-  // timers: coupon id → seconds remaining (null = not started, 0 = used/expired)
+  // timers: coupon id → seconds remaining (null = not started)
   const [timers, setTimers] = useState<Record<string, number | null>>({});
   const intervalRefs = useRef<Record<string, ReturnType<typeof setInterval>>>({});
 
@@ -161,19 +160,15 @@ export default function CouponsTab() {
     if (!user) return;
 
     try {
-      const initialTimers: Record<string, number> = {};
-
-      // 1. Permanently used coupons → show "Used" badge
+      // 1. Load used coupon IDs — these will be filtered out of the list
       const userSnap = await getDoc(doc(db, 'users', user.uid));
       const usedIds: string[] = userSnap.data()?.usedCouponIds ?? [];
-      const wIds: string[] = userSnap.data()?.welcomeCouponIds ?? [];
-      welcomeCouponIdsRef.current = wIds;
-      setWelcomeCouponIds(wIds);
-      usedIds.forEach(id => { initialTimers[id] = 0; });
+      setUsedCouponIds(usedIds);
 
       // 2. Active coupon timers → resume countdown
       const activeCoupons = await getDocs(collection(db, 'users', user.uid, 'coupons'));
       const now = Date.now();
+      const initialTimers: Record<string, number> = {};
 
       for (const snap of activeCoupons.docs) {
         const activatedAt: Timestamp = snap.data().activatedAt;
@@ -185,17 +180,10 @@ export default function CouponsTab() {
         if (remaining <= 0) {
           // Expired while app was closed — clean up
           await deleteDoc(snap.ref);
-          const isWelcome = wIds.includes(snap.id);
-          if (isWelcome) {
-            await updateDoc(doc(db, 'users', user.uid), { welcomeCouponIds: arrayRemove(snap.id) });
-            wIds.splice(wIds.indexOf(snap.id), 1);
-          } else {
-            await updateDoc(doc(db, 'users', user.uid), { usedCouponIds: arrayUnion(snap.id) });
-          }
-          initialTimers[snap.id] = 0;
+          await updateDoc(doc(db, 'users', user.uid), { usedCouponIds: arrayUnion(snap.id) });
+          setUsedCouponIds(prev => [...prev, snap.id]);
         } else {
           initialTimers[snap.id] = remaining;
-          setTimers(prev => ({ ...prev, [snap.id]: remaining }));
           runInterval(snap.id);
         }
       }
@@ -216,19 +204,12 @@ export default function CouponsTab() {
         if (remaining <= 0) {
           clearInterval(intervalRefs.current[id]);
           delete intervalRefs.current[id];
-          // Clean up Firebase: delete active doc
+          // Clean up Firebase: delete active doc, mark as used
           const user = auth.currentUser;
           if (user) {
             deleteDoc(doc(db, 'users', user.uid, 'coupons', id));
-            const isWelcome = welcomeCouponIdsRef.current.includes(id);
-            if (isWelcome) {
-              // Welcome coupon: remove from profile → fully disappears
-              updateDoc(doc(db, 'users', user.uid), { welcomeCouponIds: arrayRemove(id) });
-              welcomeCouponIdsRef.current = welcomeCouponIdsRef.current.filter(w => w !== id);
-              setWelcomeCouponIds(prev => prev.filter(w => w !== id));
-            } else {
-              updateDoc(doc(db, 'users', user.uid), { usedCouponIds: arrayUnion(id) });
-            }
+            updateDoc(doc(db, 'users', user.uid), { usedCouponIds: arrayUnion(id) });
+            setUsedCouponIds(prev => [...prev, id]);
           }
           return { ...prev, [id]: 0 };
         }
@@ -255,10 +236,11 @@ export default function CouponsTab() {
     }
   }
 
-  const filtered = allCoupons.filter(c =>
-    restaurant === 'All' ? true : c.restaurant === 'All' || c.restaurant === restaurant
-  );
-  const welcome  = filtered.filter(c => c.type === 'welcome' && welcomeCouponIds.includes(c.id));
+  const filtered = allCoupons
+    .filter(c => !c.oneTime || !usedCouponIds.includes(c.id))
+    .filter(c => restaurant === 'All' ? true : c.restaurant === 'All' || c.restaurant === restaurant);
+
+  const welcome  = filtered.filter(c => c.type === 'welcome');
   const seasonal = filtered.filter(c => c.type === 'seasonal');
   const always   = filtered.filter(c => c.type === 'always');
 
