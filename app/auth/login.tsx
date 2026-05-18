@@ -85,6 +85,24 @@ export default function Login() {
                             withCountryNameButton: false,
                             withAlphaFilter: true,
                             withEmoji: true,
+                            modalProps: { statusBarTranslucent: false },
+                            closeButtonStyle: { marginRight: 12 },
+                            renderCountryFilter: (filterPropsInner: any) => (
+                                <TextInput
+                                    {...filterPropsInner}
+                                    placeholder="Enter country name"
+                                    placeholderTextColor="rgba(0,0,0,0.5)"
+                                    autoCorrect={false}
+                                    style={{
+                                        height: 70,
+                                        flex: 1,
+                                        paddingHorizontal: 12,
+                                        marginTop: insets.top - 20,
+                                        fontSize: 16,
+                                        color: '#000',
+                                    }}
+                                />
+                            ),
                             renderFlagButton: ({ countryCode, onOpen }: { countryCode: string; onOpen: () => void }) => (
                                 <TouchableOpacity onPress={onOpen} style={styles.flagButton} activeOpacity={0.7}>
                                     <Text style={styles.flagEmoji}>{getFlagEmoji(countryCode || 'KZ')}</Text>
@@ -174,15 +192,18 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: BrandColors.white,
         width: '100%',
+        height: undefined,
     },
     phoneTextContainer: {
         backgroundColor: 'transparent',
         borderRadius: 12,
         paddingLeft: 0,
+        paddingVertical: 0,
     },
     phoneInputText: {
         color: BrandColors.white,
         fontSize: 15,
+        paddingVertical: 16,
     },
     phoneCodeText: {
         color: BrandColors.white,

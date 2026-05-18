@@ -107,8 +107,8 @@ function CouponSection({ titleKey, subtitleKey, items, timers, onUse }: SectionP
   return (
     <View>
       <View style={styles.sectionTitles}>
-        <Text style={styles.sectionTitle}>{t(titleKey)}</Text>
-        <Text style={styles.sectionSubtitle}>{t(subtitleKey)}</Text>
+        <Text style={styles.sectionTitle}>{t(titleKey as any)}</Text>
+        <Text style={styles.sectionSubtitle}>{t(subtitleKey as any)}</Text>
       </View>
       <View style={styles.couponsSection}>
         {items.map((c) => (

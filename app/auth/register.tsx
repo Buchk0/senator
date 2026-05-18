@@ -1,8 +1,6 @@
 import { useState, useRef } from "react";
 import { TextInput, View, Text, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Pressable, Keyboard, Alert, ScrollView, Modal, ImageBackground, Image } from "react-native";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, db } from "@/constants/firebase";
-import { doc, setDoc, collection, getDocs, query, where } from "firebase/firestore";
+import nativeAuth from "@react-native-firebase/auth";
 import { router } from "expo-router";
 import { BrandColors } from "@/constants/theme";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -11,6 +9,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BlurView } from "expo-blur";
 import PhoneInput from "react-native-phone-number-input";
+import { setConfirmationResult, setStoredCredentials, setStoredProfile } from "@/constants/auth-store";
 
 const getFlagEmoji = (code: string) =>
     code.toUpperCase().replace(/./g, (c) => String.fromCodePoint(127397 + c.charCodeAt(0)));
@@ -33,6 +32,7 @@ export default function Reg() {
     const [showPicker, setShowPicker] = useState(false);
     const [formattedPhone, setFormattedPhone] = useState('');
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
     const phoneInput = useRef<PhoneInput>(null);
 
     const handleRegister = async () => {
@@ -42,30 +42,21 @@ export default function Reg() {
         if (!formattedPhone) return Alert.alert(t('profile.error'), t('profile.enter_phone'));
         if (password.length < 6) return Alert.alert(t('profile.error'), t('register.password_min'));
 
+        setLoading(true);
         try {
-            const generatedEmail = `${formattedPhone.replace(/[^0-9]/g, '')}@senator.kz`;
-            const credential = await createUserWithEmailAndPassword(auth, generatedEmail, password);
-
-            const welcomeSnap = await getDocs(
-                query(collection(db, 'coupons'), where('type', '==', 'welcome'), where('active', '==', true))
-            );
-            const welcomeCouponIds = welcomeSnap.docs.map(d => d.id);
-
-            await setDoc(doc(db, "users", credential.user.uid), {
-                name: name.trim(),
-                surname: surname.trim(),
-                birthDate: formatDate(birthDate),
-                phone: formattedPhone,
-                usedCouponIds: [],
-                welcomeCouponIds,
-            });
-            router.replace("/(tabs)");
+            const confirmation = await nativeAuth().signInWithPhoneNumber(formattedPhone);
+            setConfirmationResult(confirmation);
+            setStoredCredentials(formattedPhone, password);
+            setStoredProfile(name.trim(), surname.trim(), formatDate(birthDate!));
+            router.push('/auth/verify');
         } catch (e: any) {
-            if (e?.code === 'auth/email-already-in-use') {
-                Alert.alert(t('profile.error'), 'Этот номер уже зарегистрирован');
+            if (e?.code === 'auth/invalid-phone-number') {
+                Alert.alert(t('profile.error'), t('register.invalid_phone'));
             } else {
                 Alert.alert(t('profile.error'), e?.message ?? t('register.send_code_error'));
             }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -121,25 +112,42 @@ export default function Reg() {
                             </Text>
                         </TouchableOpacity>
 
-                        <Modal visible={showPicker} transparent animationType="slide">
-                            <View style={styles.modalOverlay}>
-                                <View style={styles.modalSheet}>
-                                    <TouchableOpacity onPress={() => setShowPicker(false)} style={styles.doneBtn}>
-                                        <Text style={styles.doneBtnText}>{t('register.done')}</Text>
-                                    </TouchableOpacity>
-                                    <DateTimePicker
-                                        value={birthDate ?? new Date(2000, 0, 1)}
-                                        mode="date"
-                                        display="spinner"
-                                        maximumDate={new Date()}
-                                        onChange={(_, date) => { if (date) setBirthDate(date); }}
-                                        style={{ width: '100%' }}
-                                        textColor="#1a2035"
-                                        locale={locale}
-                                    />
+                        {/* Android: native dialog, no custom Modal needed */}
+                        {Platform.OS === 'android' && showPicker && (
+                            <DateTimePicker
+                                value={birthDate ?? new Date(2000, 0, 1)}
+                                mode="date"
+                                display="default"
+                                maximumDate={new Date()}
+                                onChange={(_, date) => {
+                                    setShowPicker(false);
+                                    if (date) setBirthDate(date);
+                                }}
+                            />
+                        )}
+
+                        {/* iOS: slide-up sheet with spinner */}
+                        {Platform.OS === 'ios' && (
+                            <Modal visible={showPicker} transparent animationType="slide">
+                                <View style={styles.modalOverlay}>
+                                    <View style={styles.modalSheet}>
+                                        <TouchableOpacity onPress={() => setShowPicker(false)} style={styles.doneBtn}>
+                                            <Text style={styles.doneBtnText}>{t('register.done')}</Text>
+                                        </TouchableOpacity>
+                                        <DateTimePicker
+                                            value={birthDate ?? new Date(2000, 0, 1)}
+                                            mode="date"
+                                            display="spinner"
+                                            maximumDate={new Date()}
+                                            onChange={(_, date) => { if (date) setBirthDate(date); }}
+                                            style={{ width: '100%' }}
+                                            textColor="#1a2035"
+                                            locale={locale}
+                                        />
+                                    </View>
                                 </View>
-                            </View>
-                        </Modal>
+                            </Modal>
+                        )}
 
                         <PhoneInput
                             ref={phoneInput}
@@ -160,8 +168,30 @@ export default function Reg() {
                                 withCountryNameButton: false,
                                 withAlphaFilter: true,
                                 withEmoji: true,
+                                modalProps: { statusBarTranslucent: false },
+                                closeButtonStyle: { marginRight: 12 },
+                                renderCountryFilter: (filterPropsInner: any) => (
+                                    <TextInput
+                                        {...filterPropsInner}
+                                        placeholder="Enter country name"
+                                        placeholderTextColor="rgba(0,0,0,0.5)"
+                                        autoCorrect={false}
+                                        style={{
+                                            height: 70,
+                                            flex: 1,
+                                            paddingHorizontal: 12,
+                                            marginTop: insets.top - 20,
+                                            fontSize: 16,
+                                            color: '#000',
+                                        }}
+                                    />
+                                ),
                                 renderFlagButton: ({ countryCode, onOpen }: { countryCode: string; onOpen: () => void }) => (
-                                    <TouchableOpacity onPress={onOpen} style={styles.flagButton} activeOpacity={0.7}>
+                                    <TouchableOpacity
+                                        onPress={() => { setShowPicker(false); onOpen(); }}
+                                        style={styles.flagButton}
+                                        activeOpacity={0.7}
+                                    >
                                         <Text style={styles.flagEmoji}>{getFlagEmoji(countryCode || 'KZ')}</Text>
                                         <Text style={styles.flagChevron}>▾</Text>
                                     </TouchableOpacity>
@@ -182,10 +212,10 @@ export default function Reg() {
                             />
                         </View>
 
-                        <TouchableOpacity style={styles.btnOuter} onPress={handleRegister} activeOpacity={0.8}>
+                        <TouchableOpacity style={styles.btnOuter} onPress={handleRegister} activeOpacity={0.8} disabled={loading}>
                             <View style={styles.btnInner}>
                                 <BlurView intensity={60} tint="dark" style={StyleSheet.absoluteFillObject} />
-                                <Text style={styles.btnText}>{t('register.get_code_btn')}</Text>
+                                <Text style={styles.btnText}>{loading ? '...' : t('register.submit_btn')}</Text>
                             </View>
                         </TouchableOpacity>
 
@@ -259,15 +289,18 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: BrandColors.white,
         width: '100%',
+        height: undefined,
     },
     phoneTextContainer: {
         backgroundColor: 'transparent',
         borderRadius: 12,
         paddingLeft: 0,
+        paddingVertical: 0,
     },
     phoneInputText: {
         color: BrandColors.white,
         fontSize: 15,
+        paddingVertical: 16,
     },
     phoneCodeText: {
         color: BrandColors.white,

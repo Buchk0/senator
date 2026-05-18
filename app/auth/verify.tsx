@@ -3,28 +3,39 @@ import { confirmationResult, storedPassword, storedName, storedSurname, storedBi
 import { router } from "expo-router";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Pressable, Keyboard, Alert } from "react-native";
 import { BrandColors } from "@/constants/theme";
-import { EmailAuthProvider, linkWithCredential } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth, db } from "@/constants/firebase";
 import { doc, setDoc, collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "@/constants/firebase";
+import nativeAuth from "@react-native-firebase/auth";
 
 export default function Verify() {
     const [code, setCode] = useState<string>('')
+    const [loading, setLoading] = useState(false);
 
     const handleVerify = async () => {
         if (!confirmationResult) return;
-        try {
-            const generatedEmail = `${storedPhone.replace(/[^0-9]/g, '')}@senator.kz`;
-            const result = await confirmationResult.confirm(code);
-            const credential = EmailAuthProvider.credential(generatedEmail, storedPassword);
-            await linkWithCredential(result.user, credential);
+        if (code.length < 6) return Alert.alert('Ошибка', 'Введите 6-значный код');
 
-            // Fetch all active welcome coupon IDs to assign to the new user
+        setLoading(true);
+        try {
+            // Confirm OTP via native Firebase auth
+            await confirmationResult.confirm(code);
+
+            // Sign out of native auth — we only needed it for OTP
+            await nativeAuth().signOut();
+
+            // Create the actual account via JS SDK (email/password)
+            const generatedEmail = `${storedPhone.replace(/[^0-9]/g, '')}@senator.kz`;
+            const credential = await createUserWithEmailAndPassword(auth, generatedEmail, storedPassword);
+
+            // Fetch welcome coupons
             const welcomeSnap = await getDocs(
                 query(collection(db, 'coupons'), where('type', '==', 'welcome'), where('active', '==', true))
             );
             const welcomeCouponIds = welcomeSnap.docs.map(d => d.id);
 
-            await setDoc(doc(db, "users", result.user.uid), {
+            // Save profile to Firestore
+            await setDoc(doc(db, "users", credential.user.uid), {
                 name: storedName,
                 surname: storedSurname,
                 birthDate: storedBirthDate,
@@ -32,13 +43,18 @@ export default function Verify() {
                 usedCouponIds: [],
                 welcomeCouponIds,
             });
+
             router.replace("/(tabs)");
         } catch (e: any) {
-            if (e?.code === 'auth/email-already-in-use') {
+            if (e?.code === 'auth/invalid-verification-code') {
+                Alert.alert('Ошибка', 'Неверный код. Попробуйте ещё раз.');
+            } else if (e?.code === 'auth/email-already-in-use') {
                 Alert.alert('Ошибка', 'Этот номер уже зарегистрирован');
             } else {
                 Alert.alert('Ошибка', e?.message ?? 'Не удалось подтвердить код');
             }
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -60,8 +76,12 @@ export default function Verify() {
                     maxLength={6}
                 />
 
-                <TouchableOpacity style={styles.btn} onPress={handleVerify} activeOpacity={0.85}>
-                    <Text style={styles.btnText}>Подтвердить</Text>
+                <TouchableOpacity style={[styles.btn, loading && styles.btnDisabled]} onPress={handleVerify} activeOpacity={0.85} disabled={loading}>
+                    <Text style={styles.btnText}>{loading ? '...' : 'Подтвердить'}</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7} style={styles.backBtn}>
+                    <Text style={styles.backText}>← Назад</Text>
                 </TouchableOpacity>
             </View>
         </KeyboardAvoidingView>
@@ -116,10 +136,21 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: 8,
     },
+    btnDisabled: {
+        opacity: 0.6,
+    },
     btnText: {
         color: BrandColors.gold,
         fontSize: 15,
         fontWeight: '700',
         letterSpacing: 0.4,
+    },
+    backBtn: {
+        marginTop: 20,
+        alignItems: 'center',
+    },
+    backText: {
+        color: '#888',
+        fontSize: 14,
     },
 });

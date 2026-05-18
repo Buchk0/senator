@@ -31,7 +31,7 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
   const { t } = useTranslation();
 
   return (
-    <View style={[styles.container, { paddingBottom: 24 }]}>
+    <View style={[styles.container, { paddingBottom: insets.bottom + 8 }]}>
       {state.routes.map((route, index) => {
         const icon = TAB_ICONS[route.name];
         const i18nKey = TAB_I18N_KEYS[route.name];
@@ -67,7 +67,7 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
                 color={isFocused ? BrandColors.white : BrandColors.black}
               />
               <Text style={[styles.label, isFocused && styles.labelActive]} numberOfLines={1}>
-                {t(i18nKey)}
+                {t(i18nKey as any)}
               </Text>
             </View>
           </TouchableOpacity>

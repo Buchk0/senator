@@ -1,7 +1,7 @@
 import { useContext, useState, createContext, useEffect } from 'react';
 import { User, onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth, db } from '@/constants/firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, onSnapshot } from 'firebase/firestore';
 
 export interface UserProfile {
   name: string;
@@ -28,18 +28,18 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser);
       setLoading(false);
-
-      if (firebaseUser) {
-        // Fetch profile immediately in the background — no await, no blocking
-        getDoc(doc(db, 'users', firebaseUser.uid)).then((snap) => {
-          if (snap.exists()) setProfile(snap.data() as UserProfile);
-        });
-      } else {
-        setProfile(null);
-      }
+      if (!firebaseUser) setProfile(null);
     });
     return unsubscribe;
   }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    const unsubscribe = onSnapshot(doc(db, 'users', user.uid), (snap) => {
+      setProfile(snap.exists() ? (snap.data() as UserProfile) : null);
+    });
+    return unsubscribe;
+  }, [user]);
 
   return (
     <AuthContext.Provider value={{ user, loading, profile, signOut: () => signOut(auth) }}>

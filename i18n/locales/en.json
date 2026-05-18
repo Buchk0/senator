@@ -33,6 +33,7 @@
     "birthdate_placeholder": "Date of birth",
     "password_placeholder": "Password (min 6 characters)",
     "get_code_btn": "Get code",
+    "submit_btn": "Register",
     "have_account": "Already have an account?",
     "done": "Done",
     "enter_name": "Enter your first name",

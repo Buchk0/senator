@@ -2,7 +2,7 @@
   "expo": {
     "name": "Senator Hotel",
     "slug": "senator-hotel",
-    "version": "1.0.0",
+    "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "senator-hotel",
@@ -19,7 +19,7 @@
     },
     "android": {
       "package": "kz.senator.hotel",
-      "versionCode": 1,
+      "versionCode": 9,
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
@@ -35,6 +35,7 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      "@react-native-firebase/app",
       "expo-router",
       [
         "expo-splash-screen",
@@ -49,7 +50,9 @@
         }
       ],
       "expo-localization",
-      "@react-native-community/datetimepicker"
+      "@react-native-community/datetimepicker",
+      "expo-web-browser",
+      "@react-native-firebase/auth"
     ],
     "experiments": {
       "typedRoutes": true,
@@ -60,6 +63,12 @@
       "eas": {
         "projectId": "b4861bef-9834-4ff1-8e35-7fe56c521516"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/b4861bef-9834-4ff1-8e35-7fe56c521516"
     }
   }
 }

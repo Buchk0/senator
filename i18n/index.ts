@@ -1,16 +1,9 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import * as Localization from 'expo-localization';
 
 import en from './locales/en.json';
 import ru from './locales/ru.json';
 import kz from './locales/kz.json';
-
-const SUPPORTED_LOCALES = ['en', 'ru', 'kz'] as const;
-const deviceLocale = Localization.getLocales()[0]?.languageCode ?? 'kz';
-const detectedLanguage = SUPPORTED_LOCALES.includes(deviceLocale as any)
-  ? deviceLocale
-  : 'kz';
 
 i18n.use(initReactI18next).init({
   compatibilityJSON: 'v4',
@@ -19,7 +12,7 @@ i18n.use(initReactI18next).init({
     ru: { translation: ru },
     kz: { translation: kz },
   },
-  lng: detectedLanguage,
+  lng: 'kz',
   fallbackLng: 'kz',
   interpolation: {
     escapeValue: false,

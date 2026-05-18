@@ -33,6 +33,7 @@
     "birthdate_placeholder": "Дата рождения",
     "password_placeholder": "Пароль (минимум 6 символов)",
     "get_code_btn": "Получить код",
+    "submit_btn": "Зарегистрироваться",
     "have_account": "Уже есть аккаунт?",
     "done": "Готово",
     "enter_name": "Введите имя",
