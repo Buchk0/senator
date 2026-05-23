@@ -40,6 +40,7 @@
     "enter_surname": "Enter your last name",
     "enter_birthdate": "Enter your date of birth",
     "password_min": "Password must be at least 6 characters",
+    "invalid_phone": "Invalid phone number",
     "send_code_error": "Failed to send code"
   },
   "coupons": {
@@ -194,5 +195,11 @@
     "contact_reception": "Contact Reception",
     "directions": "Directions",
     "logout": "Sign out"
+  },
+  "auth": {
+    "gate_title": "Sign in required",
+    "gate_subtitle": "Sign in or create an account to access this section.",
+    "login_btn": "Sign in",
+    "register_btn": "Register"
   }
 }

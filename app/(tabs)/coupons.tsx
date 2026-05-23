@@ -7,6 +7,8 @@ import { Coupon } from '@/constants/coupons-data';
 import { query, where } from 'firebase/firestore';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { auth, db } from '@/constants/firebase';
+import { useAuth } from '@/context/AuthContext';
+import { AuthGate } from '@/components/auth/auth-gate';
 import {
   doc, getDoc, setDoc, deleteDoc, updateDoc,
   arrayUnion, collection, getDocs, serverTimestamp, Timestamp,
@@ -129,6 +131,7 @@ function CouponSection({ titleKey, subtitleKey, items, timers, onUse }: SectionP
 export default function CouponsTab() {
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
+  const { user } = useAuth();
 
   const [restaurant, setRestaurant] = useState<'All' | 'Senator' | 'Balkon'>('All');
   const [allCoupons, setAllCoupons] = useState<Coupon[]>([]);
@@ -243,6 +246,8 @@ export default function CouponsTab() {
   const welcome  = filtered.filter(c => c.type === 'welcome');
   const seasonal = filtered.filter(c => c.type === 'seasonal');
   const always   = filtered.filter(c => c.type === 'always');
+
+  if (!user) return <AuthGate />;
 
   return (
     <ScrollView style={styles.scroll}>

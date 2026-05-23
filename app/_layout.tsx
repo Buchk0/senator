@@ -193,9 +193,7 @@ function InitialLayout() {
   useEffect(() => {
     if (!assetsLoaded || loading) return;
     const inAuth = segments[0] === 'auth';
-    if (!user && !inAuth) {
-      router.replace('/auth/login');
-    } else if (user && inAuth) {
+    if (user && inAuth) {
       router.replace('/(tabs)');
     }
   }, [user, loading, segments, assetsLoaded]);
