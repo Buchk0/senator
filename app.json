@@ -2,7 +2,7 @@
   "expo": {
     "name": "Senator Hotel",
     "slug": "senator-hotel",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "senator-hotel",
@@ -19,7 +19,7 @@
     },
     "android": {
       "package": "kz.senator.hotel",
-      "versionCode": 9,
+      "versionCode": 10,
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
