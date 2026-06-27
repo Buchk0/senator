@@ -2,6 +2,20 @@
   "common": {
     "back": "Back"
   },
+  "promotions": {
+    "title": "Promotions",
+    "subtitle": "Current offers at our restaurants",
+    "empty": "No active promotions"
+  },
+  "events": {
+    "title": "Events",
+    "subtitle": "Upcoming events at the hotel",
+    "empty": "No upcoming events"
+  },
+  "photos": {
+    "title": "Photo Reports",
+    "subtitle": "Moments from our restaurants and spaces"
+  },
   "home": {
     "hero_title": "Comfortable rest and delicious evenings - in one place",
     "hero_subtitle": "Book a room, a table and get coupons right in the app.",
@@ -13,6 +27,9 @@
     "quick_spa": "SPA",
     "quick_conference": "Conference\nHall",
     "quick_vip": "VIP\nNegotiation",
+    "quick_promotions": "Promotions",
+    "quick_events": "Events",
+    "quick_photos": "Photos",
     "cards_hotel": "Hotel Senator",
     "cards_senator": "Restaurant Senator",
     "cards_balkon": "Restaurant Balkon",

@@ -16,7 +16,10 @@ export interface QuickAccessProps {
 }
 
 export function QuickAccess({ items }: QuickAccessProps) {
-  const rows = [items.slice(0, 3), items.slice(3, 6)];
+  const rows: QuickAccessItem[][] = [];
+  for (let i = 0; i < items.length; i += 3) {
+    rows.push(items.slice(i, i + 3));
+  }
 
   return (
     <View style={styles.container}>

@@ -2,6 +2,20 @@
   "common": {
     "back": "Назад"
   },
+  "promotions": {
+    "title": "Акции",
+    "subtitle": "Актуальные предложения наших ресторанов",
+    "empty": "Нет активных акций"
+  },
+  "events": {
+    "title": "События",
+    "subtitle": "Ближайшие события отеля",
+    "empty": "Нет предстоящих событий"
+  },
+  "photos": {
+    "title": "Фотоотчёты",
+    "subtitle": "Моменты из наших ресторанов и пространств"
+  },
   "home": {
     "hero_title": "Комфортный отдых и вкусные вечера - в одном месте",
     "hero_subtitle": "Бронируй номер, столик и забирай купоны прямо в приложении.",
@@ -13,6 +27,9 @@
     "quick_spa": "SPA",
     "quick_conference": "Конференц\nзал",
     "quick_vip": "VIP\nПереговорная",
+    "quick_promotions": "Акции",
+    "quick_events": "События",
+    "quick_photos": "Фото",
     "cards_hotel": "Отель Senator",
     "cards_senator": "Ресторан Senator",
     "cards_balkon": "Ресторан Balkon",
