@@ -20,6 +20,7 @@ import { BrandColors } from '@/constants/theme';
 import { ROOM_CATEGORIES } from '@/constants/room-data';
 import { BackButton } from '@/components/navigation/back-button';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import ImageViewing from 'react-native-image-viewing';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -38,9 +39,19 @@ export default function RoomCategoryScreen() {
 
   const [expandedKey, setExpandedKey] = useState<string | null>(null);
 
+  const [viewerImages, setViewerImages] = useState<{ uri: string }[]>([]);
+  const [viewerIndex, setViewerIndex] = useState(0);
+  const [viewerVisible, setViewerVisible] = useState(false);
+
   const toggle = (key: string) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setExpandedKey((prev) => (prev === key ? null : key));
+  };
+
+  const openViewer = (gallery: any[], index: number) => {
+    setViewerImages(gallery.map((img) => ({ uri: Image.resolveAssetSource(img).uri })));
+    setViewerIndex(index);
+    setViewerVisible(true);
   };
 
   return (
@@ -117,12 +128,17 @@ export default function RoomCategoryScreen() {
                     style={styles.carousel}
                   >
                     {sub.gallery.map((img, i) => (
-                      <Image
+                      <TouchableOpacity
                         key={i}
-                        source={img}
-                        style={styles.carouselImg}
-                        resizeMode="cover"
-                      />
+                        activeOpacity={0.85}
+                        onPress={() => openViewer(sub.gallery, i)}
+                      >
+                        <Image
+                          source={img}
+                          style={styles.carouselImg}
+                          resizeMode="cover"
+                        />
+                      </TouchableOpacity>
                     ))}
                   </ScrollView>
                 </View>
@@ -133,6 +149,14 @@ export default function RoomCategoryScreen() {
         })}
       </View>
     </ScrollView>
+
+      <ImageViewing
+        images={viewerImages}
+        imageIndex={viewerIndex}
+        visible={viewerVisible}
+        onRequestClose={() => setViewerVisible(false)}
+      />
+
       <BackButton tint="dark" />
     </View>
   );
