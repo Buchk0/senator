@@ -15,6 +15,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BrandColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
 import { BackButton } from '@/components/navigation/back-button';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -139,6 +140,10 @@ export default function VipScreen() {
       <View style={[styles.reserveBar, { paddingBottom: insets.bottom + 16 }]}>
         <TouchableOpacity style={styles.reserveBtn} activeOpacity={0.85} onPress={() => Linking.openURL('tel:+7777777777')}>
           <Text style={styles.reserveText}>{t('vip.book_btn')}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.whatsappBtn} activeOpacity={0.85} onPress={() => Linking.openURL('https://wa.me/77777777777')}>
+          <Ionicons name="logo-whatsapp" size={18} color={BrandColors.gold} style={{ marginRight: 8 }} />
+          <Text style={styles.whatsappText}>{t('common.whatsapp')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -298,6 +303,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   reserveText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: BrandColors.gold,
+    letterSpacing: 0.4,
+  },
+  whatsappBtn: {
+    marginTop: 10,
+    borderRadius: 50,
+    paddingVertical: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: BrandColors.gold,
+    backgroundColor: 'transparent',
+  },
+  whatsappText: {
     fontSize: 15,
     fontWeight: '700',
     color: BrandColors.gold,

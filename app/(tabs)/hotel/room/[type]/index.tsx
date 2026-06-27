@@ -19,6 +19,7 @@ import { BlurView } from 'expo-blur';
 import { BrandColors } from '@/constants/theme';
 import { ROOM_CATEGORIES } from '@/constants/room-data';
 import { BackButton } from '@/components/navigation/back-button';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -66,6 +67,11 @@ export default function RoomCategoryScreen() {
           <TouchableOpacity style={styles.heroBookBtn} activeOpacity={0.85} onPress={() => Linking.openURL('tel:+7777777777')}>
             <BlurView intensity={55} style={StyleSheet.absoluteFill} tint="dark" />
             <Text style={styles.heroBookBtnText}>{t('hotel.book_btn')}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.heroWhatsappBtn} activeOpacity={0.85} onPress={() => Linking.openURL('https://wa.me/77777777777')}>
+            <BlurView intensity={55} style={StyleSheet.absoluteFill} tint="dark" />
+            <Ionicons name="logo-whatsapp" size={18} color={BrandColors.gold} style={{ marginRight: 8, zIndex: 1 }} />
+            <Text style={styles.heroWhatsappText}>{t('common.whatsapp')}</Text>
           </TouchableOpacity>
         </View>
       </ImageBackground>
@@ -182,6 +188,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: BrandColors.white,
+    zIndex: 1,
+  },
+  heroWhatsappBtn: {
+    marginTop: 10,
+    height: 56,
+    borderRadius: 28,
+    borderWidth: 1.5,
+    borderColor: BrandColors.gold,
+    overflow: 'hidden',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  heroWhatsappText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: BrandColors.gold,
     zIndex: 1,
   },
   subtypeList: {

@@ -1,6 +1,7 @@
 {
   "common": {
-    "back": "Back"
+    "back": "Back",
+    "whatsapp": "WhatsApp"
   },
   "promotions": {
     "title": "Promotions",

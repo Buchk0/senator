@@ -1,6 +1,7 @@
 {
   "common": {
-    "back": "Назад"
+    "back": "Назад",
+    "whatsapp": "WhatsApp"
   },
   "promotions": {
     "title": "Акции",
