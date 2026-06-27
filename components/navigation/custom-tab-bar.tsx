@@ -3,6 +3,7 @@ import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { ComponentProps } from 'react';
+import { router, usePathname } from 'expo-router';
 import { BrandColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
 
@@ -10,64 +11,56 @@ const NAV_DARK = '#1a2035';
 
 type IconName = ComponentProps<typeof MaterialIcons>['name'];
 
-const TAB_ICONS: Record<string, IconName> = {
-  index:       'home',
-  hotel:       'apartment',
-  restaurants: 'restaurant',
-  coupons:     'confirmation-number',
-  profile:     'person',
+type TabSpec = {
+  key: string;
+  icon: IconName;
+  i18nKey: string;
+  route: string;
+  matchPrefix: string;
 };
 
-const TAB_I18N_KEYS: Record<string, string> = {
-  index:       'nav.home',
-  hotel:       'nav.hotel',
-  restaurants: 'nav.restaurants',
-  coupons:     'nav.coupons',
-  profile:     'nav.profile',
-};
+const TABS: TabSpec[] = [
+  { key: 'home',    icon: 'home',         i18nKey: 'nav.home',    route: '/(tabs)',                     matchPrefix: '/' },
+  { key: 'hotel',   icon: 'apartment',    i18nKey: 'nav.hotel',   route: '/(tabs)/hotel',               matchPrefix: '/hotel' },
+  { key: 'senator', icon: 'restaurant',   i18nKey: 'nav.senator', route: '/(tabs)/restaurants/senator', matchPrefix: '/restaurants/senator' },
+  { key: 'balkon',  icon: 'lunch-dining', i18nKey: 'nav.balkon',  route: '/(tabs)/restaurants/balkon',  matchPrefix: '/restaurants/balkon' },
+  { key: 'profile', icon: 'person',       i18nKey: 'nav.profile', route: '/(tabs)/profile',             matchPrefix: '/profile' },
+];
 
-export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
+function getActiveKey(pathname: string): string {
+  if (pathname.startsWith('/restaurants/senator')) return 'senator';
+  if (pathname.startsWith('/restaurants/balkon')) return 'balkon';
+  if (pathname.startsWith('/hotel')) return 'hotel';
+  if (pathname.startsWith('/profile')) return 'profile';
+  if (pathname === '/' || pathname === '') return 'home';
+  return '';
+}
+
+export function CustomTabBar(_: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
+  const pathname = usePathname();
+  const activeKey = getActiveKey(pathname);
 
   return (
     <View style={[styles.container, { paddingBottom: insets.bottom + 8 }]}>
-      {state.routes.map((route, index) => {
-        const icon = TAB_ICONS[route.name];
-        const i18nKey = TAB_I18N_KEYS[route.name];
-        if (!icon || !i18nKey) return null;
-
-        const currentRoute = state.routes[state.index].name;
-        const isActuallyFocused = state.index === index;
-        const isFocused = isActuallyFocused ||
-          (['spa', 'conference', 'vip'].includes(currentRoute) && route.name === 'index');
-
-        const onPress = () => {
-          const event = navigation.emit({
-            type: 'tabPress',
-            target: route.key,
-            canPreventDefault: true,
-          });
-          if (!isActuallyFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name);
-          }
-        };
-
+      {TABS.map((tab) => {
+        const isFocused = activeKey === tab.key;
         return (
           <TouchableOpacity
-            key={route.key}
-            onPress={onPress}
+            key={tab.key}
+            onPress={() => router.push(tab.route as any)}
             style={styles.tab}
             activeOpacity={0.7}
           >
             <View style={[styles.pill, isFocused && styles.pillActive]}>
               <MaterialIcons
-                name={icon}
+                name={tab.icon}
                 size={22}
                 color={isFocused ? BrandColors.white : BrandColors.black}
               />
               <Text style={[styles.label, isFocused && styles.labelActive]} numberOfLines={1}>
-                {t(i18nKey as any)}
+                {t(tab.i18nKey as any)}
               </Text>
             </View>
           </TouchableOpacity>

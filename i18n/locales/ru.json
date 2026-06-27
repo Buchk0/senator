@@ -1,7 +1,9 @@
 {
   "common": {
     "back": "Назад",
-    "whatsapp": "WhatsApp"
+    "whatsapp": "WhatsApp",
+    "call": "Позвонить",
+    "cancel": "Отменить"
   },
   "promotions": {
     "title": "Акции",
@@ -43,6 +45,8 @@
   "nav": {
     "home": "Главная",
     "hotel": "Отель",
+    "senator": "Senator",
+    "balkon": "Balkon",
     "restaurants": "Рестораны",
     "coupons": "Купоны",
     "profile": "Профиль"

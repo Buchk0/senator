@@ -1,7 +1,9 @@
 {
   "common": {
     "back": "Артқа",
-    "whatsapp": "WhatsApp"
+    "whatsapp": "WhatsApp",
+    "call": "Қоңырау шалу",
+    "cancel": "Болдырмау"
   },
   "promotions": {
     "title": "Акциялар",
@@ -43,6 +45,8 @@
   "nav": {
     "home": "Басты",
     "hotel": "Қонақ үй",
+    "senator": "Senator",
+    "balkon": "Balkon",
     "restaurants": "Мейрамх",
     "coupons": "Купондар",
     "profile": "Профиль"

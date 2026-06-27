@@ -1,7 +1,9 @@
 {
   "common": {
     "back": "Back",
-    "whatsapp": "WhatsApp"
+    "whatsapp": "WhatsApp",
+    "call": "Call",
+    "cancel": "Cancel"
   },
   "promotions": {
     "title": "Promotions",
@@ -43,6 +45,8 @@
   "nav": {
     "home": "Home",
     "hotel": "Hotel",
+    "senator": "Senator",
+    "balkon": "Balkon",
     "restaurants": "Restaurants",
     "coupons": "Coupons",
     "profile": "Profile"

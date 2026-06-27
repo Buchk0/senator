@@ -9,7 +9,9 @@ import {
     TouchableOpacity,
     Dimensions,
     Linking,
+    Alert,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ImageViewing from 'react-native-image-viewing';
 import { BrandColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
@@ -43,12 +45,26 @@ const SPA_PHOTOS_FOR_VIEWER = SPA_PHOTOS.map((src) => ({
 type TabKey = 'services' | 'photos' | 'price';
 
 export default function SpaScreen() {
+    const insets = useSafeAreaInsets();
     const { t } = useTranslation();
     const { activeLanguage, changeLanguage } = useLanguage();
     const { services } = useSpaServices();
     const [activeTab, setActiveTab] = useState<TabKey>('services');
     const [viewerIndex, setViewerIndex] = useState(0);
     const [viewerVisible, setViewerVisible] = useState(false);
+
+    const handleBook = () => {
+        Alert.alert(
+            t('spa.book_btn'),
+            undefined,
+            [
+                { text: `${t('common.call')} +7 777 777 77 77`, onPress: () => Linking.openURL('tel:+7777777777') },
+                { text: t('common.whatsapp'), onPress: () => Linking.openURL('https://wa.me/77777777777') },
+                { text: t('common.cancel'), style: 'cancel' },
+            ],
+            { cancelable: true }
+        );
+    };
 
     const TABS: { key: TabKey; label: string }[] = [
         { key: 'services', label: t('spa.tab_services') },
@@ -129,7 +145,7 @@ export default function SpaScreen() {
                                             </View>
                                         </View>
                                         <Text style={styles.treatmentDuration}>{c.duration}</Text>
-                                        <TouchableOpacity style={styles.bookBtn} activeOpacity={0.85} onPress={() => Linking.openURL('tel:+7777777777')}>
+                                        <TouchableOpacity style={styles.bookBtn} activeOpacity={0.85} onPress={handleBook}>
                                             <Text style={styles.bookBtnText}>{t('spa.book_btn')}</Text>
                                         </TouchableOpacity>
                                     </View>
@@ -173,6 +189,12 @@ export default function SpaScreen() {
 
                 <View style={{ height: 90 }} />
             </ScrollView>
+
+            <View style={[styles.reserveBar, { paddingBottom: insets.bottom + 16 }]}>
+                <TouchableOpacity style={styles.reserveBtn} activeOpacity={0.85} onPress={handleBook}>
+                    <Text style={styles.reserveText}>{t('spa.book_btn')}</Text>
+                </TouchableOpacity>
+            </View>
 
             <BackButton tint="dark" />
         </View>
