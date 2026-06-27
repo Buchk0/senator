@@ -18,6 +18,7 @@ import { spaCategories } from '@/constants/spa-data';
 import { useSpaServices } from '@/hooks/use-spa-services';
 import { Header } from '@/components/home/header';
 import { useLanguage } from '@/hooks/use-language';
+import { BackButton } from '@/components/navigation/back-button';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -172,6 +173,8 @@ export default function SpaScreen() {
 
                 <View style={{ height: 90 }} />
             </ScrollView>
+
+            <BackButton tint="dark" />
         </View>
     );
 }

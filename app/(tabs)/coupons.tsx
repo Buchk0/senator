@@ -9,6 +9,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { auth, db } from '@/constants/firebase';
 import { useAuth } from '@/context/AuthContext';
 import { AuthGate } from '@/components/auth/auth-gate';
+import { BackButton } from '@/components/navigation/back-button';
 import {
   doc, getDoc, setDoc, deleteDoc, updateDoc,
   arrayUnion, collection, getDocs, serverTimestamp, Timestamp,
@@ -247,11 +248,17 @@ export default function CouponsTab() {
   const seasonal = filtered.filter(c => c.type === 'seasonal');
   const always   = filtered.filter(c => c.type === 'always');
 
-  if (!user) return <AuthGate />;
+  if (!user) return (
+    <View style={{ flex: 1 }}>
+      <AuthGate />
+      <BackButton tint="light" />
+    </View>
+  );
 
   return (
+    <View style={{ flex: 1 }}>
     <ScrollView style={styles.scroll}>
-      <View style={[styles.container, { paddingTop: insets.top }]}>
+      <View style={[styles.container, { paddingTop: insets.top + 56 }]}>
         <Text style={styles.title}>{t('coupons.title')}</Text>
         <Text style={styles.subTitle}>{t('coupons.subtitle')}</Text>
       </View>
@@ -307,6 +314,8 @@ export default function CouponsTab() {
         />
       </View>
     </ScrollView>
+      <BackButton tint="light" />
+    </View>
   );
 }
 

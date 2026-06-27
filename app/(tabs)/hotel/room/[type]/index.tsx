@@ -18,6 +18,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { BlurView } from 'expo-blur';
 import { BrandColors } from '@/constants/theme';
 import { ROOM_CATEGORIES } from '@/constants/room-data';
+import { BackButton } from '@/components/navigation/back-button';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -42,6 +43,7 @@ export default function RoomCategoryScreen() {
   };
 
   return (
+    <View style={{ flex: 1 }}>
     <ScrollView
       style={styles.container}
       bounces={false}
@@ -125,6 +127,8 @@ export default function RoomCategoryScreen() {
         })}
       </View>
     </ScrollView>
+      <BackButton tint="dark" />
+    </View>
   );
 }
 

@@ -6,18 +6,25 @@ import { useAuth } from '@/context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { AuthGate } from '@/components/auth/auth-gate';
+import { BackButton } from '@/components/navigation/back-button';
 
 export default function ProfileTab() {
   const insets = useSafeAreaInsets();
   const { user, profile, signOut } = useAuth();
   const { t } = useTranslation();
 
-  if (!user) return <AuthGate />;
+  if (!user) return (
+    <View style={{ flex: 1 }}>
+      <AuthGate />
+      <BackButton tint="light" />
+    </View>
+  );
 
   return (
+    <View style={{ flex: 1 }}>
     <ScrollView
       style={styles.profileBg}
-      contentContainerStyle={[styles.profileContent, { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 24 }]}
+      contentContainerStyle={[styles.profileContent, { paddingTop: insets.top + 56, paddingBottom: insets.bottom + 24 }]}
       showsVerticalScrollIndicator={false}
     >
       {/* Info card */}
@@ -71,6 +78,8 @@ export default function ProfileTab() {
         <Text style={styles.logoutBtnText}>{t('profile.logout')}</Text>
       </TouchableOpacity>
     </ScrollView>
+      <BackButton tint="light" />
+    </View>
   );
 }
 

@@ -14,6 +14,7 @@ import ImageViewing from 'react-native-image-viewing';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BrandColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
+import { BackButton } from '@/components/navigation/back-button';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -140,6 +141,8 @@ export default function VipScreen() {
           <Text style={styles.reserveText}>{t('vip.book_btn')}</Text>
         </TouchableOpacity>
       </View>
+
+      <BackButton tint="dark" />
     </View>
   );
 }

@@ -16,6 +16,7 @@ import { BrandColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
 import { EventsCarousel } from '@/components/home/events-carousel';
 import { useEvents } from '@/hooks/use-events';
+import { BackButton } from '@/components/navigation/back-button';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -162,6 +163,8 @@ export default function SenatorScreen() {
           <Text style={styles.reserveText}>{t('restaurants.book_table')}</Text>
         </TouchableOpacity>
       </View>
+
+      <BackButton tint="dark" />
     </View>
   );
 }

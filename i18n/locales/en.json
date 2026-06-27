@@ -1,4 +1,7 @@
 {
+  "common": {
+    "back": "Back"
+  },
   "home": {
     "hero_title": "Comfortable rest and delicious evenings - in one place",
     "hero_subtitle": "Book a room, a table and get coupons right in the app.",
