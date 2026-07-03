@@ -16,7 +16,7 @@ export default function ProfileTab() {
   if (!user) return (
     <View style={{ flex: 1 }}>
       <AuthGate />
-      <BackButton tint="light" />
+      <BackButton tint="dark" />
     </View>
   );
 
@@ -78,7 +78,7 @@ export default function ProfileTab() {
         <Text style={styles.logoutBtnText}>{t('profile.logout')}</Text>
       </TouchableOpacity>
     </ScrollView>
-      <BackButton tint="light" />
+      <BackButton tint="dark" />
     </View>
   );
 }

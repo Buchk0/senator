@@ -251,7 +251,7 @@ export default function CouponsTab() {
   if (!user) return (
     <View style={{ flex: 1 }}>
       <AuthGate />
-      <BackButton tint="light" />
+      <BackButton tint="dark" />
     </View>
   );
 
@@ -314,7 +314,7 @@ export default function CouponsTab() {
         />
       </View>
     </ScrollView>
-      <BackButton tint="light" />
+      <BackButton tint="dark" />
     </View>
   );
 }

@@ -21,9 +21,9 @@ export default function HomeScreen() {
     { id: 'spa', iconName: 'spa', label: t('home.quick_spa'), onPress: () => router.push('/(tabs)/spa') },
     { id: 'conference', iconName: 'present-to-all', label: t('home.quick_conference'), onPress: () => router.push('/(tabs)/conference') },
     { id: 'vip', iconName: 'handshake', label: t('home.quick_vip'), onPress: () => router.push('/(tabs)/vip') },
-    { id: 'promotions', iconName: 'local-offer', label: t('home.quick_promotions'), onPress: () => router.push('/promotions/index') },
-    { id: 'events', iconName: 'event', label: t('home.quick_events'), onPress: () => router.push('/events/index') },
-    { id: 'photos', iconName: 'photo-library', label: t('home.quick_photos'), onPress: () => router.push('/photos/index') },
+    { id: 'promotions', iconName: 'local-offer', label: t('home.quick_promotions'), onPress: () => router.push('/promotions') },
+    { id: 'events', iconName: 'event', label: t('home.quick_events'), onPress: () => router.push('/events') },
+    { id: 'photos', iconName: 'photo-library', label: t('home.quick_photos'), onPress: () => router.push('/photos') },
   ];
 
   return (
