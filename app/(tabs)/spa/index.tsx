@@ -8,8 +8,6 @@ import {
     ScrollView,
     TouchableOpacity,
     Dimensions,
-    Linking,
-    Alert,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ImageViewing from 'react-native-image-viewing';
@@ -21,6 +19,7 @@ import { useSpaServices } from '@/hooks/use-spa-services';
 import { Header } from '@/components/home/header';
 import { useLanguage } from '@/hooks/use-language';
 import { BackButton } from '@/components/navigation/back-button';
+import { useContactActions } from '@/hooks/use-contact-actions';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -53,18 +52,8 @@ export default function SpaScreen() {
     const [viewerIndex, setViewerIndex] = useState(0);
     const [viewerVisible, setViewerVisible] = useState(false);
 
-    const handleBook = () => {
-        Alert.alert(
-            t('spa.book_btn'),
-            undefined,
-            [
-                { text: `${t('common.call')} +7 777 777 77 77`, onPress: () => Linking.openURL('tel:+7777777777') },
-                { text: t('common.whatsapp'), onPress: () => Linking.openURL('https://wa.me/77777777777') },
-                { text: t('common.cancel'), style: 'cancel' },
-            ],
-            { cancelable: true }
-        );
-    };
+    const { showContactAlert } = useContactActions();
+    const handleBook = () => showContactAlert(t('spa.book_btn'));
 
     const TABS: { key: TabKey; label: string }[] = [
         { key: 'services', label: t('spa.tab_services') },

@@ -7,11 +7,13 @@ import { useTranslation } from 'react-i18next';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { AuthGate } from '@/components/auth/auth-gate';
 import { BackButton } from '@/components/navigation/back-button';
+import { useContactActions } from '@/hooks/use-contact-actions';
 
 export default function ProfileTab() {
   const insets = useSafeAreaInsets();
   const { user, profile, signOut } = useAuth();
   const { t } = useTranslation();
+  const { showContactAlert } = useContactActions();
 
   if (!user) return (
     <View style={{ flex: 1 }}>
@@ -58,7 +60,7 @@ export default function ProfileTab() {
       <View style={styles.helpCard}>
         <Text style={styles.sectionHeader}>{t('profile.help')}</Text>
 
-        <TouchableOpacity style={styles.helpRow} activeOpacity={0.8} onPress={() => Linking.openURL('tel:+7777777777')}>
+        <TouchableOpacity style={styles.helpRow} activeOpacity={0.8} onPress={() => showContactAlert(t('profile.contact_reception'))}>
           <Text style={styles.helpCardText}>{t('profile.contact_reception')}</Text>
           <View style={styles.chevronCircle}>
             <MaterialIcons name="chevron-right" size={22} color="#1a2035" />

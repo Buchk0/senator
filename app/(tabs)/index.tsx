@@ -7,12 +7,14 @@ import { HeroText } from '@/components/home/hero-text';
 import { ActionButtons } from '@/components/home/action-buttons';
 import { QuickAccess, QuickAccessItem } from '@/components/home/quick-access';
 import { useLanguage } from '@/hooks/use-language';
+import { useContactActions } from '@/hooks/use-contact-actions';
 import { BrandColors } from '@/constants/theme';
 
 
 export default function HomeScreen() {
   const { t } = useTranslation();
   const { activeLanguage, changeLanguage } = useLanguage();
+  const { showContactAlert } = useContactActions();
 
   const quickAccessItems: QuickAccessItem[] = [
     { id: 'hotel', iconName: 'bed', label: t('home.quick_hotel'), onPress: () => router.push('/(tabs)/hotel') },
@@ -48,7 +50,7 @@ export default function HomeScreen() {
             subtitle={t('home.hero_subtitle')}
           />
           <ActionButtons
-            primary={{ label: t('home.btn_contact'), onPress: () => Linking.openURL('tel:+7777777777') }}
+            primary={{ label: t('home.btn_contact'), onPress: () => showContactAlert(t('home.btn_contact')) }}
             secondary={{ label: t('home.btn_directions'), onPress: () => Linking.openURL('https://maps.app.goo.gl/kRDshYUDDvmSryyX6?g_st=ic') }}
           />
           <QuickAccess items={quickAccessItems} />
