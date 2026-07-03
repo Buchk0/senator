@@ -42,6 +42,16 @@ const MENU_IMAGES_FOR_VIEWER = MENU_IMAGES.map((src) => ({
   uri: Image.resolveAssetSource(src).uri,
 }));
 
+const PHOTOS = [
+  require('@/assets/images/senator-photo-1.jpg'),
+  require('@/assets/images/senator-photo-2.jpg'),
+  require('@/assets/images/senator-photo-3.jpg'),
+];
+
+const PHOTOS_FOR_VIEWER = PHOTOS.map((src) => ({
+  uri: Image.resolveAssetSource(src).uri,
+}));
+
 type TabKey = 'menu' | 'photos' | 'events' | 'info';
 
 export default function SenatorScreen() {
@@ -57,8 +67,15 @@ export default function SenatorScreen() {
     { key: 'events', label: t('restaurants.tab_events') },
     { key: 'info',   label: t('restaurants.tab_info') },
   ];
+  const [viewerImages, setViewerImages] = useState<{ uri: string }[]>([]);
   const [viewerIndex, setViewerIndex] = useState(0);
   const [viewerVisible, setViewerVisible] = useState(false);
+
+  const openViewer = (images: { uri: string }[], index: number) => {
+    setViewerImages(images);
+    setViewerIndex(index);
+    setViewerVisible(true);
+  };
 
   return (
     <View style={styles.root}>
@@ -109,7 +126,7 @@ export default function SenatorScreen() {
               <TouchableOpacity
                 key={i}
                 activeOpacity={0.9}
-                onPress={() => { setViewerIndex(i); setViewerVisible(true); }}
+                onPress={() => openViewer(MENU_IMAGES_FOR_VIEWER, i)}
               >
                 <Image source={src} style={styles.menuImage} resizeMode="cover" />
               </TouchableOpacity>
@@ -118,7 +135,7 @@ export default function SenatorScreen() {
         )}
 
         <ImageViewing
-          images={MENU_IMAGES_FOR_VIEWER}
+          images={viewerImages}
           imageIndex={viewerIndex}
           visible={viewerVisible}
           onRequestClose={() => setViewerVisible(false)}
@@ -127,9 +144,15 @@ export default function SenatorScreen() {
         {/* ─── Photos ─── */}
         {activeTab === 'photos' && (
           <View style={styles.photosWrap}>
-            <Image source={require('@/assets/images/senator-photo-1.jpg')} style={styles.photo} resizeMode="cover" />
-            <Image source={require('@/assets/images/senator-photo-2.jpg')} style={styles.photo} resizeMode="cover" />
-            <Image source={require('@/assets/images/senator-photo-3.jpg')} style={styles.photo} resizeMode="cover" />
+            {PHOTOS.map((src, i) => (
+              <TouchableOpacity
+                key={i}
+                activeOpacity={0.85}
+                onPress={() => openViewer(PHOTOS_FOR_VIEWER, i)}
+              >
+                <Image source={src} style={styles.photo} resizeMode="cover" />
+              </TouchableOpacity>
+            ))}
           </View>
         )}
 

@@ -21,11 +21,7 @@ export function BackButton({ tint = 'dark', onPress }: BackButtonProps) {
       onPress();
       return;
     }
-    if (router.canGoBack()) {
-      router.back();
-    } else {
-      router.replace('/(tabs)');
-    }
+    router.replace('/(tabs)');
   };
 
   return (
