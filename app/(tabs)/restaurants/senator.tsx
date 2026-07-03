@@ -18,6 +18,7 @@ import { EventsCarousel } from '@/components/home/events-carousel';
 import { useEvents } from '@/hooks/use-events';
 import { BackButton } from '@/components/navigation/back-button';
 import { useContactActions } from '@/hooks/use-contact-actions';
+import { useRestaurantPhotos } from '@/hooks/use-restaurant-photos';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -42,15 +43,6 @@ const MENU_IMAGES_FOR_VIEWER = MENU_IMAGES.map((src) => ({
   uri: Image.resolveAssetSource(src).uri,
 }));
 
-const PHOTOS = [
-  require('@/assets/images/senator-photo-1.jpg'),
-  require('@/assets/images/senator-photo-2.jpg'),
-  require('@/assets/images/senator-photo-3.jpg'),
-];
-
-const PHOTOS_FOR_VIEWER = PHOTOS.map((src) => ({
-  uri: Image.resolveAssetSource(src).uri,
-}));
 
 type TabKey = 'menu' | 'photos' | 'events' | 'info';
 
@@ -60,6 +52,8 @@ export default function SenatorScreen() {
   const [activeTab, setActiveTab] = useState<TabKey>('menu');
   const { events } = useEvents();
   const { showContactAlert } = useContactActions();
+  const { photos } = useRestaurantPhotos('Senator');
+  const photosForViewer = photos.map((p) => ({ uri: p.imageUrl }));
 
   const TABS: { key: TabKey; label: string }[] = [
     { key: 'menu',   label: t('restaurants.tab_menu') },
@@ -144,13 +138,13 @@ export default function SenatorScreen() {
         {/* ─── Photos ─── */}
         {activeTab === 'photos' && (
           <View style={styles.photosWrap}>
-            {PHOTOS.map((src, i) => (
+            {photos.map((p, i) => (
               <TouchableOpacity
-                key={i}
+                key={p.id}
                 activeOpacity={0.85}
-                onPress={() => openViewer(PHOTOS_FOR_VIEWER, i)}
+                onPress={() => openViewer(photosForViewer, i)}
               >
-                <Image source={src} style={styles.photo} resizeMode="cover" />
+                <Image source={{ uri: p.imageUrl }} style={styles.photo} resizeMode="cover" />
               </TouchableOpacity>
             ))}
           </View>
