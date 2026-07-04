@@ -15,6 +15,7 @@ import ImageViewing from 'react-native-image-viewing';
 import { ImageViewerHeader } from '@/components/image-viewer-header';
 import { BrandColors } from '@/constants/theme';
 import { BackButton } from '@/components/navigation/back-button';
+import { useGallery } from '@/hooks/use-gallery';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const H_PADDING = 16;
@@ -22,36 +23,11 @@ const GAP = 8;
 const COLS = 3;
 const PHOTO_SIZE = (SCREEN_WIDTH - H_PADDING * 2 - GAP * (COLS - 1)) / COLS;
 
-const PHOTOS = [
-  require('@/assets/images/senator-photo-1.jpg'),
-  require('@/assets/images/senator-photo-2.jpg'),
-  require('@/assets/images/senator-photo-3.jpg'),
-  require('@/assets/images/senator-photo-4.jpg'),
-  require('@/assets/images/grill-photo-1.jpg'),
-  require('@/assets/images/grill-photo-2.jpg'),
-  require('@/assets/images/grill-photo-3.jpg'),
-  require('@/assets/images/grill-photo-4.jpg'),
-  require('@/assets/images/grill-photo-5.jpg'),
-  require('@/assets/images/spa/spa-photo-1.jpg'),
-  require('@/assets/images/spa/spa-photo-2.jpg'),
-  require('@/assets/images/spa/spa-photo-3.jpg'),
-  require('@/assets/images/spa/spa-photo-4.jpg'),
-  require('@/assets/images/spa/spa-photo-5.jpg'),
-  require('@/assets/images/spa/spa-photo-6.jpg'),
-  require('@/assets/images/vip/vip-photo-1.jpg'),
-  require('@/assets/images/vip/vip-photo-2.jpg'),
-  require('@/assets/images/vip/vip-photo-3.jpg'),
-  require('@/assets/images/conference/conference-photo-1.jpg'),
-  require('@/assets/images/conference/conference-photo-2.jpg'),
-];
-
-const PHOTOS_FOR_VIEWER = PHOTOS.map((src) => ({
-  uri: Image.resolveAssetSource(src).uri,
-}));
-
 export default function PhotosScreen() {
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
+  const { photos } = useGallery();
+  const photosForViewer = photos.map((p) => ({ uri: p.imageUrl }));
   const [viewerIndex, setViewerIndex] = useState(0);
   const [viewerVisible, setViewerVisible] = useState(false);
 
@@ -78,14 +54,14 @@ export default function PhotosScreen() {
         </ImageBackground>
 
         <View style={styles.grid}>
-          {PHOTOS.map((src, i) => (
+          {photos.map((p, i) => (
             <TouchableOpacity
-              key={i}
+              key={p.id}
               activeOpacity={0.85}
               onPress={() => { setViewerIndex(i); setViewerVisible(true); }}
               style={styles.photoTouch}
             >
-              <Image source={src} style={styles.photo} resizeMode="cover" />
+              <Image source={{ uri: p.imageUrl }} style={styles.photo} resizeMode="cover" />
             </TouchableOpacity>
           ))}
         </View>
@@ -94,7 +70,7 @@ export default function PhotosScreen() {
       </ScrollView>
 
       <ImageViewing
-        images={PHOTOS_FOR_VIEWER}
+        images={photosForViewer}
         imageIndex={viewerIndex}
         visible={viewerVisible}
         onRequestClose={() => setViewerVisible(false)}
