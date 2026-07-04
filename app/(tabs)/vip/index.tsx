@@ -11,6 +11,7 @@ import {
   Linking,
 } from 'react-native';
 import ImageViewing from 'react-native-image-viewing';
+import { ImageViewerHeader } from '@/components/image-viewer-header';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BrandColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
@@ -112,6 +113,7 @@ export default function VipScreen() {
           imageIndex={viewerIndex}
           visible={viewerVisible}
           onRequestClose={() => setViewerVisible(false)}
+          HeaderComponent={() => <ImageViewerHeader onClose={() => setViewerVisible(false)} />}
         />
 
         {/* ─── Info ─── */}

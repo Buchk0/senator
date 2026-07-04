@@ -12,6 +12,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import ImageViewing from 'react-native-image-viewing';
+import { ImageViewerHeader } from '@/components/image-viewer-header';
 import { BrandColors } from '@/constants/theme';
 import { BackButton } from '@/components/navigation/back-button';
 
@@ -97,6 +98,7 @@ export default function PhotosScreen() {
         imageIndex={viewerIndex}
         visible={viewerVisible}
         onRequestClose={() => setViewerVisible(false)}
+        HeaderComponent={() => <ImageViewerHeader onClose={() => setViewerVisible(false)} />}
       />
 
       <BackButton tint="dark" />

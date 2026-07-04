@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ImageViewing from 'react-native-image-viewing';
+import { ImageViewerHeader } from '@/components/image-viewer-header';
 import { BrandColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -160,6 +161,7 @@ export default function SpaScreen() {
                     imageIndex={viewerIndex}
                     visible={viewerVisible}
                     onRequestClose={() => setViewerVisible(false)}
+                    HeaderComponent={() => <ImageViewerHeader onClose={() => setViewerVisible(false)} />}
                 />
 
                 {/* ─── Price ─── */}

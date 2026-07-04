@@ -21,6 +21,7 @@ import { ROOM_CATEGORIES } from '@/constants/room-data';
 import { BackButton } from '@/components/navigation/back-button';
 import { useContactActions } from '@/hooks/use-contact-actions';
 import ImageViewing from 'react-native-image-viewing';
+import { ImageViewerHeader } from '@/components/image-viewer-header';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -151,6 +152,7 @@ export default function RoomCategoryScreen() {
         imageIndex={viewerIndex}
         visible={viewerVisible}
         onRequestClose={() => setViewerVisible(false)}
+        HeaderComponent={() => <ImageViewerHeader onClose={() => setViewerVisible(false)} />}
       />
 
       <BackButton tint="dark" />

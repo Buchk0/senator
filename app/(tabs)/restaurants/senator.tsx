@@ -19,6 +19,7 @@ import { useEvents } from '@/hooks/use-events';
 import { BackButton } from '@/components/navigation/back-button';
 import { useContactActions } from '@/hooks/use-contact-actions';
 import { useRestaurantPhotos } from '@/hooks/use-restaurant-photos';
+import { ImageViewerHeader } from '@/components/image-viewer-header';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -133,6 +134,7 @@ export default function SenatorScreen() {
           imageIndex={viewerIndex}
           visible={viewerVisible}
           onRequestClose={() => setViewerVisible(false)}
+          HeaderComponent={() => <ImageViewerHeader onClose={() => setViewerVisible(false)} />}
         />
 
         {/* ─── Photos ─── */}
