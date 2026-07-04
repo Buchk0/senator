@@ -10,6 +10,7 @@ import { auth, db } from '@/constants/firebase';
 import { useAuth } from '@/context/AuthContext';
 import { AuthGate } from '@/components/auth/auth-gate';
 import { BackButton } from '@/components/navigation/back-button';
+import { router, useLocalSearchParams } from 'expo-router';
 import {
   doc, getDoc, setDoc, deleteDoc, updateDoc,
   arrayUnion, collection, getDocs, serverTimestamp, Timestamp,
@@ -133,6 +134,17 @@ export default function CouponsTab() {
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const { user } = useAuth();
+  const { from } = useLocalSearchParams<{ from?: string }>();
+
+  const handleBack = () => {
+    if (from === 'balkon') {
+      router.replace('/(tabs)/restaurants/balkon');
+    } else if (from === 'senator') {
+      router.replace('/(tabs)/restaurants/senator');
+    } else {
+      router.replace('/(tabs)');
+    }
+  };
 
   const [restaurant, setRestaurant] = useState<'All' | 'Senator' | 'Balkon'>('All');
   const [allCoupons, setAllCoupons] = useState<Coupon[]>([]);
@@ -251,7 +263,7 @@ export default function CouponsTab() {
   if (!user) return (
     <View style={{ flex: 1 }}>
       <AuthGate />
-      <BackButton tint="dark" />
+      <BackButton tint="dark" onPress={handleBack} />
     </View>
   );
 
@@ -314,7 +326,7 @@ export default function CouponsTab() {
         />
       </View>
     </ScrollView>
-      <BackButton tint="dark" />
+      <BackButton tint="dark" onPress={handleBack} />
     </View>
   );
 }

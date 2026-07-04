@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import ImageViewing from 'react-native-image-viewing';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
 import { BrandColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
 import { EventsCarousel } from '@/components/home/events-carousel';
@@ -171,6 +172,13 @@ export default function SenatorScreen() {
       <View style={[styles.reserveBar, { paddingBottom: insets.bottom + 16 }]}>
         <TouchableOpacity style={styles.reserveBtn} activeOpacity={0.85} onPress={() => showContactAlert(t('restaurants.book_table'))}>
           <Text style={styles.reserveText}>{t('restaurants.book_table')}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.couponsBtn}
+          activeOpacity={0.85}
+          onPress={() => router.push({ pathname: '/coupons', params: { from: 'senator' } })}
+        >
+          <Text style={styles.couponsText}>{t('restaurants.view_coupons')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -337,6 +345,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   reserveText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: BrandColors.gold,
+    letterSpacing: 0.4,
+  },
+  couponsBtn: {
+    marginTop: 10,
+    borderRadius: 50,
+    paddingVertical: 14,
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: BrandColors.gold,
+    backgroundColor: 'transparent',
+  },
+  couponsText: {
     fontSize: 15,
     fontWeight: '700',
     color: BrandColors.gold,

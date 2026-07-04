@@ -153,7 +153,8 @@
     "hours_title": "Working Hours",
     "hours_weekdays": "Mon – Thu",
     "hours_weekend": "Fri – Sun",
-    "book_table": "Book a Table"
+    "book_table": "Book a Table",
+    "view_coupons": "Coupons"
   },
   "spa": {
     "title": "Senator Spa",
