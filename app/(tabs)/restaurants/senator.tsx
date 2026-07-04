@@ -19,6 +19,7 @@ import { useEvents } from '@/hooks/use-events';
 import { BackButton } from '@/components/navigation/back-button';
 import { useContactActions } from '@/hooks/use-contact-actions';
 import { useRestaurantPhotos } from '@/hooks/use-restaurant-photos';
+import { useMenu } from '@/hooks/use-menu';
 import { ImageViewerHeader } from '@/components/image-viewer-header';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -29,20 +30,6 @@ const PHOTO_GAP = 8;
 const PHOTO_H_PAD = 16;
 const PHOTO_SIZE = (SCREEN_WIDTH - PHOTO_H_PAD * 2 - PHOTO_GAP * 2) / 3;
 
-const MENU_IMAGES = [
-  require('@/assets/images/menu/senator/1.png'),
-  require('@/assets/images/menu/senator/2.png'),
-  require('@/assets/images/menu/senator/3.png'),
-  require('@/assets/images/menu/senator/4.png'),
-  require('@/assets/images/menu/senator/5.png'),
-  require('@/assets/images/menu/senator/6.png'),
-  require('@/assets/images/menu/senator/7.png'),
-  require('@/assets/images/menu/senator/8.png'),
-];
-
-const MENU_IMAGES_FOR_VIEWER = MENU_IMAGES.map((src) => ({
-  uri: Image.resolveAssetSource(src).uri,
-}));
 
 
 type TabKey = 'menu' | 'photos' | 'events' | 'info';
@@ -55,6 +42,8 @@ export default function SenatorScreen() {
   const { showContactAlert } = useContactActions();
   const { photos } = useRestaurantPhotos('Senator');
   const photosForViewer = photos.map((p) => ({ uri: p.imageUrl }));
+  const { pages: menuPages } = useMenu('Senator');
+  const menuForViewer = menuPages.map((p) => ({ uri: p.imageUrl }));
 
   const TABS: { key: TabKey; label: string }[] = [
     { key: 'menu',   label: t('restaurants.tab_menu') },
@@ -117,13 +106,13 @@ export default function SenatorScreen() {
         {/* ─── Menu ─── */}
         {activeTab === 'menu' && (
           <View style={styles.menuWrap}>
-            {MENU_IMAGES.map((src, i) => (
+            {menuPages.map((p, i) => (
               <TouchableOpacity
-                key={i}
+                key={p.id}
                 activeOpacity={0.9}
-                onPress={() => openViewer(MENU_IMAGES_FOR_VIEWER, i)}
+                onPress={() => openViewer(menuForViewer, i)}
               >
-                <Image source={src} style={styles.menuImage} resizeMode="cover" />
+                <Image source={{ uri: p.imageUrl }} style={styles.menuImage} resizeMode="cover" />
               </TouchableOpacity>
             ))}
           </View>

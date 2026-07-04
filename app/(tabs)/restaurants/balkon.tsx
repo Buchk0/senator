@@ -19,6 +19,7 @@ import { useEvents } from '@/hooks/use-events';
 import { BackButton } from '@/components/navigation/back-button';
 import { useContactActions } from '@/hooks/use-contact-actions';
 import { useRestaurantPhotos } from '@/hooks/use-restaurant-photos';
+import { useMenu } from '@/hooks/use-menu';
 import { ImageViewerHeader } from '@/components/image-viewer-header';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -29,18 +30,6 @@ const PHOTO_GAP = 8;
 const PHOTO_H_PAD = 16;
 const PHOTO_SIZE = (SCREEN_WIDTH - PHOTO_H_PAD * 2 - PHOTO_GAP * 2) / 3;
 
-const MENU_IMAGES = [
-  require('@/assets/images/menu/balkon/1.png'),
-  require('@/assets/images/menu/balkon/2.png'),
-  require('@/assets/images/menu/balkon/3.png'),
-  require('@/assets/images/menu/balkon/4.png'),
-  require('@/assets/images/menu/balkon/5.png'),
-  require('@/assets/images/menu/balkon/6.png'),
-];
-
-const MENU_IMAGES_FOR_VIEWER = MENU_IMAGES.map((src) => ({
-  uri: Image.resolveAssetSource(src).uri,
-}));
 
 
 type TabKey = 'menu' | 'photos' | 'events' | 'info';
@@ -53,6 +42,8 @@ export default function BalkonScreen() {
   const { showContactAlert } = useContactActions();
   const { photos } = useRestaurantPhotos('Balkon');
   const photosForViewer = photos.map((p) => ({ uri: p.imageUrl }));
+  const { pages: menuPages } = useMenu('Balkon');
+  const menuForViewer = menuPages.map((p) => ({ uri: p.imageUrl }));
 
   const TABS: { key: TabKey; label: string }[] = [
     { key: 'menu',   label: t('restaurants.tab_menu') },
@@ -115,13 +106,13 @@ export default function BalkonScreen() {
         {/* ─── Menu ─── */}
         {activeTab === 'menu' && (
           <View style={styles.menuWrap}>
-            {MENU_IMAGES.map((src, i) => (
+            {menuPages.map((p, i) => (
               <TouchableOpacity
-                key={i}
+                key={p.id}
                 activeOpacity={0.9}
-                onPress={() => openViewer(MENU_IMAGES_FOR_VIEWER, i)}
+                onPress={() => openViewer(menuForViewer, i)}
               >
-                <Image source={src} style={styles.menuImage} resizeMode="contain" />
+                <Image source={{ uri: p.imageUrl }} style={styles.menuImage} resizeMode="contain" />
               </TouchableOpacity>
             ))}
           </View>
