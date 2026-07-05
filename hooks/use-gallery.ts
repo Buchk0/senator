@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
 import { collection, getDocs, orderBy, query, where } from 'firebase/firestore';
 import { db, auth } from '@/constants/firebase';
 
@@ -14,32 +15,45 @@ export function useGallery() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!auth.currentUser) {
-      setLoading(false);
-      return;
-    }
+    let cancelled = false;
 
-    getDocs(
-      query(
-        collection(db, 'gallery'),
-        where('active', '==', true),
-        orderBy('order', 'asc')
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        if (!cancelled) setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+      getDocs(
+        query(
+          collection(db, 'gallery'),
+          where('active', '==', true),
+          orderBy('order', 'asc')
+        )
       )
-    )
-      .then((snap) => {
-        const items: GalleryPhoto[] = snap.docs.map((d) => {
-          const data = d.data();
-          return {
-            id: d.id,
-            imageUrl: data.imageUrl,
-            order: data.order ?? 0,
-            active: data.active,
-          };
+        .then((snap) => {
+          if (cancelled) return;
+          const items: GalleryPhoto[] = snap.docs.map((d) => {
+            const data = d.data();
+            return {
+              id: d.id,
+              imageUrl: data.imageUrl,
+              order: data.order ?? 0,
+              active: data.active,
+            };
+          });
+          setPhotos(items);
+        })
+        .catch(console.error)
+        .finally(() => {
+          if (!cancelled) setLoading(false);
         });
-        setPhotos(items);
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
+    });
+
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
   }, []);
 
   return { photos, loading };

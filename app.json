@@ -42,7 +42,10 @@
         {
           "ios": {
             "useFrameworks": "static",
-            "forceStaticLinking": ["RNFBApp", "RNFBAuth"]
+            "forceStaticLinking": [
+              "RNFBApp",
+              "RNFBAuth"
+            ]
           }
         }
       ],
@@ -61,7 +64,8 @@
       ],
       "expo-localization",
       "@react-native-community/datetimepicker",
-      "expo-web-browser"
+      "expo-web-browser",
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true,

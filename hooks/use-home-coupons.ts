@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
@@ -49,34 +50,51 @@ export function useHomeCoupons() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!auth.currentUser) return;
-    getDocs(query(collection(db, 'coupons'), where('active', '==', true)))
-      .then((snap) => {
-        const all = snap.docs
-          .map((d) => ({ id: d.id, ...d.data() } as Coupon))
-          .filter((c) => !c.oneTime);
+    let cancelled = false;
 
-        const senator = all.filter((c) => c.restaurant === 'Senator' || c.restaurant === 'All');
-        const balkon  = all.filter((c) => c.restaurant === 'Balkon');
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        if (!cancelled) setLoading(false);
+        return;
+      }
 
-        setSenatorCoupons(
-          senator.map((c, i) =>
-            toCouponItem(c, i, SENATOR_PHOTOS, lang, t(`coupons.expires_${c.type}`), () =>
-              router.push('/(tabs)/restaurants/senator')
+      setLoading(true);
+      getDocs(query(collection(db, 'coupons'), where('active', '==', true)))
+        .then((snap) => {
+          if (cancelled) return;
+          const all = snap.docs
+            .map((d) => ({ id: d.id, ...d.data() } as Coupon))
+            .filter((c) => !c.oneTime);
+
+          const senator = all.filter((c) => c.restaurant === 'Senator' || c.restaurant === 'All');
+          const balkon  = all.filter((c) => c.restaurant === 'Balkon');
+
+          setSenatorCoupons(
+            senator.map((c, i) =>
+              toCouponItem(c, i, SENATOR_PHOTOS, lang, t(`coupons.expires_${c.type}`), () =>
+                router.push('/(tabs)/restaurants/senator')
+              )
             )
-          )
-        );
+          );
 
-        setBalkonCoupons(
-          balkon.map((c, i) =>
-            toCouponItem(c, i, BALKON_PHOTOS, lang, t(`coupons.expires_${c.type}`), () =>
-              router.push('/(tabs)/restaurants/balkon')
+          setBalkonCoupons(
+            balkon.map((c, i) =>
+              toCouponItem(c, i, BALKON_PHOTOS, lang, t(`coupons.expires_${c.type}`), () =>
+                router.push('/(tabs)/restaurants/balkon')
+              )
             )
-          )
-        );
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
+          );
+        })
+        .catch(console.error)
+        .finally(() => {
+          if (!cancelled) setLoading(false);
+        });
+    });
+
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
   }, [lang]);
 
   return { senatorCoupons, balkonCoupons, loading };

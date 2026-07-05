@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db, auth } from '@/constants/firebase';
 import { EventItem } from '@/components/home/events-carousel';
@@ -12,22 +13,39 @@ export function useEvents() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!auth.currentUser) return;
-    getDocs(query(collection(db, 'events'), where('active', '==', true)))
-      .then((snap) => {
-        const items: EventItem[] = snap.docs.map((d) => {
-          const data = d.data();
-          return {
-            id: d.id,
-            imageUrl: data.imageUrl ?? '',
-            title: data.title?.[lang] ?? data.title?.en ?? '',
-            subtitle: data.date ?? '',
-          };
+    let cancelled = false;
+
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        if (!cancelled) setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+      getDocs(query(collection(db, 'events'), where('active', '==', true)))
+        .then((snap) => {
+          if (cancelled) return;
+          const items: EventItem[] = snap.docs.map((d) => {
+            const data = d.data();
+            return {
+              id: d.id,
+              imageUrl: data.imageUrl ?? '',
+              title: data.title?.[lang] ?? data.title?.en ?? '',
+              subtitle: data.date ?? '',
+            };
+          });
+          setEvents(items);
+        })
+        .catch(console.error)
+        .finally(() => {
+          if (!cancelled) setLoading(false);
         });
-        setEvents(items);
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
+    });
+
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
   }, [lang]);
 
   return { events, loading };
