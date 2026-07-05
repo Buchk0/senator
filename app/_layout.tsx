@@ -11,6 +11,7 @@ import AuthProvider, { useAuth } from '@/context/AuthContext';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Asset } from 'expo-asset';
 import { BrandColors } from '@/constants/theme';
+import { prefetchRemoteContent } from '@/utils/prefetch-remote-content';
 
 // ─── All local images to preload ─────────────────────────────────────────────
 
@@ -178,6 +179,7 @@ function InitialLayout() {
   const segments = useSegments();
   const colorScheme = useColorScheme();
   const [assetsLoaded, setAssetsLoaded] = useState(false);
+  const remotePrefetchStarted = useRef(false);
 
   useEffect(() => {
     async function preload() {
@@ -189,6 +191,16 @@ function InitialLayout() {
     }
     preload();
   }, []);
+
+  // Firestore-backed photos (restaurantPhotos, menu, gallery, spa, events,
+  // coupons) live at URLs only known once logged in — kick off their
+  // download as soon as auth resolves, in the background, so they're
+  // already cached by the time the user opens those screens.
+  useEffect(() => {
+    if (!user || remotePrefetchStarted.current) return;
+    remotePrefetchStarted.current = true;
+    prefetchRemoteContent().catch(console.error);
+  }, [user]);
 
   useEffect(() => {
     if (!assetsLoaded || loading) return;
