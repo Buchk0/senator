@@ -11,10 +11,25 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    // Coupons are world-readable for authenticated users, writeable only via console.
+    // Coupons: readable by any authenticated user; writable only by admins.
     match /coupons/{couponId} {
       allow read: if request.auth != null;
-      allow write: if false;
+      allow write: if request.auth != null
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Hotel events: same access model as coupons.
+    match /events/{eventId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Spa services: same access model as coupons.
+    match /spa_services/{serviceId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
     // Restaurant photos: readable by any authenticated user;
