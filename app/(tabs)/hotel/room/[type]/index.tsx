@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, router } from 'expo-router';
 import { BlurView } from 'expo-blur';
 import { BrandColors } from '@/constants/theme';
 import { ROOM_CATEGORIES } from '@/constants/room-data';
@@ -155,7 +155,7 @@ export default function RoomCategoryScreen() {
         HeaderComponent={() => <ImageViewerHeader onClose={() => setViewerVisible(false)} />}
       />
 
-      <BackButton tint="dark" />
+      <BackButton tint="dark" onPress={() => router.replace('/(tabs)/hotel')} />
     </View>
   );
 }

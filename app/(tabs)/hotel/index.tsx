@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { BrandColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
+import { BackButton } from '@/components/navigation/back-button';
 
 const ROOMS = [
   { type: 'standard', image: require('@/assets/images/standart/standart-double/1.jpg') },
@@ -16,7 +17,8 @@ export default function HotelTab() {
   const { t } = useTranslation();
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top + 24 }]}>
+    <View style={[styles.container, { paddingTop: insets.top + 72 }]}>
+      <BackButton tint="dark" />
       <Text style={styles.heading}>{t('hotel.title')}</Text>
       <Text style={styles.subheading}>{t('hotel.subtitle')}</Text>
 
