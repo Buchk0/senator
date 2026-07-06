@@ -19,7 +19,7 @@
     },
     "android": {
       "package": "kz.senator.hotel",
-      "versionCode": 11,
+      "versionCode": 12,
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
