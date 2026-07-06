@@ -29,7 +29,9 @@ const NAV_DARK = '#1a2035';
 
 const PHOTO_GAP = 8;
 const PHOTO_H_PAD = 16;
-const PHOTO_SIZE = (SCREEN_WIDTH - PHOTO_H_PAD * 2 - PHOTO_GAP * 2) / 3;
+// Divide by ~3.3 instead of 3 so a sliver of the next photo peeks in,
+// signalling that the row scrolls horizontally.
+const PHOTO_SIZE = (SCREEN_WIDTH - PHOTO_H_PAD * 2 - PHOTO_GAP * 2) / 3.3;
 
 
 
@@ -129,7 +131,11 @@ export default function SenatorScreen() {
 
         {/* ─── Photos ─── */}
         {activeTab === 'photos' && (
-          <View style={styles.photosWrap}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.photosWrap}
+          >
             {photos.map((p, i) => (
               <TouchableOpacity
                 key={p.id}
@@ -139,7 +145,7 @@ export default function SenatorScreen() {
                 <Image source={{ uri: p.imageUrl }} style={styles.photo} resizeMode="cover" />
               </TouchableOpacity>
             ))}
-          </View>
+          </ScrollView>
         )}
 
         {/* ─── Events ─── */}
@@ -165,7 +171,7 @@ export default function SenatorScreen() {
           </View>
         )}
 
-        <View style={{ height: 90 }} />
+        <View style={{ height: insets.bottom + 160 }} />
       </ScrollView>
 
       {/* ─── Sticky Reservation Button ─── */}

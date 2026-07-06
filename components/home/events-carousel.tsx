@@ -34,9 +34,11 @@ export function EventCard({ imageUrl, subtitle, title }: EventItem) {
         resizeMode="cover"
       />
 
-      <Text style={styles.subtitleText}>{subtitle}</Text>
+      {/* Dark scrim so white text stays legible over bright photos */}
+      <View style={styles.scrim} />
 
       <View style={styles.titleWrap}>
+        {subtitle ? <Text style={styles.subtitleText}>{subtitle}</Text> : null}
         <Text style={styles.titleText}>{title}</Text>
       </View>
     </View>
@@ -92,11 +94,11 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   cardImage: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    height: CARD_HEIGHT,
-    width: CARD_HEIGHT,
+    ...StyleSheet.absoluteFillObject,
+  },
+  scrim: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.38)',
   },
   subtitleText: {
     color: BrandColors.white,
@@ -105,7 +107,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 21,
     opacity: 0.85,
-    marginTop: 20,
+    marginBottom: 6,
   },
   titleWrap: {
     position: 'absolute',
@@ -115,6 +117,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     alignItems: 'center',
     justifyContent: 'center',
+    paddingHorizontal: 10,
   },
   titleText: {
     color: BrandColors.white,
@@ -122,5 +125,8 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     textAlign: 'center',
     lineHeight: 26,
+    textShadowColor: 'rgba(0,0,0,0.4)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
   },
 });
