@@ -36,7 +36,7 @@ export function useSpaServices() {
             const data = d.data();
             return {
               id: d.id,
-              name: data.name?.[lang] ?? data.name?.en ?? '',
+              name: data.name?.[lang] || data.name?.en || '',
               duration: data.duration ?? '',
               price: data.price ?? '',
               imageUrl: data.imageUrl ?? '',

@@ -30,7 +30,10 @@ export function useEvents() {
             return {
               id: d.id,
               imageUrl: data.imageUrl ?? '',
-              title: data.title?.[lang] ?? data.title?.en ?? '',
+              // ?? only falls through on null/undefined — admin only requires
+              // the EN field, so an untranslated RU/KZ title is '' (not
+              // nullish) and would render blank without the `||` fallback.
+              title: data.title?.[lang] || data.title?.en || '',
               subtitle: data.date ?? '',
             };
           });

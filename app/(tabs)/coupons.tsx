@@ -59,15 +59,15 @@ function CouponCard({ c, timerSeconds, onUse }: CouponCardProps) {
       </View>
 
       {/* ── Title & description ── */}
-      <Text style={styles.couponTitle}>{c.emoji} {c.title[lang]}</Text>
-      <Text style={styles.couponDesc}>{c.description[lang]}</Text>
+      <Text style={styles.couponTitle}>{c.emoji} {c.title[lang] || c.title.en}</Text>
+      <Text style={styles.couponDesc}>{c.description[lang] || c.description.en}</Text>
 
       <View style={styles.couponDivider} />
 
       {/* ── Terms ── */}
       <Text style={styles.couponTerms}>
         <Text style={styles.couponTermsLabel}>{t('coupons.terms_label')}: </Text>
-        {c.terms[lang]}
+        {c.terms[lang] || c.terms.en}
       </Text>
 
       {/* ── Action area (one-time coupons only) ── */}

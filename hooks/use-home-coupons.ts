@@ -34,8 +34,10 @@ function toCouponItem(
     imageUrl: coupon.imageUrl ? { uri: coupon.imageUrl } : photos[index % photos.length],
     categoryLabel: coupon.restaurant === 'All' ? 'Senator & Balkon' : coupon.restaurant,
     validUntil: validUntilLabel,
-    title: coupon.title[lang],
-    description: coupon.description[lang],
+    // Admin only requires the EN field — an untranslated RU/KZ entry is ''
+    // (not nullish), so fall back to EN explicitly instead of showing blank.
+    title: coupon.title[lang] || coupon.title.en,
+    description: coupon.description[lang] || coupon.description.en,
     onPress,
   };
 }
