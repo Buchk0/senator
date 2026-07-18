@@ -1,19 +1,21 @@
 import { Image } from 'react-native';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/constants/firebase';
+import { contentCache, RawDoc } from '@/utils/content-cache';
+
+async function fetchActiveDocs(collectionName: string): Promise<RawDoc[]> {
+  const snap = await getDocs(query(collection(db, collectionName), where('active', '==', true))).catch(() => null);
+  if (!snap) return [];
+  return snap.docs.map((d) => ({ id: d.id, data: d.data() }));
+}
 
 async function collectImageUrls(collectionNames: readonly string[]): Promise<Set<string>> {
-  const snapshots = await Promise.all(
-    collectionNames.map((name) =>
-      getDocs(query(collection(db, name), where('active', '==', true))).catch(() => null)
-    )
-  );
+  const docLists = await Promise.all(collectionNames.map(fetchActiveDocs));
 
   const urls = new Set<string>();
-  snapshots.forEach((snap) => {
-    if (!snap) return;
-    snap.docs.forEach((d) => {
-      const url = d.data().imageUrl;
+  docLists.forEach((docs) => {
+    docs.forEach(({ data }) => {
+      const url = data.imageUrl;
       if (typeof url === 'string' && url) urls.add(url);
     });
   });
@@ -23,9 +25,21 @@ async function collectImageUrls(collectionNames: readonly string[]): Promise<Set
 // Menu and spa service photos are small in number but shown immediately on
 // screens users open right after launch — download and await all of them
 // before the splash screen releases, so those two sections never show a
-// loading placeholder at all.
+// loading placeholder at all. The fetched docs are also cached so
+// useMenu/useSpaServices can read them synchronously instead of re-querying
+// Firestore every time those screens mount (e.g. switching Senator/Balkon).
 export async function prefetchCriticalContent(): Promise<void> {
-  const urls = await collectImageUrls(['menu', 'spa_services']);
+  const [menuDocs, spaDocs] = await Promise.all([
+    fetchActiveDocs('menu'),
+    fetchActiveDocs('spa_services'),
+  ]);
+  contentCache.menu = menuDocs;
+  contentCache.spaServices = spaDocs;
+
+  const urls = new Set<string>();
+  [...menuDocs, ...spaDocs].forEach(({ data }) => {
+    if (typeof data.imageUrl === 'string' && data.imageUrl) urls.add(data.imageUrl);
+  });
   await Promise.allSettled([...urls].map((url) => Image.prefetch(url)));
 }
 
