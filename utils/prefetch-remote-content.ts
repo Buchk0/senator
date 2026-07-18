@@ -2,22 +2,9 @@ import { Image } from 'react-native';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/constants/firebase';
 
-const COLLECTIONS_WITH_IMAGES = [
-  'restaurantPhotos',
-  'menu',
-  'gallery',
-  'spa_services',
-  'events',
-  'coupons',
-] as const;
-
-// Fetches every active Firestore-backed collection's imageUrl and starts
-// downloading them into the RN image cache right away, so screens like
-// Senator/Balkon photos, menu, gallery no longer show a load-in-place spinner
-// the first time the user opens them after login.
-export async function prefetchRemoteContent(): Promise<void> {
+async function collectImageUrls(collectionNames: readonly string[]): Promise<Set<string>> {
   const snapshots = await Promise.all(
-    COLLECTIONS_WITH_IMAGES.map((name) =>
+    collectionNames.map((name) =>
       getDocs(query(collection(db, name), where('active', '==', true))).catch(() => null)
     )
   );
@@ -30,7 +17,23 @@ export async function prefetchRemoteContent(): Promise<void> {
       if (typeof url === 'string' && url) urls.add(url);
     });
   });
+  return urls;
+}
 
+// Menu and spa service photos are small in number but shown immediately on
+// screens users open right after launch — download and await all of them
+// before the splash screen releases, so those two sections never show a
+// loading placeholder at all.
+export async function prefetchCriticalContent(): Promise<void> {
+  const urls = await collectImageUrls(['menu', 'spa_services']);
+  await Promise.allSettled([...urls].map((url) => Image.prefetch(url)));
+}
+
+// Everything else (restaurantPhotos, gallery, events, coupons) is public or
+// becomes readable after login — start downloading in the background without
+// blocking the UI; screens show a fade-in placeholder until each one lands.
+export async function prefetchBackgroundContent(): Promise<void> {
+  const urls = await collectImageUrls(['restaurantPhotos', 'gallery', 'events', 'coupons']);
   urls.forEach((url) => {
     Image.prefetch(url).catch(() => {});
   });

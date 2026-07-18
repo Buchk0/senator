@@ -11,7 +11,7 @@ import AuthProvider, { useAuth } from '@/context/AuthContext';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Asset } from 'expo-asset';
 import { BrandColors } from '@/constants/theme';
-import { prefetchRemoteContent } from '@/utils/prefetch-remote-content';
+import { prefetchCriticalContent, prefetchBackgroundContent } from '@/utils/prefetch-remote-content';
 
 // ─── All local images to preload ─────────────────────────────────────────────
 
@@ -185,20 +185,23 @@ function InitialLayout() {
       await Promise.all([
         Asset.loadAsync(LOCAL_IMAGES),
         ...REMOTE_IMAGES.map(url => Image.prefetch(url)),
+        // Menu and spa photos are shown right after launch — hold the splash
+        // until they're fully cached so those two sections never show a
+        // loading placeholder.
+        prefetchCriticalContent().catch(console.error),
       ]);
       setAssetsLoaded(true);
     }
     preload();
   }, []);
 
-  // Firestore-backed photos (restaurantPhotos, menu, gallery, spa, events)
-  // are public and readable without login, so start downloading them right
-  // away in the background — no need to wait for auth. Coupons still
-  // require login; that collection's fetch inside prefetchRemoteContent
+  // Everything else (restaurantPhotos, gallery, events, coupons) is public or
+  // becomes readable after login — download in the background without
+  // blocking the splash. Coupons require login; that collection's fetch
   // simply no-ops (catches its own permission error) until the user signs
   // in, at which point this effect re-runs (user changed) and picks it up.
   useEffect(() => {
-    prefetchRemoteContent().catch(console.error);
+    prefetchBackgroundContent().catch(console.error);
   }, [user]);
 
   useEffect(() => {
