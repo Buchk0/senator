@@ -9,6 +9,7 @@ import {
     TouchableOpacity,
     Dimensions,
 } from 'react-native';
+import { Image as ExpoImage } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ImageViewing from 'react-native-image-viewing';
 import { ImageViewerHeader } from '@/components/image-viewer-header';
@@ -123,7 +124,12 @@ export default function SpaScreen() {
                             {services.map(c => (
                                 <View key={c.id} style={styles.treatmentCard}>
                                     {c.imageUrl ? (
-                                        <Image source={{ uri: c.imageUrl }} style={styles.treatmentImage} resizeMode="cover" />
+                                        <ExpoImage
+                                            source={{ uri: c.imageUrl }}
+                                            style={[styles.treatmentImage, { backgroundColor: '#f0ece4' }]}
+                                            contentFit="cover"
+                                            transition={200}
+                                        />
                                     ) : (
                                         <View style={[styles.treatmentImage, { backgroundColor: '#f0ece4' }]} />
                                     )}

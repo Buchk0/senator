@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
+import { Image as ExpoImage } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import ImageViewing from 'react-native-image-viewing';
@@ -61,7 +62,12 @@ export default function PhotosScreen() {
               onPress={() => { setViewerIndex(i); setViewerVisible(true); }}
               style={styles.photoTouch}
             >
-              <Image source={{ uri: p.imageUrl }} style={styles.photo} resizeMode="cover" />
+              <ExpoImage
+                source={{ uri: p.imageUrl }}
+                style={styles.photo}
+                contentFit="cover"
+                transition={200}
+              />
             </TouchableOpacity>
           ))}
         </View>
@@ -138,5 +144,6 @@ const styles = StyleSheet.create({
   photo: {
     width: '100%',
     height: '100%',
+    backgroundColor: '#eee',
   },
 });

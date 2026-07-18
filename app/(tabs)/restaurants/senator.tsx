@@ -10,6 +10,7 @@ import {
   Dimensions,
   Linking,
 } from 'react-native';
+import { Image as ExpoImage } from 'expo-image';
 import ImageViewing from 'react-native-image-viewing';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -115,7 +116,12 @@ export default function SenatorScreen() {
                 activeOpacity={0.9}
                 onPress={() => openViewer(menuForViewer, i)}
               >
-                <Image source={{ uri: p.imageUrl }} style={styles.menuImage} resizeMode="cover" />
+                <ExpoImage
+                  source={{ uri: p.imageUrl }}
+                  style={styles.menuImage}
+                  contentFit="cover"
+                  transition={200}
+                />
               </TouchableOpacity>
             ))}
           </View>
@@ -142,7 +148,12 @@ export default function SenatorScreen() {
                 activeOpacity={0.85}
                 onPress={() => openViewer(photosForViewer, i)}
               >
-                <Image source={{ uri: p.imageUrl }} style={styles.photo} resizeMode="cover" />
+                <ExpoImage
+                  source={{ uri: p.imageUrl }}
+                  style={styles.photo}
+                  contentFit="cover"
+                  transition={200}
+                />
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -271,7 +282,7 @@ const styles = StyleSheet.create({
   menuImage: {
     width: SCREEN_WIDTH,
     height: SCREEN_WIDTH * 1.5,
-    backgroundColor: BrandColors.white,
+    backgroundColor: '#eee',
   },
 
   /* ── Photos ── */
@@ -286,6 +297,7 @@ const styles = StyleSheet.create({
     width: PHOTO_SIZE,
     height: PHOTO_SIZE,
     borderRadius: 12,
+    backgroundColor: '#eee',
   },
 
   /* ── Info ── */

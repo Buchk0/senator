@@ -2,9 +2,9 @@ import {
   View,
   Text,
   StyleSheet,
-  Image,
   Dimensions,
 } from 'react-native';
+import { Image } from 'expo-image';
 import { BrandColors } from '@/constants/theme';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -31,7 +31,8 @@ export function EventCard({ imageUrl, subtitle, title }: EventItem) {
       <Image
         source={{ uri: imageUrl }}
         style={styles.cardImage}
-        resizeMode="cover"
+        contentFit="cover"
+        transition={200}
       />
 
       {/* Dark scrim so white text stays legible over bright photos */}
@@ -95,6 +96,7 @@ const styles = StyleSheet.create({
   },
   cardImage: {
     ...StyleSheet.absoluteFillObject,
+    backgroundColor: '#d9d9d9',
   },
   scrim: {
     ...StyleSheet.absoluteFillObject,
