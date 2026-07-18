@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { collection, getDocs, orderBy, query, where } from 'firebase/firestore';
 import { db } from '@/constants/firebase';
+import { contentCache } from '@/utils/content-cache';
 
 export interface GalleryPhoto {
   id: string;
@@ -9,11 +10,35 @@ export interface GalleryPhoto {
   active: boolean;
 }
 
+function toGalleryPhoto(id: string, data: Record<string, any>): GalleryPhoto {
+  return {
+    id,
+    imageUrl: data.imageUrl,
+    order: data.order ?? 0,
+    active: data.active,
+  };
+}
+
 export function useGallery() {
-  const [photos, setPhotos] = useState<GalleryPhoto[]>([]);
-  const [loading, setLoading] = useState(true);
+  const cached = contentCache.gallery;
+  const initialPhotos = cached
+    ? cached.map((d) => toGalleryPhoto(d.id, d.data)).sort((a, b) => a.order - b.order)
+    : [];
+
+  const [photos, setPhotos] = useState<GalleryPhoto[]>(initialPhotos);
+  const [loading, setLoading] = useState(!cached);
 
   useEffect(() => {
+    // Already fetched in the background at app startup — read from that
+    // cache instead of re-querying Firestore on every mount.
+    if (contentCache.gallery) {
+      setPhotos(
+        contentCache.gallery.map((d) => toGalleryPhoto(d.id, d.data)).sort((a, b) => a.order - b.order)
+      );
+      setLoading(false);
+      return;
+    }
+
     let cancelled = false;
 
     setLoading(true);
@@ -26,16 +51,7 @@ export function useGallery() {
     )
       .then((snap) => {
         if (cancelled) return;
-        const items: GalleryPhoto[] = snap.docs.map((d) => {
-          const data = d.data();
-          return {
-            id: d.id,
-            imageUrl: data.imageUrl,
-            order: data.order ?? 0,
-            active: data.active,
-          };
-        });
-        setPhotos(items);
+        setPhotos(snap.docs.map((d) => toGalleryPhoto(d.id, d.data())));
       })
       .catch(console.error)
       .finally(() => {

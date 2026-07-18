@@ -6,6 +6,7 @@ import { useRouter } from 'expo-router';
 import { db, auth } from '@/constants/firebase';
 import { Coupon } from '@/constants/coupons-data';
 import { CouponItem } from '@/components/home/coupon-carousel';
+import { contentCache, RawDoc } from '@/utils/content-cache';
 
 const SENATOR_PHOTOS = [
   require('@/assets/images/senator-photo-1.jpg'),
@@ -20,6 +21,10 @@ const BALKON_PHOTOS = [
   require('@/assets/images/grill-photo-3.jpg'),
   require('@/assets/images/grill-photo-4.jpg'),
 ];
+
+function toCoupons(docs: RawDoc[]): Coupon[] {
+  return docs.map((d) => ({ id: d.id, ...d.data } as Coupon)).filter((c) => !c.oneTime);
+}
 
 function toCouponItem(
   coupon: Coupon,
@@ -54,6 +59,35 @@ export function useHomeCoupons() {
   useEffect(() => {
     let cancelled = false;
 
+    const applyCoupons = (all: Coupon[]) => {
+      const senator = all.filter((c) => c.restaurant === 'Senator' || c.restaurant === 'All');
+      const balkon  = all.filter((c) => c.restaurant === 'Balkon');
+
+      setSenatorCoupons(
+        senator.map((c, i) =>
+          toCouponItem(c, i, SENATOR_PHOTOS, lang, t(`coupons.expires_${c.type}`), () =>
+            router.push('/(tabs)/restaurants/senator')
+          )
+        )
+      );
+
+      setBalkonCoupons(
+        balkon.map((c, i) =>
+          toCouponItem(c, i, BALKON_PHOTOS, lang, t(`coupons.expires_${c.type}`), () =>
+            router.push('/(tabs)/restaurants/balkon')
+          )
+        )
+      );
+    };
+
+    // Already fetched in the background at app startup (post-login) — read
+    // from that cache instead of re-querying Firestore on every mount.
+    if (contentCache.coupons) {
+      applyCoupons(toCoupons(contentCache.coupons));
+      setLoading(false);
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!user) {
         if (!cancelled) setLoading(false);
@@ -64,28 +98,7 @@ export function useHomeCoupons() {
       getDocs(query(collection(db, 'coupons'), where('active', '==', true)))
         .then((snap) => {
           if (cancelled) return;
-          const all = snap.docs
-            .map((d) => ({ id: d.id, ...d.data() } as Coupon))
-            .filter((c) => !c.oneTime);
-
-          const senator = all.filter((c) => c.restaurant === 'Senator' || c.restaurant === 'All');
-          const balkon  = all.filter((c) => c.restaurant === 'Balkon');
-
-          setSenatorCoupons(
-            senator.map((c, i) =>
-              toCouponItem(c, i, SENATOR_PHOTOS, lang, t(`coupons.expires_${c.type}`), () =>
-                router.push('/(tabs)/restaurants/senator')
-              )
-            )
-          );
-
-          setBalkonCoupons(
-            balkon.map((c, i) =>
-              toCouponItem(c, i, BALKON_PHOTOS, lang, t(`coupons.expires_${c.type}`), () =>
-                router.push('/(tabs)/restaurants/balkon')
-              )
-            )
-          );
+          applyCoupons(toCoupons(snap.docs.map((d) => ({ id: d.id, data: d.data() }))));
         })
         .catch(console.error)
         .finally(() => {

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { collection, getDocs, orderBy, query, where } from 'firebase/firestore';
 import { db } from '@/constants/firebase';
+import { contentCache } from '@/utils/content-cache';
 
 export type PhotoRestaurant = 'Senator' | 'Balkon';
 
@@ -9,13 +10,48 @@ export interface RestaurantPhoto {
   restaurant: PhotoRestaurant;
   imageUrl: string;
   active: boolean;
+  createdAt?: { seconds: number; nanoseconds: number };
+}
+
+function toPhoto(id: string, data: Record<string, any>): RestaurantPhoto {
+  return {
+    id,
+    restaurant: data.restaurant,
+    imageUrl: data.imageUrl,
+    active: data.active,
+    createdAt: data.createdAt,
+  };
+}
+
+function sortByCreatedAtDesc(a: RestaurantPhoto, b: RestaurantPhoto): number {
+  return (b.createdAt?.seconds ?? 0) - (a.createdAt?.seconds ?? 0);
 }
 
 export function useRestaurantPhotos(restaurant: PhotoRestaurant) {
-  const [photos, setPhotos] = useState<RestaurantPhoto[]>([]);
-  const [loading, setLoading] = useState(true);
+  const cached = contentCache.restaurantPhotos;
+  const initialPhotos = cached
+    ? cached
+        .filter((d) => d.data.restaurant === restaurant)
+        .map((d) => toPhoto(d.id, d.data))
+        .sort(sortByCreatedAtDesc)
+    : [];
+
+  const [photos, setPhotos] = useState<RestaurantPhoto[]>(initialPhotos);
+  const [loading, setLoading] = useState(!cached);
 
   useEffect(() => {
+    // Already fetched in the background at app startup — filter from that
+    // cache instead of re-querying Firestore on every mount.
+    if (contentCache.restaurantPhotos) {
+      const items = contentCache.restaurantPhotos
+        .filter((d) => d.data.restaurant === restaurant)
+        .map((d) => toPhoto(d.id, d.data))
+        .sort(sortByCreatedAtDesc);
+      setPhotos(items);
+      setLoading(false);
+      return;
+    }
+
     let cancelled = false;
 
     setLoading(true);
@@ -29,16 +65,7 @@ export function useRestaurantPhotos(restaurant: PhotoRestaurant) {
     )
       .then((snap) => {
         if (cancelled) return;
-        const items: RestaurantPhoto[] = snap.docs.map((d) => {
-          const data = d.data();
-          return {
-            id: d.id,
-            restaurant: data.restaurant,
-            imageUrl: data.imageUrl,
-            active: data.active,
-          };
-        });
-        setPhotos(items);
+        setPhotos(snap.docs.map((d) => toPhoto(d.id, d.data())));
       })
       .catch(console.error)
       .finally(() => {

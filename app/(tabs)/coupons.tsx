@@ -8,6 +8,7 @@ import { Coupon } from '@/constants/coupons-data';
 import { query, where } from 'firebase/firestore';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { auth, db } from '@/constants/firebase';
+import { contentCache } from '@/utils/content-cache';
 import { useAuth } from '@/context/AuthContext';
 import { AuthGate } from '@/components/auth/auth-gate';
 import { BackButton } from '@/components/navigation/back-button';
@@ -158,13 +159,19 @@ export default function CouponsTab() {
   // ─── Load state from Firebase on mount ───────────────────────────────────
   useEffect(() => {
     if (!auth.currentUser) return;
-    // Fetch coupons from Firestore
-    getDocs(query(collection(db, 'coupons'), where('active', '==', true)))
-      .then((snap) => {
-        const items = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Coupon));
-        setAllCoupons(items);
-      })
-      .catch(console.error);
+
+    // Already fetched in the background at app startup (post-login) — read
+    // from that cache instead of re-querying Firestore on every mount.
+    if (contentCache.coupons) {
+      setAllCoupons(contentCache.coupons.map((d) => ({ id: d.id, ...d.data } as Coupon)));
+    } else {
+      getDocs(query(collection(db, 'coupons'), where('active', '==', true)))
+        .then((snap) => {
+          const items = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Coupon));
+          setAllCoupons(items);
+        })
+        .catch(console.error);
+    }
 
     loadCouponState();
     return () => {
