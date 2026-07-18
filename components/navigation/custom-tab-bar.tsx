@@ -92,6 +92,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 10,
     borderRadius: 12,
+    overflow: 'hidden',
     gap: 3,
     width: '100%',
   },
