@@ -15,6 +15,7 @@ export const contentCache: {
   gallery: RawDoc[] | null;
   events: RawDoc[] | null;
   coupons: RawDoc[] | null;
+  promotions: RawDoc[] | null;
 } = {
   menu: null,
   spaServices: null,
@@ -22,4 +23,5 @@ export const contentCache: {
   gallery: null,
   events: null,
   coupons: null,
+  promotions: null,
 };

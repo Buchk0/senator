@@ -10,15 +10,15 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { BrandColors } from '@/constants/theme';
 import { CouponCarousel } from '@/components/home/coupon-carousel';
-import { useHomeCoupons } from '@/hooks/use-home-coupons';
+import { usePromotions } from '@/hooks/use-promotions';
 import { BackButton } from '@/components/navigation/back-button';
 
 export default function PromotionsScreen() {
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
-  const { senatorCoupons, balkonCoupons } = useHomeCoupons();
+  const { senatorPromotions, balkonPromotions } = usePromotions();
 
-  const isEmpty = senatorCoupons.length === 0 && balkonCoupons.length === 0;
+  const isEmpty = senatorPromotions.length === 0 && balkonPromotions.length === 0;
 
   return (
     <View style={styles.root}>
@@ -42,16 +42,16 @@ export default function PromotionsScreen() {
           </View>
         </ImageBackground>
 
-        {senatorCoupons.length > 0 && (
+        {senatorPromotions.length > 0 && (
           <CouponCarousel
             sectionTitle={t('home.coupons_senator_title')}
-            items={senatorCoupons}
+            items={senatorPromotions}
           />
         )}
-        {balkonCoupons.length > 0 && (
+        {balkonPromotions.length > 0 && (
           <CouponCarousel
             sectionTitle={t('home.coupons_balkon_title')}
-            items={balkonCoupons}
+            items={balkonPromotions}
             topSpacing={30}
             cardBottomPadding={16}
           />

@@ -18,10 +18,11 @@ service cloud.firestore {
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
-    // Promotions: admin-only source of truth that mirrors into coupons/{same
-    // id} — never read directly by the mobile app, so no public/authed read.
+    // Promotions: public read (shown before login, unlike coupons), source
+    // of truth that also mirrors into coupons/{same id}; write admin-only.
     match /promotions/{promotionId} {
-      allow read, write: if request.auth != null
+      allow read: if true;
+      allow write: if request.auth != null
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 

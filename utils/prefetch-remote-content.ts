@@ -46,16 +46,18 @@ export async function prefetchCriticalContent(): Promise<void> {
 // blocking the UI, and cache the docs too so re-visiting those screens
 // reads from memory instead of re-querying Firestore each time.
 export async function prefetchBackgroundContent(): Promise<void> {
-  const [restaurantPhotosDocs, galleryDocs, eventsDocs, couponsDocs] = await Promise.all([
+  const [restaurantPhotosDocs, galleryDocs, eventsDocs, couponsDocs, promotionsDocs] = await Promise.all([
     fetchActiveDocs('restaurantPhotos'),
     fetchActiveDocs('gallery'),
     fetchActiveDocs('events'),
     fetchActiveDocs('coupons'),
+    fetchActiveDocs('promotions'),
   ]);
   if (restaurantPhotosDocs) contentCache.restaurantPhotos = restaurantPhotosDocs;
   if (galleryDocs) contentCache.gallery = galleryDocs;
   if (eventsDocs) contentCache.events = eventsDocs;
   if (couponsDocs) contentCache.coupons = couponsDocs;
+  if (promotionsDocs) contentCache.promotions = promotionsDocs;
 
-  prefetchImages([restaurantPhotosDocs, galleryDocs, eventsDocs, couponsDocs]).catch(() => {});
+  prefetchImages([restaurantPhotosDocs, galleryDocs, eventsDocs, couponsDocs, promotionsDocs]).catch(() => {});
 }
