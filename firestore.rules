@@ -18,6 +18,13 @@ service cloud.firestore {
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
+    // Promotions: admin-only source of truth that mirrors into coupons/{same
+    // id} — never read directly by the mobile app, so no public/authed read.
+    match /promotions/{promotionId} {
+      allow read, write: if request.auth != null
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
     // Hotel events: public read (shown before login), writable only by admins.
     match /events/{eventId} {
       allow read: if true;
