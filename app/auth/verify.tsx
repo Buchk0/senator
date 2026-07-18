@@ -2,6 +2,7 @@ import { useState } from "react";
 import { confirmationResult, storedPassword, storedName, storedSurname, storedBirthDate, storedPhone } from "@/constants/auth-store";
 import { router } from "expo-router";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Pressable, Keyboard, Alert } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import { BrandColors } from "@/constants/theme";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "@/constants/firebase";
@@ -60,6 +61,7 @@ export default function Verify() {
 
     return (
         <Pressable style={styles.root} onPress={Keyboard.dismiss}>
+        <StatusBar style="dark" />
         <KeyboardAvoidingView style={styles.root} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
             <View style={styles.inner}>
                 <Text style={styles.title}>Подтверждение</Text>

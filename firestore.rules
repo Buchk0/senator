@@ -18,38 +18,38 @@ service cloud.firestore {
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
-    // Hotel events: same access model as coupons.
+    // Hotel events: public read (shown before login), writable only by admins.
     match /events/{eventId} {
-      allow read: if request.auth != null;
+      allow read: if true;
       allow write: if request.auth != null
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
-    // Spa services: same access model as coupons.
+    // Spa services: public read, writable only by admins.
     match /spa_services/{serviceId} {
-      allow read: if request.auth != null;
+      allow read: if true;
       allow write: if request.auth != null
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
-    // Restaurant photos: readable by any authenticated user;
-    // writable only by admins (role check in users/{uid}).
+    // Restaurant photos: public read, writable only by admins
+    // (role check in users/{uid}).
     match /restaurantPhotos/{photoId} {
-      allow read: if request.auth != null;
+      allow read: if true;
       allow write: if request.auth != null
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
-    // Menu pages: same access model as restaurant photos.
+    // Menu pages: public read, writable only by admins.
     match /menu/{pageId} {
-      allow read: if request.auth != null;
+      allow read: if true;
       allow write: if request.auth != null
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
-    // Gallery photos (Фотоотчёты screen): same access model.
+    // Gallery photos (Фотоотчёты screen): public read, writable only by admins.
     match /gallery/{photoId} {
-      allow read: if request.auth != null;
+      allow read: if true;
       allow write: if request.auth != null
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }

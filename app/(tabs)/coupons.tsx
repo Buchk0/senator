@@ -1,4 +1,5 @@
 import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BrandColors } from '@/constants/theme';
 import { useState, useEffect, useRef } from 'react';
@@ -269,6 +270,7 @@ export default function CouponsTab() {
 
   return (
     <View style={{ flex: 1 }}>
+    <StatusBar style="dark" />
     <ScrollView style={styles.scroll}>
       <View style={[styles.container, { paddingTop: insets.top + 56 }]}>
         <Text style={styles.title}>{t('coupons.title')}</Text>

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-import { onAuthStateChanged } from 'firebase/auth';
 import { collection, getDocs, orderBy, query, where } from 'firebase/firestore';
-import { db, auth } from '@/constants/firebase';
+import { db } from '@/constants/firebase';
 
 export type MenuRestaurant = 'Senator' | 'Balkon';
 
@@ -20,44 +19,36 @@ export function useMenu(restaurant: MenuRestaurant) {
   useEffect(() => {
     let cancelled = false;
 
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        if (!cancelled) setLoading(false);
-        return;
-      }
-
-      setLoading(true);
-      getDocs(
-        query(
-          collection(db, 'menu'),
-          where('restaurant', '==', restaurant),
-          where('active', '==', true),
-          orderBy('order', 'asc')
-        )
+    setLoading(true);
+    getDocs(
+      query(
+        collection(db, 'menu'),
+        where('restaurant', '==', restaurant),
+        where('active', '==', true),
+        orderBy('order', 'asc')
       )
-        .then((snap) => {
-          if (cancelled) return;
-          const items: MenuPage[] = snap.docs.map((d) => {
-            const data = d.data();
-            return {
-              id: d.id,
-              restaurant: data.restaurant,
-              imageUrl: data.imageUrl,
-              order: data.order ?? 0,
-              active: data.active,
-            };
-          });
-          setPages(items);
-        })
-        .catch(console.error)
-        .finally(() => {
-          if (!cancelled) setLoading(false);
+    )
+      .then((snap) => {
+        if (cancelled) return;
+        const items: MenuPage[] = snap.docs.map((d) => {
+          const data = d.data();
+          return {
+            id: d.id,
+            restaurant: data.restaurant,
+            imageUrl: data.imageUrl,
+            order: data.order ?? 0,
+            active: data.active,
+          };
         });
-    });
+        setPages(items);
+      })
+      .catch(console.error)
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
 
     return () => {
       cancelled = true;
-      unsubscribe();
     };
   }, [restaurant]);
 

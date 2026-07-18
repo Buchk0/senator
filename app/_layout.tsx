@@ -179,7 +179,6 @@ function InitialLayout() {
   const segments = useSegments();
   const colorScheme = useColorScheme();
   const [assetsLoaded, setAssetsLoaded] = useState(false);
-  const remotePrefetchStarted = useRef(false);
 
   useEffect(() => {
     async function preload() {
@@ -192,13 +191,13 @@ function InitialLayout() {
     preload();
   }, []);
 
-  // Firestore-backed photos (restaurantPhotos, menu, gallery, spa, events,
-  // coupons) live at URLs only known once logged in — kick off their
-  // download as soon as auth resolves, in the background, so they're
-  // already cached by the time the user opens those screens.
+  // Firestore-backed photos (restaurantPhotos, menu, gallery, spa, events)
+  // are public and readable without login, so start downloading them right
+  // away in the background — no need to wait for auth. Coupons still
+  // require login; that collection's fetch inside prefetchRemoteContent
+  // simply no-ops (catches its own permission error) until the user signs
+  // in, at which point this effect re-runs (user changed) and picks it up.
   useEffect(() => {
-    if (!user || remotePrefetchStarted.current) return;
-    remotePrefetchStarted.current = true;
     prefetchRemoteContent().catch(console.error);
   }, [user]);
 

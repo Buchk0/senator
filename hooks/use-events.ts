@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-import { onAuthStateChanged } from 'firebase/auth';
 import { collection, getDocs, query, where } from 'firebase/firestore';
-import { db, auth } from '@/constants/firebase';
+import { db } from '@/constants/firebase';
 import { EventItem } from '@/components/home/events-carousel';
 import { useTranslation } from 'react-i18next';
 
@@ -15,39 +14,31 @@ export function useEvents() {
   useEffect(() => {
     let cancelled = false;
 
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        if (!cancelled) setLoading(false);
-        return;
-      }
-
-      setLoading(true);
-      getDocs(query(collection(db, 'events'), where('active', '==', true)))
-        .then((snap) => {
-          if (cancelled) return;
-          const items: EventItem[] = snap.docs.map((d) => {
-            const data = d.data();
-            return {
-              id: d.id,
-              imageUrl: data.imageUrl ?? '',
-              // ?? only falls through on null/undefined — admin only requires
-              // the EN field, so an untranslated RU/KZ title is '' (not
-              // nullish) and would render blank without the `||` fallback.
-              title: data.title?.[lang] || data.title?.en || '',
-              subtitle: data.date ?? '',
-            };
-          });
-          setEvents(items);
-        })
-        .catch(console.error)
-        .finally(() => {
-          if (!cancelled) setLoading(false);
+    setLoading(true);
+    getDocs(query(collection(db, 'events'), where('active', '==', true)))
+      .then((snap) => {
+        if (cancelled) return;
+        const items: EventItem[] = snap.docs.map((d) => {
+          const data = d.data();
+          return {
+            id: d.id,
+            imageUrl: data.imageUrl ?? '',
+            // ?? only falls through on null/undefined — admin only requires
+            // the EN field, so an untranslated RU/KZ title is '' (not
+            // nullish) and would render blank without the `||` fallback.
+            title: data.title?.[lang] || data.title?.en || '',
+            subtitle: data.date ?? '',
+          };
         });
-    });
+        setEvents(items);
+      })
+      .catch(console.error)
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
 
     return () => {
       cancelled = true;
-      unsubscribe();
     };
   }, [lang]);
 

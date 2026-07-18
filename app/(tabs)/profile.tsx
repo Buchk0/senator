@@ -1,4 +1,5 @@
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Linking } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BrandColors } from '@/constants/theme';
 import { router } from 'expo-router';
@@ -24,6 +25,7 @@ export default function ProfileTab() {
 
   return (
     <View style={{ flex: 1 }}>
+    <StatusBar style="dark" />
     <ScrollView
       style={styles.profileBg}
       contentContainerStyle={[styles.profileContent, { paddingTop: insets.top + 56, paddingBottom: insets.bottom + 24 }]}

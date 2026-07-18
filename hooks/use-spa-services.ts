@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-import { onAuthStateChanged } from 'firebase/auth';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { useTranslation } from 'react-i18next';
-import { db, auth } from '@/constants/firebase';
+import { db } from '@/constants/firebase';
 
 export type SpaServiceItem = {
   id: string;
@@ -22,37 +21,29 @@ export function useSpaServices() {
   useEffect(() => {
     let cancelled = false;
 
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        if (!cancelled) setLoading(false);
-        return;
-      }
-
-      setLoading(true);
-      getDocs(query(collection(db, 'spa_services'), where('active', '==', true)))
-        .then((snap) => {
-          if (cancelled) return;
-          const items: SpaServiceItem[] = snap.docs.map((d) => {
-            const data = d.data();
-            return {
-              id: d.id,
-              name: data.name?.[lang] || data.name?.en || '',
-              duration: data.duration ?? '',
-              price: data.price ?? '',
-              imageUrl: data.imageUrl ?? '',
-            };
-          });
-          setServices(items);
-        })
-        .catch(console.error)
-        .finally(() => {
-          if (!cancelled) setLoading(false);
+    setLoading(true);
+    getDocs(query(collection(db, 'spa_services'), where('active', '==', true)))
+      .then((snap) => {
+        if (cancelled) return;
+        const items: SpaServiceItem[] = snap.docs.map((d) => {
+          const data = d.data();
+          return {
+            id: d.id,
+            name: data.name?.[lang] || data.name?.en || '',
+            duration: data.duration ?? '',
+            price: data.price ?? '',
+            imageUrl: data.imageUrl ?? '',
+          };
         });
-    });
+        setServices(items);
+      })
+      .catch(console.error)
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
 
     return () => {
       cancelled = true;
-      unsubscribe();
     };
   }, [lang]);
 

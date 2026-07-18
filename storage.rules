@@ -1,0 +1,39 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isAdmin() {
+      return request.auth != null
+        && firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Public content — readable without login, writable only by admins.
+    match /restaurantPhotos/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /menu/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /gallery/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /spa_services/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /events/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Coupons: readable only by authenticated users, writable only by admins.
+    match /coupons/{allPaths=**} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+  }
+}
