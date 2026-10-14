@@ -1,104 +1,132 @@
 import { ComponentProps } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { BlurView } from 'expo-blur';
+import { Image, ImageSource } from 'expo-image';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { BrandColors } from '@/constants/theme';
 
 export interface QuickAccessItem {
   id: string;
-  iconName: ComponentProps<typeof MaterialIcons>['name'];
+  /** Custom icon from the design; falls back to iconName when not provided */
+  iconSource?: ImageSource | number;
+  iconName?: ComponentProps<typeof MaterialIcons>['name'];
   label: string;
   onPress: () => void;
 }
 
 export interface QuickAccessProps {
   items: QuickAccessItem[];
+  /** Wide buttons (icon on the left) shown in a row under the grid */
+  wideItems?: QuickAccessItem[];
 }
 
-export function QuickAccess({ items }: QuickAccessProps) {
+const COLUMNS = 3;
+
+function ItemIcon({ item, size }: { item: QuickAccessItem; size: number }) {
+  if (item.iconSource) {
+    return (
+      <Image
+        source={item.iconSource}
+        style={{ width: size, height: size }}
+        contentFit="contain"
+      />
+    );
+  }
+  return <MaterialIcons name={item.iconName} size={size} color={BrandColors.white} />;
+}
+
+export function QuickAccess({ items, wideItems = [] }: QuickAccessProps) {
   const rows: QuickAccessItem[][] = [];
-  for (let i = 0; i < items.length; i += 3) {
-    rows.push(items.slice(i, i + 3));
+  for (let i = 0; i < items.length; i += COLUMNS) {
+    rows.push(items.slice(i, i + COLUMNS));
   }
 
   return (
     <View style={styles.container}>
-      {/* Single outer card with blur background and gold border */}
-      <View style={styles.outerCard}>
-        <BlurView intensity={60} tint="dark" style={StyleSheet.absoluteFillObject} />
+      {rows.map((row, rowIndex) => (
+        <View key={rowIndex} style={styles.row}>
+          {row.map((item) => (
+            <TouchableOpacity
+              key={item.id}
+              onPress={item.onPress}
+              style={styles.tile}
+              activeOpacity={0.7}
+            >
+              <BlurView intensity={60} tint="dark" style={StyleSheet.absoluteFillObject} />
+              <ItemIcon item={item} size={36} />
+              <Text style={styles.label}>{item.label}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      ))}
 
-        {rows.map((row, rowIndex) => (
-          <View key={rowIndex}>
-            {/* Horizontal divider between rows */}
-            {rowIndex > 0 && <View style={styles.horizontalDivider} />}
-
-            <View style={styles.row}>
-              {row.map((item, colIndex) => (
-                <View key={item.id} style={styles.cellWrapper}>
-                  {/* Vertical divider between columns */}
-                  {colIndex > 0 && <View style={styles.verticalDivider} />}
-
-                  <TouchableOpacity
-                    onPress={item.onPress}
-                    style={styles.cell}
-                    activeOpacity={0.6}
-                  >
-                    <MaterialIcons
-                      name={item.iconName}
-                      size={36}
-                      color={BrandColors.white}
-                    />
-                    <Text style={styles.label}>{item.label}</Text>
-                  </TouchableOpacity>
-                </View>
-              ))}
-            </View>
-          </View>
-        ))}
-      </View>
+      {wideItems.length > 0 && (
+        <View style={[styles.row, styles.wideRow]}>
+          {wideItems.map((item) => (
+            <TouchableOpacity
+              key={item.id}
+              onPress={item.onPress}
+              style={styles.wideTile}
+              activeOpacity={0.7}
+            >
+              <BlurView intensity={60} tint="dark" style={StyleSheet.absoluteFillObject} />
+              <ItemIcon item={item} size={32} />
+              <Text style={[styles.label, styles.wideLabel]}>{item.label}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
     </View>
   );
 }
 
+const tileBase = {
+  borderRadius: 20,
+  borderWidth: 1,
+  borderColor: BrandColors.gold,
+  overflow: 'hidden',
+  backgroundColor: 'rgba(0,0,0,0.5)',
+} as const;
+
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 24,
-    marginTop: 32,
-  },
-  outerCard: {
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: BrandColors.gold,
-    overflow: 'hidden',
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    paddingHorizontal: 20,
+    marginTop: 24,
+    gap: 12,
   },
   row: {
     flexDirection: 'row',
+    gap: 12,
   },
-  cellWrapper: {
+  tile: {
+    ...tileBase,
     flex: 1,
-    flexDirection: 'row',
-  },
-  verticalDivider: {
-    width: StyleSheet.hairlineWidth,
-    backgroundColor: 'rgba(198, 156, 109, 0.4)',
-  },
-  horizontalDivider: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: 'rgba(198, 156, 109, 0.4)',
-  },
-  cell: {
-    flex: 1,
-    paddingVertical: 28,
+    height: 100,
+    paddingHorizontal: 4,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 12,
+    gap: 8,
+  },
+  wideRow: {
+    marginTop: 20,
+  },
+  wideTile: {
+    ...tileBase,
+    flex: 1,
+    height: 62,
+    paddingHorizontal: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
   },
   label: {
     fontSize: 13,
     color: BrandColors.white,
     textAlign: 'center',
     fontWeight: '400',
-    lineHeight: 18,
+    lineHeight: 17,
+  },
+  wideLabel: {
+    flex: 1,
   },
 });

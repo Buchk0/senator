@@ -33,6 +33,7 @@
     "quick_promotions": "Акциялар",
     "quick_events": "Оқиғалар",
     "quick_photos": "Фото",
+    "quick_promotions_events": "Акциялар /\nОқиғалар",
     "cards_hotel": "Қонақ үй Senator",
     "cards_senator": "Мейрамхана Senator",
     "cards_balkon": "Мейрамхана Balkon",
@@ -104,6 +105,31 @@
     }
   },
   "hotel": {
+    "famous_guests_title": "Атақты қонақтар",
+    "prices": {
+      "category": "Бөлме санаты",
+      "cost": "Құны (тг.)",
+      "extra_categories": "Қосымша санаттар"
+    },
+    "info": {
+      "check_in": "Кіру уақыты",
+      "check_in_value": "14:00",
+      "check_out": "Шығу уақыты",
+      "check_out_value": "12:00-ге дейін",
+      "booking_award": "Traveller Review Awards 2026",
+      "breakfast": "Таңғы ас",
+      "breakfast_desc": "Тамаша таңғы ас тұру құнына кіреді",
+      "fitness": "Фитнес-зал",
+      "fitness_desc": "Тегін кіру",
+      "room_service": "Room-Service",
+      "laundry": "Кір жуу қызметі",
+      "parking": "Тұрақ"
+    },
+    "tab_info": "Ақпарат",
+    "tab_prices": "Бағалар",
+    "tab_promotions": "Акциялар",
+    "famous_guests": "Атақты қонақтар",
+    "awards": "Марапаттар",
     "title": "Senator қонақ үйі",
     "subtitle": "Бөлме санатын таңдаңыз",
     "book_btn": "Брондау",
@@ -144,8 +170,41 @@
   "restaurants": {
     "title": "Мейрамхана таңдаңыз",
     "subtitle": "Мәзір, оқиғалар, байланыс",
+    "promos": {
+      "birthday_title": "Туған\nкүн",
+      "birthday_badge": "10% жеңілдік",
+      "birthday_desc": "Мейрамханадан сыйлық және дәмді комплимент",
+      "breakfast_title": "Отбасылық\nтаңғы ас",
+      "breakfast_badge": "10% жеңілдік",
+      "breakfast_desc": "Әр жексенбі"
+    },
+    "senator_features": {
+      "cuisine": "Заманауи еуропалық асхана\nжәне ұлттық тағамдар",
+      "wine": "Қаладағы ең бай шарап картасы",
+      "breakfast": "Таңғы ас күн сайын",
+      "breakfast_note": "7:00-ден 12:00-ге дейін",
+      "style": "Талғампаз стиль,\nтыныш әрі жайлы атмосфера",
+      "meetings": "Мейрамхана іскерлік кездесулер мен\nжеке салтанаттарға өте қолайлы",
+      "music": "Жанды музыка",
+      "music_note": "әр сенбі"
+    },
+    "balkon_promos": {
+      "cocktail_title": "Коктейль\nсәрсенбісі",
+      "cocktail_badge": "10% жеңілдік",
+      "happy_hours_title": "Бақытты\nдәмді сағаттар",
+      "happy_hours_desc": "жұмыс күндері 12:00 - 16:00",
+      "happy_hours_badge": "20% жеңілдік",
+      "birthday_title": "Туған\nкүн",
+      "birthday_desc": "Туған күн иесіне жеңілдік және мейрамханадан тәтті тосынсый",
+      "birthday_badge": "10% жеңілдік"
+    },
     "senator_title": "Senator мейрамханасы",
+    "senator_subtitle": "Қалаға панорамалық көрінісі бар\nеуропалық асхана мейрамханасы",
+    "tab_promotions_events": "Акциялар\nОқиғалар",
+    "menu_text": "Мәзір",
+    "menu_photo": "Мәзір фотосы",
     "balkon_title": "Gastro Grill Balkon",
+    "balkon_subtitle": "От, Шарап & Ет",
     "tab_menu": "Мәзір",
     "tab_photos": "Фото",
     "tab_events": "Оқиғалар",
@@ -157,6 +216,15 @@
     "view_coupons": "Купондар"
   },
   "spa": {
+    "tab_info": "Ақпарат",
+    "price_hotel_guests": "Қонақ үйде тұратындарға",
+    "booking_note": "*24 сағат бұрын алдын ала брондау",
+    "features": {
+      "hammam": "Хаммам",
+      "sauna": "Фин саунасы",
+      "pool": "Гидромассаж бассейні",
+      "lounge": "Демалыс бөлмесі"
+    },
     "title": "Senator Spa",
     "subtitle": "Жайлылық пен тыныштық атмосферасында демалу, қалпына келу және өзіне күтім жасау.",
     "tab_services": "Қызметтер",
@@ -169,7 +237,7 @@
     "min": "мин",
     "hours_title": "Жұмыс уақыты",
     "hours_daily": "Күн сайын",
-    "hours_time": "10:00 – 21:00",
+    "hours_time": "08:00 – 01:00",
     "categories": {
       "massages": { "title": "Массаждар",        "subtitle": "Демалдыратын және қалпына келтіретін бағдарламалар" },
       "facial":   { "title": "Бет күтімі",       "subtitle": "Жасартатын және күтімдік процедуралар" },
@@ -182,6 +250,28 @@
     }
   },
   "conference": {
+    "per_person": "адам",
+    "menu_empty": "Мәзір жақында осында пайда болады",
+    "tab_coffee": "Кофе-\nбрейк",
+    "tab_lunch": "Бизнес-\nланч",
+    "prices": {
+      "col_service": "Қызмет\nтүрі",
+      "col_time": "Жалға алу\nуақыты",
+      "col_cost": "Құны",
+      "col_cost_unit": "(теңгемен)",
+      "hall_rent": "Конференц-залды\nжалға алу",
+      "hours_1": "1 сағат",
+      "hours_2": "2 сағат",
+      "hours_3": "3 сағат",
+      "extra_hour": "қосымша\nсағат",
+      "full_day": "Залды жалға алу",
+      "full_day_note": "(жабдық\nқұнына кіреді)",
+      "equipment": "Жабдықты жалға алу",
+      "equipment_note": "(үлкен экранды проектор; LED экран (4k) 165 см)",
+      "vip_room": "VIP келіссөз\nбөлмесін жалға алу",
+      "supplies": "Флип-чарт/маркерлер,\nблокноттар/қарындаштар",
+      "free": "тегін"
+    },
     "title": "Конференц-зал",
     "subtitle": "Кездесулер, презентациялар, іс-шаралар",
     "tab_photos": "Фото",
@@ -191,7 +281,7 @@
     "capacity_value": "50 адамға дейін",
     "hours_title": "Жұмыс уақыты",
     "hours_daily": "Күн сайын",
-    "hours_time": "09:00 – 21:00"
+    "hours_time": "08:00 – 21:00"
   },
   "vip": {
     "title": "VIP Келіссөз бөлмесі",

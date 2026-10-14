@@ -17,15 +17,17 @@ export default function HomeScreen() {
   const { showContactAlert } = useContactActions();
 
   const quickAccessItems: QuickAccessItem[] = [
-    { id: 'hotel', iconName: 'bed', label: t('home.quick_hotel'), onPress: () => router.push('/(tabs)/hotel') },
-    { id: 'senator', iconName: 'restaurant', label: t('home.quick_senator'), onPress: () => router.push('/(tabs)/restaurants/senator') },
-    { id: 'balkon', iconName: 'lunch-dining', label: t('home.quick_balkon'), onPress: () => router.push('/(tabs)/restaurants/balkon') },
-    { id: 'spa', iconName: 'spa', label: t('home.quick_spa'), onPress: () => router.push('/(tabs)/spa') },
-    { id: 'conference', iconName: 'present-to-all', label: t('home.quick_conference'), onPress: () => router.push('/(tabs)/conference') },
-    { id: 'vip', iconName: 'handshake', label: t('home.quick_vip'), onPress: () => router.push('/(tabs)/vip') },
-    { id: 'promotions', iconName: 'local-offer', label: t('home.quick_promotions'), onPress: () => router.push('/promotions') },
-    { id: 'events', iconName: 'event', label: t('home.quick_events'), onPress: () => router.push('/events') },
-    { id: 'photos', iconName: 'photo-library', label: t('home.quick_photos'), onPress: () => router.push('/photos') },
+    { id: 'hotel', iconSource: require('@/assets/images/home/icon-hotel.svg'), label: t('home.quick_hotel'), onPress: () => router.push('/(tabs)/hotel') },
+    { id: 'senator', iconSource: require('@/assets/images/home/icon-senator.svg'), label: t('home.quick_senator'), onPress: () => router.push('/(tabs)/restaurants/senator') },
+    { id: 'balkon', iconSource: require('@/assets/images/home/icon-balkon.svg'), label: t('home.quick_balkon'), onPress: () => router.push('/(tabs)/restaurants/balkon') },
+    { id: 'spa', iconSource: require('@/assets/images/home/icon-spa.svg'), label: t('home.quick_spa'), onPress: () => router.push('/(tabs)/spa') },
+    { id: 'conference', iconSource: require('@/assets/images/home/icon-conference.svg'), label: t('home.quick_conference'), onPress: () => router.push('/(tabs)/conference') },
+    { id: 'vip', iconSource: require('@/assets/images/home/icon-vip.svg'), label: t('home.quick_vip'), onPress: () => router.push('/(tabs)/vip') },
+  ];
+
+  const wideItems: QuickAccessItem[] = [
+    { id: 'promotions', iconSource: require('@/assets/images/home/icon-calendar.svg'), label: t('home.quick_promotions_events'), onPress: () => router.push('/promotions') },
+    { id: 'photos', iconSource: require('@/assets/images/home/icon-photos.svg'), label: t('home.quick_photos'), onPress: () => router.push('/photos') },
   ];
 
   return (
@@ -36,7 +38,7 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
       >
         <ImageBackground
-          source={require('@/assets/images/restaurants-bc.png')}
+          source={require('@/assets/images/home/background.jpg')}
           style={styles.hero}
           resizeMode="cover"
         >
@@ -44,6 +46,7 @@ export default function HomeScreen() {
           <Header
             activeLanguage={activeLanguage}
             onLanguageChange={changeLanguage}
+            largeLogo
           />
           <HeroText
             title={t('home.hero_title')}
@@ -53,7 +56,7 @@ export default function HomeScreen() {
             primary={{ label: t('home.btn_contact'), onPress: () => showContactAlert(t('home.btn_contact')) }}
             secondary={{ label: t('home.btn_directions'), onPress: () => Linking.openURL('https://maps.app.goo.gl/kRDshYUDDvmSryyX6?g_st=ic') }}
           />
-          <QuickAccess items={quickAccessItems} />
+          <QuickAccess items={quickAccessItems} wideItems={wideItems} />
         </ImageBackground>
       </ScrollView>
     </View>
@@ -68,8 +71,11 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
   },
-  contentContainer: {},
+  contentContainer: {
+    flexGrow: 1,
+  },
   hero: {
+    flexGrow: 1,
     width: '100%',
     paddingBottom: 80,
   },

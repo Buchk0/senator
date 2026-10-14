@@ -23,6 +23,7 @@ import { useContactActions } from '@/hooks/use-contact-actions';
 import { useRestaurantPhotos } from '@/hooks/use-restaurant-photos';
 import { useMenu } from '@/hooks/use-menu';
 import { ImageViewerHeader } from '@/components/image-viewer-header';
+import { PromoBanners } from '@/components/restaurants/promo-banners';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -37,6 +38,7 @@ const PHOTO_SIZE = (SCREEN_WIDTH - PHOTO_H_PAD * 2 - PHOTO_GAP * 2) / 3.3;
 
 
 type TabKey = 'menu' | 'photos' | 'events' | 'info';
+type MenuMode = 'text' | 'photo';
 
 export default function BalkonScreen() {
   const insets = useSafeAreaInsets();
@@ -49,11 +51,14 @@ export default function BalkonScreen() {
   const { pages: menuPages } = useMenu('Balkon');
   const menuForViewer = menuPages.map((p) => ({ uri: p.imageUrl }));
 
+  // null = nothing picked yet, only the two menu buttons are shown
+  const [menuMode, setMenuMode] = useState<MenuMode | null>(null);
+
   const TABS: { key: TabKey; label: string }[] = [
-    { key: 'menu',   label: t('restaurants.tab_menu') },
-    { key: 'photos', label: t('restaurants.tab_photos') },
-    { key: 'events', label: t('restaurants.tab_events') },
     { key: 'info',   label: t('restaurants.tab_info') },
+    { key: 'photos', label: t('restaurants.tab_photos') },
+    { key: 'menu',   label: t('restaurants.tab_menu') },
+    { key: 'events', label: t('restaurants.tab_promotions_events') },
   ];
   const [viewerImages, setViewerImages] = useState<{ uri: string }[]>([]);
   const [viewerIndex, setViewerIndex] = useState(0);
@@ -79,7 +84,7 @@ export default function BalkonScreen() {
 
           <View style={[styles.logoWrap, { top: insets.top + 16 }]}>
             <Image
-              source={require('@/assets/images/logo.png')}
+              source={require('@/assets/images/restaurants/balkon/logo.png')}
               style={styles.logo}
               resizeMode="contain"
             />
@@ -87,7 +92,7 @@ export default function BalkonScreen() {
 
           <View style={styles.heroContent}>
             <Text style={styles.heroTitle}>{t('restaurants.balkon_title')}</Text>
-            <Text style={styles.heroSub}>{t('restaurants.subtitle')}</Text>
+            <Text style={styles.heroSub}>{t('restaurants.balkon_subtitle')}</Text>
           </View>
         </ImageBackground>
 
@@ -100,7 +105,13 @@ export default function BalkonScreen() {
               style={[styles.tabBtn, activeTab === tab.key && styles.tabBtnActive]}
               activeOpacity={0.8}
             >
-              <Text style={[styles.tabLabel, activeTab === tab.key && styles.tabLabelActive]}>
+              <Text
+                style={[
+                  styles.tabLabel,
+                  tab.label.includes('\n') && styles.tabLabelTwoLines,
+                  activeTab === tab.key && styles.tabLabelActive,
+                ]}
+              >
                 {tab.label}
               </Text>
             </TouchableOpacity>
@@ -109,6 +120,24 @@ export default function BalkonScreen() {
 
         {/* ─── Menu ─── */}
         {activeTab === 'menu' && (
+          <View style={styles.menuModeRow}>
+            {(['text', 'photo'] as const).map((mode) => (
+              <TouchableOpacity
+                key={mode}
+                style={[styles.menuModeBtn, menuMode === mode && styles.menuModeBtnActive]}
+                activeOpacity={0.8}
+                onPress={() => setMenuMode(mode)}
+              >
+                <Text style={[styles.menuModeLabel, menuMode === mode && styles.menuModeLabelActive]}>
+                  {t(mode === 'text' ? 'restaurants.menu_text' : 'restaurants.menu_photo')}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+
+        {/* TODO: content for the text menu (menuMode === 'text') is not defined yet */}
+        {activeTab === 'menu' && menuMode === 'photo' && (
           <View style={styles.menuWrap}>
             {menuPages.map((p, i) => (
               <TouchableOpacity
@@ -161,7 +190,10 @@ export default function BalkonScreen() {
 
         {/* ─── Events ─── */}
         {activeTab === 'events' && (
-          <EventsCarousel items={events} />
+          <>
+            <PromoBanners restaurant="balkon" />
+            <EventsCarousel items={events} />
+          </>
         )}
 
         {/* ─── Info ─── */}
@@ -226,24 +258,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logo: {
-    width: 72,
-    height: 40,
+    width: 93,
+    height: 45,
   },
   heroContent: {
     paddingHorizontal: 24,
     paddingBottom: 32,
   },
   heroTitle: {
-    fontSize: 32,
-    fontWeight: '400',
+    fontSize: 28,
+    fontWeight: '700',
     color: BrandColors.white,
     marginBottom: 8,
   },
   heroSub: {
     fontSize: 13,
     fontWeight: '400',
-    color: 'rgba(255,255,255,0.65)',
+    color: 'rgba(255,255,255,0.75)',
     letterSpacing: 0.3,
+    lineHeight: 18,
   },
 
   /* ── Tabs ── */
@@ -257,10 +290,11 @@ const styles = StyleSheet.create({
   },
   tabBtn: {
     flex: 1,
-    paddingVertical: 10,
-    borderRadius: 20,
+    height: 38,
+    borderRadius: 19,
     backgroundColor: '#f0f0f0',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   tabBtnActive: {
     backgroundColor: NAV_DARK,
@@ -270,7 +304,40 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#888',
   },
+  tabLabelTwoLines: {
+    fontSize: 11,
+    lineHeight: 13,
+    textAlign: 'center',
+  },
   tabLabelActive: {
+    color: BrandColors.white,
+  },
+
+  /* ── Menu / Menu Photo buttons ── */
+  menuModeRow: {
+    flexDirection: 'row',
+    gap: 10,
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 16,
+  },
+  menuModeBtn: {
+    flex: 1,
+    height: 50,
+    borderRadius: 12,
+    backgroundColor: '#f0f0f0',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  menuModeBtnActive: {
+    backgroundColor: NAV_DARK,
+  },
+  menuModeLabel: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: NAV_DARK,
+  },
+  menuModeLabelActive: {
     color: BrandColors.white,
   },
 
@@ -357,10 +424,12 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   reserveBtn: {
-    backgroundColor: NAV_DARK,
     borderRadius: 50,
-    paddingVertical: 16,
+    paddingVertical: 14,
     alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: BrandColors.gold,
+    backgroundColor: 'transparent',
   },
   reserveText: {
     fontSize: 15,

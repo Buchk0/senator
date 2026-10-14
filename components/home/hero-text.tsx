@@ -18,21 +18,24 @@ export function HeroText({ title, subtitle }: HeroTextProps) {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 24,
-    marginTop: 40,
+    marginTop: 28,
+    alignItems: 'center',
   },
   title: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: '700',
     color: BrandColors.white,
-    letterSpacing: -0.3,
-    lineHeight: 36,
+    lineHeight: 32,
+    textAlign: 'center',
   },
   subtitle: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '300',
     color: 'rgba(255, 255, 255, 0.6)',
-    marginTop: 10,
+    marginTop: 6,
     letterSpacing: 0.2,
-    lineHeight: 22,
+    lineHeight: 20,
+    textAlign: 'center',
+    maxWidth: 280,
   },
 });

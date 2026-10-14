@@ -17,6 +17,8 @@ import { BrandColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
 import { BackButton } from '@/components/navigation/back-button';
 import { useContactActions } from '@/hooks/use-contact-actions';
+import { ConferencePrices } from '@/components/conference/conference-prices';
+import { ConferenceMenu } from '@/components/conference/conference-menu';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -35,19 +37,21 @@ const PHOTOS_FOR_VIEWER = PHOTOS.map((src) => ({
   uri: Image.resolveAssetSource(src).uri,
 }));
 
-type TabKey = 'photos' | 'info';
+type TabKey = 'info' | 'photos' | 'coffee' | 'lunch';
 
 export default function ConferenceScreen() {
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<TabKey>('photos');
+  const [activeTab, setActiveTab] = useState<TabKey>('info');
   const [viewerIndex, setViewerIndex] = useState(0);
   const [viewerVisible, setViewerVisible] = useState(false);
   const { showContactAlert } = useContactActions();
 
   const TABS: { key: TabKey; label: string }[] = [
-    { key: 'photos', label: t('conference.tab_photos') },
     { key: 'info',   label: t('conference.tab_info') },
+    { key: 'photos', label: t('conference.tab_photos') },
+    { key: 'coffee', label: t('conference.tab_coffee') },
+    { key: 'lunch',  label: t('conference.tab_lunch') },
   ];
 
   return (
@@ -85,7 +89,13 @@ export default function ConferenceScreen() {
               style={[styles.tabBtn, activeTab === tab.key && styles.tabBtnActive]}
               activeOpacity={0.8}
             >
-              <Text style={[styles.tabLabel, activeTab === tab.key && styles.tabLabelActive]}>
+              <Text
+                style={[
+                  styles.tabLabel,
+                  tab.label.includes('\n') && styles.tabLabelTwoLines,
+                  activeTab === tab.key && styles.tabLabelActive,
+                ]}
+              >
                 {tab.label}
               </Text>
             </TouchableOpacity>
@@ -115,14 +125,13 @@ export default function ConferenceScreen() {
           HeaderComponent={() => <ImageViewerHeader onClose={() => setViewerVisible(false)} />}
         />
 
+        {activeTab === 'coffee' && <ConferenceMenu type="coffee_break" />}
+        {activeTab === 'lunch' && <ConferenceMenu type="business_lunch" />}
+
         {/* ─── Info ─── */}
         {activeTab === 'info' && (
           <View style={styles.infoWrap}>
-            <View style={styles.infoCard}>
-              <Text style={styles.infoCardTitle}>{t('conference.capacity_title')}</Text>
-              <View style={styles.infoDivider} />
-              <Text style={styles.infoCardValue}>{t('conference.capacity_value')}</Text>
-            </View>
+            <ConferencePrices />
 
             <View style={[styles.infoCard, { marginTop: 16 }]}>
               <Text style={styles.infoCardTitle}>{t('conference.hours_title')}</Text>
@@ -180,8 +189,8 @@ const styles = StyleSheet.create({
     paddingBottom: 32,
   },
   heroTitle: {
-    fontSize: 32,
-    fontWeight: '400',
+    fontSize: 28,
+    fontWeight: '700',
     color: BrandColors.white,
     marginBottom: 8,
   },
@@ -203,10 +212,11 @@ const styles = StyleSheet.create({
   },
   tabBtn: {
     flex: 1,
-    paddingVertical: 10,
-    borderRadius: 20,
+    height: 38,
+    borderRadius: 19,
     backgroundColor: '#f0f0f0',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   tabBtnActive: {
     backgroundColor: NAV_DARK,
@@ -215,6 +225,11 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     color: '#888',
+  },
+  tabLabelTwoLines: {
+    fontSize: 11,
+    lineHeight: 13,
+    textAlign: 'center',
   },
   tabLabelActive: {
     color: BrandColors.white,
@@ -237,7 +252,7 @@ const styles = StyleSheet.create({
   /* ── Info ── */
   infoWrap: {
     paddingHorizontal: 16,
-    paddingTop: 24,
+    paddingTop: 8,
     paddingBottom: 24,
   },
   infoCard: {
@@ -256,11 +271,6 @@ const styles = StyleSheet.create({
     height: StyleSheet.hairlineWidth,
     backgroundColor: '#e5e5e5',
     marginBottom: 16,
-  },
-  infoCardValue: {
-    fontSize: 14,
-    fontWeight: '400',
-    color: '#666',
   },
   scheduleRow: {
     flexDirection: 'row',

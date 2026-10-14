@@ -20,7 +20,7 @@
     "subtitle": "Моменты из наших ресторанов и пространств"
   },
   "home": {
-    "hero_title": "Комфортный отдых и вкусные вечера - в одном месте",
+    "hero_title": "SENATOR - отель\nв центре событий!",
     "hero_subtitle": "Бронируй номер, столик и забирай купоны прямо в приложении.",
     "btn_contact": "Связь",
     "btn_directions": "Как добраться",
@@ -33,6 +33,7 @@
     "quick_promotions": "Акции",
     "quick_events": "События",
     "quick_photos": "Фото",
+    "quick_promotions_events": "Акции /\nСобытия",
     "cards_hotel": "Отель Senator",
     "cards_senator": "Ресторан Senator",
     "cards_balkon": "Ресторан Balkon",
@@ -104,6 +105,31 @@
     }
   },
   "hotel": {
+    "famous_guests_title": "Знаменитые Гости",
+    "prices": {
+      "category": "Категория номера",
+      "cost": "Стоимость (тг.)",
+      "extra_categories": "Дополнительные категории"
+    },
+    "info": {
+      "check_in": "Время заезда",
+      "check_in_value": "14:00",
+      "check_out": "Время выезда",
+      "check_out_value": "до 12:00",
+      "booking_award": "Traveller Review Awards 2026",
+      "breakfast": "Завтрак",
+      "breakfast_desc": "Великолепный завтрак включен в стоимость проживания",
+      "fitness": "Фитнес-зал",
+      "fitness_desc": "Бесплатный доступ",
+      "room_service": "Room-Service",
+      "laundry": "Услуги прачечной",
+      "parking": "Парковка"
+    },
+    "tab_info": "Инфо",
+    "tab_prices": "Цены",
+    "tab_promotions": "Акции",
+    "famous_guests": "Знаменитые гости",
+    "awards": "Награды",
     "title": "Отель Senator",
     "subtitle": "Выберите категорию номера",
     "book_btn": "Забронировать",
@@ -144,8 +170,41 @@
   "restaurants": {
     "title": "Выберите ресторан",
     "subtitle": "Меню, события, контакты",
+    "promos": {
+      "birthday_title": "День\nрождения",
+      "birthday_badge": "10% скидка",
+      "birthday_desc": "Подарок от ресторана и вкусный комплимент",
+      "breakfast_title": "Семейный\nзавтрак",
+      "breakfast_badge": "10% скидка",
+      "breakfast_desc": "Каждое воскресенье"
+    },
+    "senator_features": {
+      "cuisine": "Современная европейская кухня\nи национальные блюда",
+      "wine": "Самая богатая винная карта в городе",
+      "breakfast": "Завтраки ежедневно",
+      "breakfast_note": "с 7:00 до 12:00",
+      "style": "Элегантный стиль,\nспокойная и уютная атмосфера",
+      "meetings": "Ресторан идеально подходит\nдля деловых встреч и частных торжеств",
+      "music": "Живая музыка",
+      "music_note": "каждую субботу"
+    },
+    "balkon_promos": {
+      "cocktail_title": "Коктейльная\nсреда",
+      "cocktail_badge": "10% скидка",
+      "happy_hours_title": "Счастливые\nвкусные часы",
+      "happy_hours_desc": "по будням 12:00 - 16:00",
+      "happy_hours_badge": "20% скидка",
+      "birthday_title": "День\nрождения",
+      "birthday_desc": "Имениннику дарим скидку и сладкий сюрприз от ресторана",
+      "birthday_badge": "10% скидка"
+    },
     "senator_title": "Ресторан Senator",
+    "senator_subtitle": "Ресторан европейской кухни\nс панорамным видом на город",
+    "tab_promotions_events": "Акции\nСобытия",
+    "menu_text": "Меню",
+    "menu_photo": "Фото меню",
     "balkon_title": "Gastro Grill Balkon",
+    "balkon_subtitle": "Огонь, Вино & Мясо",
     "tab_menu": "Меню",
     "tab_photos": "Фото",
     "tab_events": "События",
@@ -157,6 +216,15 @@
     "view_coupons": "Купоны"
   },
   "spa": {
+    "tab_info": "Инфо",
+    "price_hotel_guests": "Для проживающих",
+    "booking_note": "*Предварительная бронь за 24 часа",
+    "features": {
+      "hammam": "Хаммам",
+      "sauna": "Финская сауна",
+      "pool": "Гидромассажный бассейн",
+      "lounge": "Комната отдыха"
+    },
     "title": "Senator Spa",
     "subtitle": "Расслабление, восстановление и забота о себе в атмосфере уюта и тишины.",
     "tab_services": "Услуги",
@@ -169,7 +237,7 @@
     "min": "мин",
     "hours_title": "Время работы",
     "hours_daily": "Ежедневно",
-    "hours_time": "10:00 – 21:00",
+    "hours_time": "08:00 – 01:00",
     "categories": {
       "massages": { "title": "Массажи",        "subtitle": "Расслабляющие и восстановительные программы" },
       "facial":   { "title": "Уход за лицом",  "subtitle": "Омолаживающие и уходовые процедуры" },
@@ -182,6 +250,28 @@
     }
   },
   "conference": {
+    "per_person": "персона",
+    "menu_empty": "Скоро здесь появится меню",
+    "tab_coffee": "Кофе-\nбрейк",
+    "tab_lunch": "Бизнес-\nланч",
+    "prices": {
+      "col_service": "Вид\nуслуги",
+      "col_time": "Время\nаренды",
+      "col_cost": "Стоимость",
+      "col_cost_unit": "(в тенге)",
+      "hall_rent": "Аренда\nконференц-зала",
+      "hours_1": "1 час",
+      "hours_2": "2 часа",
+      "hours_3": "3 часа",
+      "extra_hour": "дополнительный\nчас",
+      "full_day": "Аренда зала",
+      "full_day_note": "(оборудование\nвходит в стоимость)",
+      "equipment": "Аренда оборудования",
+      "equipment_note": "(проектор с большим экраном; LED экран (4k)165см)",
+      "vip_room": "Аренда ВИП-\nпереговорной",
+      "supplies": "Флип-чарт/маркеры,\nблокноты/карандаши",
+      "free": "без оплаты"
+    },
     "title": "Конференц-зал",
     "subtitle": "Встречи, презентации, мероприятия",
     "tab_photos": "Фото",
@@ -191,7 +281,7 @@
     "capacity_value": "До 50 человек",
     "hours_title": "Время работы",
     "hours_daily": "Ежедневно",
-    "hours_time": "09:00 – 21:00"
+    "hours_time": "08:00 – 21:00"
   },
   "vip": {
     "title": "VIP Переговорная",

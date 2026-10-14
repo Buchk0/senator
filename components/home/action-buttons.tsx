@@ -36,14 +36,14 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     gap: 12,
-    paddingHorizontal: 24,
-    marginTop: 28,
+    paddingHorizontal: 20,
+    marginTop: 24,
   },
   buttonOuter: {
     flex: 1,
   },
   buttonBorder: {
-    height: 52,
+    height: 48,
     borderRadius: 20,
     borderWidth: 1,
     borderColor: BrandColors.gold,

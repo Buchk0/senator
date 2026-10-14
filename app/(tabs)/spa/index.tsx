@@ -9,17 +9,12 @@ import {
     TouchableOpacity,
     Dimensions,
 } from 'react-native';
-import { Image as ExpoImage } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ImageViewing from 'react-native-image-viewing';
 import { ImageViewerHeader } from '@/components/image-viewer-header';
 import { BrandColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { spaCategories } from '@/constants/spa-data';
-import { useSpaServices } from '@/hooks/use-spa-services';
-import { Header } from '@/components/home/header';
-import { useLanguage } from '@/hooks/use-language';
 import { BackButton } from '@/components/navigation/back-button';
 import { useContactActions } from '@/hooks/use-contact-actions';
 
@@ -43,14 +38,17 @@ const SPA_PHOTOS_FOR_VIEWER = SPA_PHOTOS.map((src) => ({
     uri: Image.resolveAssetSource(src).uri,
 }));
 
-type TabKey = 'services' | 'photos' | 'price';
+const PRICE_REGULAR = '40 000 ₸';
+const PRICE_HOTEL_GUESTS = '30 000 ₸';
+
+const FEATURES = ['hammam', 'sauna', 'pool', 'lounge'] as const;
+
+type TabKey = 'info' | 'photos';
 
 export default function SpaScreen() {
     const insets = useSafeAreaInsets();
     const { t } = useTranslation();
-    const { activeLanguage, changeLanguage } = useLanguage();
-    const { services } = useSpaServices();
-    const [activeTab, setActiveTab] = useState<TabKey>('services');
+    const [activeTab, setActiveTab] = useState<TabKey>('info');
     const [viewerIndex, setViewerIndex] = useState(0);
     const [viewerVisible, setViewerVisible] = useState(false);
 
@@ -58,9 +56,8 @@ export default function SpaScreen() {
     const handleBook = () => showContactAlert(t('spa.book_btn'));
 
     const TABS: { key: TabKey; label: string }[] = [
-        { key: 'services', label: t('spa.tab_services') },
-        { key: 'photos',   label: t('spa.tab_photos') },
-        { key: 'price',    label: t('spa.tab_price') },
+        { key: 'info',   label: t('spa.tab_info') },
+        { key: 'photos', label: t('spa.tab_photos') },
     ];
 
     return (
@@ -75,10 +72,13 @@ export default function SpaScreen() {
                 >
                     <View style={styles.heroOverlay} />
 
-                    <Header
-                        activeLanguage={activeLanguage}
-                        onLanguageChange={changeLanguage}
-                    />
+                    <View style={[styles.logoWrap, { top: insets.top + 16 }]}>
+                        <Image
+                            source={require('@/assets/images/logo.png')}
+                            style={styles.logo}
+                            resizeMode="contain"
+                        />
+                    </View>
 
                     <View style={styles.heroContent}>
                         <Text style={styles.heroTitle}>{t('spa.title')}</Text>
@@ -102,49 +102,37 @@ export default function SpaScreen() {
                     ))}
                 </View>
 
-                {/* ─── Services ─── */}
-                {activeTab === 'services' && (
-                    <View style={styles.servicesWrap}>
-                        <Text style={styles.sectionTitle}>{t('spa.section_categories')}</Text>
-                        <View style={styles.servicesGrid}>
-                            {spaCategories.map(c => (
-                                <View key={c.id} style={styles.categoryCard}>
-                                    <View style={styles.cardTitleContainer}>
-                                        <View style={styles.cardIconWrap}>
-                                            <MaterialIcons name="star" size={13} color={BrandColors.navy} />
-                                        </View>
-                                        <Text style={styles.cardTitle}>{t(`spa.categories.${c.id}.title`)}</Text>
-                                    </View>
-                                    <Text style={styles.cardDescription}>{t(`spa.categories.${c.id}.subtitle`)}</Text>
-                                </View>
-                            ))}
+                {/* ─── Info ─── */}
+                {activeTab === 'info' && (
+                    <View style={styles.infoWrap}>
+                        <View style={styles.scheduleCard}>
+                            <Text style={styles.scheduleTitle}>{t('spa.hours_title')}</Text>
+                            <View style={styles.scheduleDivider} />
+                            <View style={styles.scheduleRow}>
+                                <Text style={styles.scheduleDay}>{t('spa.hours_daily')}</Text>
+                                <Text style={styles.scheduleTime}>{t('spa.hours_time')}</Text>
+                            </View>
                         </View>
-                        <View style={styles.treatmentsWrap}>
-                            <Text style={styles.sectionTitle}>{t('spa.section_treatments')}</Text>
-                            {services.map(c => (
-                                <View key={c.id} style={styles.treatmentCard}>
-                                    {c.imageUrl ? (
-                                        <ExpoImage
-                                            source={{ uri: c.imageUrl }}
-                                            style={[styles.treatmentImage, { backgroundColor: '#f0ece4' }]}
-                                            contentFit="cover"
-                                            transition={200}
-                                        />
-                                    ) : (
-                                        <View style={[styles.treatmentImage, { backgroundColor: '#f0ece4' }]} />
-                                    )}
-                                    <View style={styles.treatmentBody}>
-                                        <View style={styles.treatmentTitleRow}>
-                                            <Text style={styles.treatmentTitle}>{c.name}</Text>
-                                            <View style={styles.pricePill}>
-                                                <Text style={styles.priceText}>{c.price}</Text>
-                                            </View>
-                                        </View>
-                                        <Text style={styles.treatmentDuration}>{c.duration}</Text>
-                                        <TouchableOpacity style={styles.bookBtn} activeOpacity={0.85} onPress={handleBook}>
-                                            <Text style={styles.bookBtnText}>{t('spa.book_btn')}</Text>
-                                        </TouchableOpacity>
+
+                        <View style={styles.priceRow}>
+                            <View style={styles.priceBox}>
+                                <Text style={styles.priceValue}>{PRICE_REGULAR}</Text>
+                            </View>
+                            <View style={styles.priceBox}>
+                                <Text style={styles.priceLabel}>{t('spa.price_hotel_guests')}</Text>
+                                <Text style={styles.priceValue}>{PRICE_HOTEL_GUESTS}</Text>
+                            </View>
+                        </View>
+
+                        <Text style={styles.bookingNote}>{t('spa.booking_note')}</Text>
+
+                        <View style={styles.featuresGrid}>
+                            {FEATURES.map((feature) => (
+                                <View key={feature} style={styles.featureCard}>
+                                    <View style={styles.featureIconWrap}>
+                                        <MaterialIcons name="star-border" size={15} color={BrandColors.navy} />
                                     </View>
+                                    <Text style={styles.featureTitle}>{t(`spa.features.${feature}`)}</Text>
                                 </View>
                             ))}
                         </View>
@@ -170,20 +158,6 @@ export default function SpaScreen() {
                     HeaderComponent={() => <ImageViewerHeader onClose={() => setViewerVisible(false)} />}
                 />
 
-                {/* ─── Price ─── */}
-                {activeTab === 'price' && (
-                    <View style={styles.infoWrap}>
-                        <View style={styles.scheduleCard}>
-                            <Text style={styles.scheduleTitle}>{t('spa.hours_title')}</Text>
-                            <View style={styles.scheduleDivider} />
-                            <View style={[styles.scheduleRow, { marginBottom: 0 }]}>
-                                <Text style={styles.scheduleDay}>{t('spa.hours_daily')}</Text>
-                                <Text style={styles.scheduleTime}>{t('spa.hours_time')}</Text>
-                            </View>
-                        </View>
-                    </View>
-                )}
-
                 <View style={{ height: 90 }} />
             </ScrollView>
 
@@ -207,27 +181,38 @@ const styles = StyleSheet.create({
     /* ── Hero ── */
     hero: {
         minHeight: 280,
-        justifyContent: 'space-between',
+        justifyContent: 'flex-end',
     },
     heroOverlay: {
         ...StyleSheet.absoluteFillObject,
         backgroundColor: 'rgba(0,0,0,0.52)',
+    },
+    logoWrap: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        alignItems: 'center',
+    },
+    logo: {
+        width: 72,
+        height: 40,
     },
     heroContent: {
         paddingHorizontal: 24,
         paddingBottom: 32,
     },
     heroTitle: {
-        fontSize: 32,
-        fontWeight: '400',
+        fontSize: 28,
+        fontWeight: '700',
         color: BrandColors.white,
         marginBottom: 8,
     },
     heroSub: {
         fontSize: 13,
         fontWeight: '400',
-        color: 'rgba(255,255,255,0.65)',
+        color: 'rgba(255,255,255,0.75)',
         letterSpacing: 0.3,
+        lineHeight: 18,
     },
 
     /* ── Tabs ── */
@@ -241,10 +226,11 @@ const styles = StyleSheet.create({
     },
     tabBtn: {
         flex: 1,
-        paddingVertical: 10,
-        borderRadius: 20,
+        height: 38,
+        borderRadius: 19,
         backgroundColor: '#f0f0f0',
         alignItems: 'center',
+        justifyContent: 'center',
     },
     tabBtnActive: {
         backgroundColor: NAV_DARK,
@@ -258,153 +244,10 @@ const styles = StyleSheet.create({
         color: BrandColors.white,
     },
 
-    /* ── Services ── */
-    servicesWrap: {
-        paddingHorizontal: 16,
-        paddingTop: 24,
-        backgroundColor: BrandColors.white,
-    },
-    sectionTitle: {
-        fontSize: 20,
-        fontWeight: '700',
-        color: BrandColors.navy,
-        marginBottom: 16,
-    },
-
-    servicesGrid: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: 12,
-    },
-    categoryCard: {
-        width: '48%',
-        minHeight: 110,
-        backgroundColor: BrandColors.white,
-        borderRadius: 6,
-        borderWidth: 1,
-        borderColor: 'rgba(11,27,46,0.08)',
-        padding: 14,
-        shadowColor: BrandColors.navy,
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.15,
-        shadowRadius: 2,
-        elevation: 3,
-    },
-    cardTitleContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    cardIconWrap: {
-        width: 24,
-        height: 24,
-        borderRadius: 6,
-        backgroundColor: '#f4efe4',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 10,
-    },
-    cardTitle: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: BrandColors.navy,
-        marginBottom: 10,
-        marginLeft: 4,
-    },
-    cardDescription: {
-        fontSize: 12,
-        fontWeight: '400',
-        color: BrandColors.navy,
-        lineHeight: 17,
-    },
-
-    /* ── Treatments ── */
-    treatmentsWrap: {
-        marginTop: 28,
-    },
-    treatmentCard: {
-        backgroundColor: BrandColors.white,
-        borderRadius: 20,
-        borderWidth: 1,
-        borderColor: 'rgba(11,27,46,0.08)',
-        marginBottom: 16,
-        shadowColor: BrandColors.navy,
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.15,
-        shadowRadius: 2,
-        elevation: 3,
-    },
-    treatmentImage: {
-        width: '100%',
-        height: 140,
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
-    },
-    treatmentBody: {
-        paddingHorizontal: 16,
-        paddingTop: 16,
-        paddingBottom: 20,
-        gap: 10,
-    },
-    treatmentTitleRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    treatmentTitle: {
-        fontSize: 15,
-        fontWeight: '700',
-        color: BrandColors.navy,
-        flexShrink: 1,
-        marginRight: 8,
-    },
-    pricePill: {
-        backgroundColor: '#F5EFE0',
-        borderRadius: 999,
-        paddingHorizontal: 12,
-        paddingVertical: 5,
-    },
-    priceText: {
-        fontSize: 11,
-        fontWeight: '700',
-        color: BrandColors.gold,
-    },
-    treatmentDuration: {
-        fontSize: 13,
-        fontWeight: '400',
-        color: 'rgba(11,27,46,0.55)',
-    },
-    bookBtn: {
-        backgroundColor: NAV_DARK,
-        borderRadius: 50,
-        paddingVertical: 10,
-        alignItems: 'center',
-    },
-    bookBtnText: {
-        fontSize: 14,
-        fontWeight: '700',
-        color: BrandColors.gold,
-        letterSpacing: 0.3,
-    },
-
-    /* ── Photos ── */
-    photosWrap: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: PHOTO_GAP,
-        paddingHorizontal: PHOTO_H_PAD,
-        paddingTop: 20,
-        paddingBottom: 20,
-    },
-    photo: {
-        width: PHOTO_SIZE,
-        height: PHOTO_SIZE,
-        borderRadius: 12,
-    },
-
     /* ── Info ── */
     infoWrap: {
         paddingHorizontal: 16,
-        paddingTop: 24,
+        paddingTop: 8,
         paddingBottom: 24,
     },
     scheduleCard: {
@@ -427,7 +270,6 @@ const styles = StyleSheet.create({
     scheduleRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 12,
     },
     scheduleDay: {
         fontSize: 14,
@@ -438,6 +280,92 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: '400',
         color: '#666',
+    },
+    priceRow: {
+        flexDirection: 'row',
+        gap: 10,
+        marginTop: 16,
+    },
+    priceBox: {
+        flex: 1,
+        height: 54,
+        borderRadius: 12,
+        backgroundColor: '#f0f0f0',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 8,
+    },
+    priceLabel: {
+        fontSize: 12,
+        fontWeight: '500',
+        color: BrandColors.navy,
+    },
+    priceValue: {
+        fontSize: 14,
+        fontWeight: '700',
+        color: BrandColors.navy,
+    },
+    bookingNote: {
+        fontSize: 12,
+        fontWeight: '600',
+        color: BrandColors.navy,
+        textAlign: 'center',
+        marginTop: 14,
+        marginBottom: 14,
+    },
+    featuresGrid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        rowGap: 10,
+    },
+    featureCard: {
+        width: '48.5%',
+        minHeight: 50,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+        backgroundColor: BrandColors.white,
+        borderRadius: 6,
+        borderWidth: 1,
+        borderColor: 'rgba(11,27,46,0.08)',
+        paddingHorizontal: 12,
+        paddingVertical: 10,
+        shadowColor: BrandColors.navy,
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.15,
+        shadowRadius: 2,
+        elevation: 3,
+    },
+    featureIconWrap: {
+        width: 24,
+        height: 24,
+        borderRadius: 6,
+        backgroundColor: '#f4efe4',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    featureTitle: {
+        flex: 1,
+        fontSize: 13,
+        fontWeight: '600',
+        color: BrandColors.navy,
+        lineHeight: 17,
+    },
+
+    /* ── Photos ── */
+    photosWrap: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: PHOTO_GAP,
+        paddingHorizontal: PHOTO_H_PAD,
+        paddingTop: 20,
+        paddingBottom: 20,
+    },
+    photo: {
+        width: PHOTO_SIZE,
+        height: PHOTO_SIZE,
+        borderRadius: 12,
     },
 
     /* ── Reserve button ── */

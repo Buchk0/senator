@@ -33,6 +33,7 @@
     "quick_promotions": "Promotions",
     "quick_events": "Events",
     "quick_photos": "Photos",
+    "quick_promotions_events": "Promotions /\nEvents",
     "cards_hotel": "Hotel Senator",
     "cards_senator": "Restaurant Senator",
     "cards_balkon": "Restaurant Balkon",
@@ -104,6 +105,31 @@
     }
   },
   "hotel": {
+    "famous_guests_title": "Famous Guests",
+    "prices": {
+      "category": "Room category",
+      "cost": "Price (KZT)",
+      "extra_categories": "Additional categories"
+    },
+    "info": {
+      "check_in": "Check-in",
+      "check_in_value": "14:00",
+      "check_out": "Check-out",
+      "check_out_value": "until 12:00",
+      "booking_award": "Traveller Review Awards 2026",
+      "breakfast": "Breakfast",
+      "breakfast_desc": "A great breakfast is included in the room rate",
+      "fitness": "Fitness room",
+      "fitness_desc": "Free access",
+      "room_service": "Room Service",
+      "laundry": "Laundry service",
+      "parking": "Parking"
+    },
+    "tab_info": "Info",
+    "tab_prices": "Prices",
+    "tab_promotions": "Promotions",
+    "famous_guests": "Famous guests",
+    "awards": "Awards",
     "title": "Hotel Senator",
     "subtitle": "Choose a room category",
     "book_btn": "Book",
@@ -144,8 +170,41 @@
   "restaurants": {
     "title": "Choose a Restaurant",
     "subtitle": "Menu, events, contacts",
+    "promos": {
+      "birthday_title": "Birthday",
+      "birthday_badge": "10% off",
+      "birthday_desc": "A gift from the restaurant and a tasty compliment",
+      "breakfast_title": "Family\nbreakfast",
+      "breakfast_badge": "10% off",
+      "breakfast_desc": "Every Sunday"
+    },
+    "senator_features": {
+      "cuisine": "Modern European cuisine\nand national dishes",
+      "wine": "The richest wine list in the city",
+      "breakfast": "Breakfast daily",
+      "breakfast_note": "from 7:00 to 12:00",
+      "style": "Elegant style,\ncalm and cosy atmosphere",
+      "meetings": "The restaurant is ideal\nfor business meetings and private celebrations",
+      "music": "Live music",
+      "music_note": "every Saturday"
+    },
+    "balkon_promos": {
+      "cocktail_title": "Cocktail\nWednesday",
+      "cocktail_badge": "10% off",
+      "happy_hours_title": "Happy\ntasty hours",
+      "happy_hours_desc": "weekdays 12:00 - 16:00",
+      "happy_hours_badge": "20% off",
+      "birthday_title": "Birthday",
+      "birthday_desc": "A discount and a sweet surprise from the restaurant for the birthday guest",
+      "birthday_badge": "10% off"
+    },
     "senator_title": "Restaurant Senator",
+    "senator_subtitle": "European cuisine restaurant\nwith a panoramic city view",
+    "tab_promotions_events": "Promotions\nEvents",
+    "menu_text": "Menu",
+    "menu_photo": "Menu Photo",
     "balkon_title": "Gastro Grill Balkon",
+    "balkon_subtitle": "Fire, Wine & Meat",
     "tab_menu": "Menu",
     "tab_photos": "Photos",
     "tab_events": "Events",
@@ -157,6 +216,15 @@
     "view_coupons": "Coupons"
   },
   "spa": {
+    "tab_info": "Info",
+    "price_hotel_guests": "For hotel guests",
+    "booking_note": "*Advance booking 24 hours ahead",
+    "features": {
+      "hammam": "Hammam",
+      "sauna": "Finnish sauna",
+      "pool": "Hydromassage pool",
+      "lounge": "Relaxation room"
+    },
     "title": "Senator Spa",
     "subtitle": "Relaxation, recovery and self-care in an atmosphere of comfort and tranquility.",
     "tab_services": "Services",
@@ -169,7 +237,7 @@
     "min": "min",
     "hours_title": "Working Hours",
     "hours_daily": "Daily",
-    "hours_time": "10:00 – 21:00",
+    "hours_time": "08:00 – 01:00",
     "categories": {
       "massages": { "title": "Massages",    "subtitle": "Relaxing & restorative programs" },
       "facial":   { "title": "Facial Care", "subtitle": "Rejuvenating & nourishing treatments" },
@@ -182,6 +250,28 @@
     }
   },
   "conference": {
+    "per_person": "person",
+    "menu_empty": "The menu will appear here soon",
+    "tab_coffee": "Coffee\nbreak",
+    "tab_lunch": "Business\nlunch",
+    "prices": {
+      "col_service": "Service",
+      "col_time": "Rental\ntime",
+      "col_cost": "Price",
+      "col_cost_unit": "(in KZT)",
+      "hall_rent": "Conference hall\nrental",
+      "hours_1": "1 hour",
+      "hours_2": "2 hours",
+      "hours_3": "3 hours",
+      "extra_hour": "additional\nhour",
+      "full_day": "Hall rental",
+      "full_day_note": "(equipment\nincluded in the price)",
+      "equipment": "Equipment rental",
+      "equipment_note": "(projector with a large screen; LED screen (4K) 165 cm)",
+      "vip_room": "VIP meeting\nroom rental",
+      "supplies": "Flip chart/markers,\nnotepads/pencils",
+      "free": "free of charge"
+    },
     "title": "Conference Hall",
     "subtitle": "Meetings, presentations, events",
     "tab_photos": "Photos",
@@ -191,7 +281,7 @@
     "capacity_value": "Up to 50 people",
     "hours_title": "Working Hours",
     "hours_daily": "Daily",
-    "hours_time": "09:00 – 21:00"
+    "hours_time": "08:00 – 21:00"
   },
   "vip": {
     "title": "VIP Negotiation Room",
