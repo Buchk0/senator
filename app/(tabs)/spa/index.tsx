@@ -47,7 +47,9 @@ type TabKey = 'info' | 'photos';
 
 export default function SpaScreen() {
     const insets = useSafeAreaInsets();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    // Tab buttons always stay in English, like the navbar
+    const tEn = i18n.getFixedT('en');
     const [activeTab, setActiveTab] = useState<TabKey>('info');
     const [viewerIndex, setViewerIndex] = useState(0);
     const [viewerVisible, setViewerVisible] = useState(false);
@@ -56,8 +58,8 @@ export default function SpaScreen() {
     const handleBook = () => showContactAlert(t('spa.book_btn'));
 
     const TABS: { key: TabKey; label: string }[] = [
-        { key: 'info',   label: t('spa.tab_info') },
-        { key: 'photos', label: t('spa.tab_photos') },
+        { key: 'info',   label: tEn('spa.tab_info') },
+        { key: 'photos', label: tEn('spa.tab_photos') },
     ];
 
     return (
@@ -132,7 +134,7 @@ export default function SpaScreen() {
                                     <View style={styles.featureIconWrap}>
                                         <MaterialIcons name="star-border" size={15} color={BrandColors.navy} />
                                     </View>
-                                    <Text style={styles.featureTitle}>{t(`spa.features.${feature}`)}</Text>
+                                    <Text style={styles.featureTitle} numberOfLines={2}>{t(`spa.features.${feature}`)}</Text>
                                 </View>
                             ))}
                         </View>
@@ -161,7 +163,7 @@ export default function SpaScreen() {
                 <View style={{ height: 90 }} />
             </ScrollView>
 
-            <View style={[styles.reserveBar, { paddingBottom: insets.bottom + 16 }]}>
+            <View style={styles.reserveBar}>
                 <TouchableOpacity style={styles.reserveBtn} activeOpacity={0.85} onPress={handleBook}>
                     <Text style={styles.reserveText}>{t('spa.book_btn')}</Text>
                 </TouchableOpacity>
@@ -307,7 +309,7 @@ const styles = StyleSheet.create({
     },
     bookingNote: {
         fontSize: 12,
-        fontWeight: '600',
+        fontWeight: '700',
         color: BrandColors.navy,
         textAlign: 'center',
         marginTop: 14,
@@ -317,20 +319,20 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
-        rowGap: 10,
+        rowGap: 14,
     },
     featureCard: {
-        width: '48.5%',
-        minHeight: 50,
+        width: '48%',
+        // Fixed height so every tile is the same size, whether its label is one line or two
+        height: 54,
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 8,
+        gap: 6,
         backgroundColor: BrandColors.white,
         borderRadius: 6,
         borderWidth: 1,
         borderColor: 'rgba(11,27,46,0.08)',
-        paddingHorizontal: 12,
-        paddingVertical: 10,
+        paddingHorizontal: 10,
         shadowColor: BrandColors.navy,
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.15,
@@ -347,10 +349,10 @@ const styles = StyleSheet.create({
     },
     featureTitle: {
         flex: 1,
-        fontSize: 13,
-        fontWeight: '600',
+        fontSize: 12,
+        fontWeight: '400',
         color: BrandColors.navy,
-        lineHeight: 17,
+        lineHeight: 15,
     },
 
     /* ── Photos ── */
@@ -376,6 +378,7 @@ const styles = StyleSheet.create({
         right: 0,
         paddingHorizontal: 20,
         paddingTop: 12,
+        paddingBottom: 12,
         backgroundColor: BrandColors.white,
         borderTopWidth: StyleSheet.hairlineWidth,
         borderTopColor: '#e0e0e0',

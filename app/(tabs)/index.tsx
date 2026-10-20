@@ -18,11 +18,11 @@ export default function HomeScreen() {
 
   const quickAccessItems: QuickAccessItem[] = [
     { id: 'hotel', iconSource: require('@/assets/images/home/icon-hotel.svg'), label: t('home.quick_hotel'), onPress: () => router.push('/(tabs)/hotel') },
-    { id: 'senator', iconSource: require('@/assets/images/home/icon-senator.svg'), label: t('home.quick_senator'), onPress: () => router.push('/(tabs)/restaurants/senator') },
+    { id: 'senator', iconSource: require('@/assets/images/home/icon-senator.svg'), iconSize: { width: 27, height: 30 }, label: t('home.quick_senator'), onPress: () => router.push('/(tabs)/restaurants/senator') },
     { id: 'balkon', iconSource: require('@/assets/images/home/icon-balkon.svg'), label: t('home.quick_balkon'), onPress: () => router.push('/(tabs)/restaurants/balkon') },
     { id: 'spa', iconSource: require('@/assets/images/home/icon-spa.svg'), label: t('home.quick_spa'), onPress: () => router.push('/(tabs)/spa') },
-    { id: 'conference', iconSource: require('@/assets/images/home/icon-conference.svg'), label: t('home.quick_conference'), onPress: () => router.push('/(tabs)/conference') },
-    { id: 'vip', iconSource: require('@/assets/images/home/icon-vip.svg'), label: t('home.quick_vip'), onPress: () => router.push('/(tabs)/vip') },
+    { id: 'conference', iconSource: require('@/assets/images/home/icon-conference.svg'), iconSize: { width: 32, height: 32 }, label: t('home.quick_conference'), onPress: () => router.push('/(tabs)/conference') },
+    { id: 'vip', iconSource: require('@/assets/images/home/icon-vip.svg'), iconSize: { width: 30, height: 28 }, label: t('home.quick_vip'), onPress: () => router.push('/(tabs)/vip') },
   ];
 
   const wideItems: QuickAccessItem[] = [

@@ -1,7 +1,9 @@
-import { View, Text, StyleSheet } from 'react-native';
-import { Image } from 'expo-image';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { Image, ImageSource } from 'expo-image';
 import { useTranslation } from 'react-i18next';
 import { BrandColors } from '@/constants/theme';
+import { usePromoBanners } from '@/hooks/use-promo-banners';
+import { usePromoLink } from '@/hooks/use-promo-link';
 
 interface Promo {
   id: string;
@@ -27,28 +29,70 @@ const PROMOS: Record<'senator' | 'balkon', Promo[]> = {
   ],
 };
 
+/** What a banner card renders, whether it came from Firestore or is built in */
+interface BannerItem {
+  id: string;
+  image: ImageSource | number;
+  title: string;
+  badge: string;
+  description: string;
+  tint?: string;
+  onPress?: () => void;
+}
+
 export interface PromoBannersProps {
   restaurant: 'senator' | 'balkon';
 }
 
 export function PromoBanners({ restaurant }: PromoBannersProps) {
   const { t } = useTranslation();
+  const { banners, loading } = usePromoBanners(restaurant);
+  const linkHandler = usePromoLink();
   const isBalkon = restaurant === 'balkon';
   const keyPrefix = isBalkon ? 'restaurants.balkon_promos' : 'restaurants.promos';
+  const tint = isBalkon ? BALKON_TINT : SENATOR_TINT;
+
+  // Avoid flashing the built-in banners while the admin's ones are loading
+  if (loading) return null;
+
+  // Banners from the admin panel; the built-in set only until the venue has any
+  const items: BannerItem[] = banners
+    ? banners.map((b) => ({
+        id: b.id,
+        image: { uri: b.imageUrl },
+        title: b.title,
+        badge: b.badge,
+        description: b.description,
+        tint: b.darken ? tint : undefined,
+        onPress: linkHandler(b.link, b.title),
+      }))
+    : PROMOS[restaurant].map((promo) => ({
+        id: promo.id,
+        image: promo.image,
+        title: t(`${keyPrefix}.${promo.id}_title` as any),
+        badge: t(`${keyPrefix}.${promo.id}_badge` as any),
+        description: promo.hasDescription ? t(`${keyPrefix}.${promo.id}_desc` as any) : '',
+        tint: promo.tint,
+      }));
 
   return (
     <View style={styles.list}>
-      {PROMOS[restaurant].map((promo) => {
-        const title = <Text style={styles.title}>{t(`${keyPrefix}.${promo.id}_title` as any)}</Text>;
-        const description = promo.hasDescription ? (
-          <Text style={styles.description}>{t(`${keyPrefix}.${promo.id}_desc` as any)}</Text>
+      {items.map((item) => {
+        const title = <Text style={styles.title}>{item.title}</Text>;
+        const description = item.description ? (
+          <Text style={styles.description}>{item.description}</Text>
         ) : null;
-        const badgeText = <Text style={styles.badgeText}>{t(`${keyPrefix}.${promo.id}_badge` as any)}</Text>;
+        const badge = item.badge ? <Text style={styles.badgeText}>{item.badge}</Text> : null;
 
         return (
-          <View key={promo.id} style={[styles.card, !isBalkon && styles.cardBordered]}>
-            <Image source={promo.image} style={StyleSheet.absoluteFill} contentFit="cover" />
-            {promo.tint && <View style={[styles.tint, { backgroundColor: promo.tint }]} />}
+          <Pressable
+            key={item.id}
+            onPress={item.onPress}
+            disabled={!item.onPress}
+            style={({ pressed }) => [styles.card, !isBalkon && styles.cardBordered, pressed && styles.cardPressed]}
+          >
+            <Image source={item.image} style={StyleSheet.absoluteFill} contentFit="cover" transition={200} cachePolicy="memory-disk" />
+            {item.tint && <View style={[styles.tint, { backgroundColor: item.tint }]} />}
 
             {isBalkon ? (
               <>
@@ -56,16 +100,16 @@ export function PromoBanners({ restaurant }: PromoBannersProps) {
                   {title}
                   {description}
                 </View>
-                <View style={styles.cornerBadge}>{badgeText}</View>
+                {badge && <View style={styles.cornerBadge}>{badge}</View>}
               </>
             ) : (
               <View style={styles.content}>
                 {title}
-                <View style={styles.badge}>{badgeText}</View>
+                {badge && <View style={styles.badge}>{badge}</View>}
                 {description}
               </View>
             )}
-          </View>
+          </Pressable>
         );
       })}
     </View>
@@ -83,6 +127,9 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: 'hidden',
     justifyContent: 'center',
+  },
+  cardPressed: {
+    opacity: 0.85,
   },
   cardBordered: {
     borderWidth: 1,

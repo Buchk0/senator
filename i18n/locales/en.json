@@ -1,4 +1,9 @@
 {
+  "venues": {
+    "senator": "Restaurant Senator",
+    "balkon": "Gastro Grill Balkon",
+    "hotel": "Hotel Senator"
+  },
   "common": {
     "back": "Back",
     "whatsapp": "WhatsApp",
@@ -8,7 +13,8 @@
   "promotions": {
     "title": "Promotions",
     "subtitle": "Current offers at our restaurants",
-    "empty": "No active promotions"
+    "empty": "No active promotions",
+    "title_full": "Promotions / Events"
   },
   "events": {
     "title": "Events",
@@ -17,7 +23,8 @@
   },
   "photos": {
     "title": "Photo Reports",
-    "subtitle": "Moments from our restaurants and spaces"
+    "subtitle": "Moments from our restaurants and spaces",
+    "empty": "No photos yet"
   },
   "home": {
     "hero_title": "Comfortable rest and delicious evenings - in one place",
@@ -105,6 +112,12 @@
     }
   },
   "hotel": {
+    "promo_romance": {
+      "badge": "Special rate",
+      "period": "Seasonal · 2–3 mo.",
+      "title": "Romance above the city",
+      "description": "Spend an unforgettable evening at Hotel & Restaurant SENATOR"
+    },
     "famous_guests_title": "Famous Guests",
     "prices": {
       "category": "Room category",

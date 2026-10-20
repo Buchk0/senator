@@ -16,6 +16,9 @@ export const contentCache: {
   events: RawDoc[] | null;
   coupons: RawDoc[] | null;
   promotions: RawDoc[] | null;
+  /** All banners, inactive included — see usePromoBanners */
+  promoBanners: RawDoc[] | null;
+  conferenceMenus: RawDoc[] | null;
 } = {
   menu: null,
   spaServices: null,
@@ -24,4 +27,6 @@ export const contentCache: {
   events: null,
   coupons: null,
   promotions: null,
+  promoBanners: null,
+  conferenceMenus: null,
 };

@@ -29,7 +29,7 @@ export function EventCard({ imageUrl, subtitle, title }: EventItem) {
   return (
     <View style={styles.card}>
       <Image
-        source={{ uri: imageUrl }}
+        source={{ uri: imageUrl }} cachePolicy="memory-disk"
         style={styles.cardImage}
         contentFit="cover"
         transition={200}

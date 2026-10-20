@@ -17,9 +17,38 @@ import { prefetchCriticalContent, prefetchBackgroundContent } from '@/utils/pref
 
 const LOCAL_IMAGES = [
   // Core
-  require('@/assets/images/restaurants-bc.png'),
+  require('@/assets/images/restaurants-bc.jpg'),
   require('@/assets/images/logo.png'),
   require('@/assets/images/fire.jpg'),
+
+  // Home screen and navbar — visible the moment the splash closes
+  require('@/assets/images/home/background.jpg'),
+  require('@/assets/images/home/icon-hotel.svg'),
+  require('@/assets/images/home/icon-senator.svg'),
+  require('@/assets/images/home/icon-balkon.svg'),
+  require('@/assets/images/home/icon-spa.svg'),
+  require('@/assets/images/home/icon-conference.svg'),
+  require('@/assets/images/home/icon-vip.svg'),
+  require('@/assets/images/home/icon-calendar.svg'),
+  require('@/assets/images/home/icon-photos.svg'),
+  require('@/assets/images/navbar/nav-home-black.svg'),
+  require('@/assets/images/navbar/nav-home-white.svg'),
+  require('@/assets/images/navbar/nav-hotel-black.svg'),
+  require('@/assets/images/navbar/nav-hotel-white.svg'),
+  require('@/assets/images/navbar/nav-senator-black.svg'),
+  require('@/assets/images/navbar/nav-senator-white.svg'),
+  require('@/assets/images/navbar/nav-balkon-black.svg'),
+  require('@/assets/images/navbar/nav-balkon-white.svg'),
+  require('@/assets/images/navbar/nav-profile-black.svg'),
+  require('@/assets/images/navbar/nav-profile-white.svg'),
+
+  // Promo banners (built-in fallbacks) and hotel promotion
+  require('@/assets/images/restaurants/promo-birthday.png'),
+  require('@/assets/images/restaurants/promo-breakfast.png'),
+  require('@/assets/images/restaurants/balkon/promo-cocktail.png'),
+  require('@/assets/images/restaurants/balkon/promo-happy-hours.png'),
+  require('@/assets/images/restaurants/balkon/promo-birthday.png'),
+  require('@/assets/images/hotel/promo-romance.png'),
 
   // Senator restaurant
   require('@/assets/images/senator-bc.jpg'),
@@ -127,17 +156,6 @@ const LOCAL_IMAGES = [
   require('@/assets/images/suite/presidential/4.jpg'),
 ];
 
-const REMOTE_IMAGES = [
-  'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800',
-  'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800',
-  'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800',
-  'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800',
-  'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800',
-  'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800',
-  'https://images.unsplash.com/photo-1551218808-94e220e084d2?w=800',
-  'https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=800',
-];
-
 // ─── Splash / loading screen ──────────────────────────────────────────────────
 
 function LoadingScreen() {
@@ -184,10 +202,8 @@ function InitialLayout() {
     async function preload() {
       await Promise.all([
         Asset.loadAsync(LOCAL_IMAGES),
-        ...REMOTE_IMAGES.map(url => Image.prefetch(url)),
-        // Menu and spa photos are shown right after launch — hold the splash
-        // until they're fully cached so those two sections never show a
-        // loading placeholder.
+        // Menu, spa and promo banner photos are shown right after launch —
+        // hold the splash until they're cached so they never pop in late.
         prefetchCriticalContent().catch(console.error),
       ]);
       setAssetsLoaded(true);
@@ -195,14 +211,16 @@ function InitialLayout() {
     preload();
   }, []);
 
-  // Everything else (restaurantPhotos, gallery, events, coupons) is public or
-  // becomes readable after login — download in the background without
-  // blocking the splash. Coupons require login; that collection's fetch
-  // simply no-ops (catches its own permission error) until the user signs
-  // in, at which point this effect re-runs (user changed) and picks it up.
+  // Everything else (restaurant photos, conference menus, gallery, events,
+  // coupons) keeps loading in the background once the splash is gone, so it
+  // doesn't compete with the splash's own downloads. Coupons require login;
+  // that collection's fetch simply no-ops (catches its own permission error)
+  // until the user signs in, at which point this effect re-runs (user
+  // changed) and picks it up.
   useEffect(() => {
+    if (!assetsLoaded) return;
     prefetchBackgroundContent().catch(console.error);
-  }, [user]);
+  }, [user, assetsLoaded]);
 
   useEffect(() => {
     if (!assetsLoaded || loading) return;

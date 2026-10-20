@@ -16,8 +16,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { BrandColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
-import { EventsCarousel } from '@/components/home/events-carousel';
-import { useEvents } from '@/hooks/use-events';
 import { BackButton } from '@/components/navigation/back-button';
 import { useContactActions } from '@/hooks/use-contact-actions';
 import { useRestaurantPhotos } from '@/hooks/use-restaurant-photos';
@@ -42,9 +40,10 @@ type MenuMode = 'text' | 'photo';
 
 export default function BalkonScreen() {
   const insets = useSafeAreaInsets();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  // Tab buttons always stay in English, like the navbar
+  const tEn = i18n.getFixedT('en');
   const [activeTab, setActiveTab] = useState<TabKey>('menu');
-  const { events } = useEvents();
   const { showContactAlert } = useContactActions();
   const { photos } = useRestaurantPhotos('Balkon');
   const photosForViewer = photos.map((p) => ({ uri: p.imageUrl }));
@@ -55,10 +54,10 @@ export default function BalkonScreen() {
   const [menuMode, setMenuMode] = useState<MenuMode | null>(null);
 
   const TABS: { key: TabKey; label: string }[] = [
-    { key: 'info',   label: t('restaurants.tab_info') },
-    { key: 'photos', label: t('restaurants.tab_photos') },
-    { key: 'menu',   label: t('restaurants.tab_menu') },
-    { key: 'events', label: t('restaurants.tab_promotions_events') },
+    { key: 'info',   label: tEn('restaurants.tab_info') },
+    { key: 'photos', label: tEn('restaurants.tab_photos') },
+    { key: 'menu',   label: tEn('restaurants.tab_menu') },
+    { key: 'events', label: tEn('restaurants.tab_promotions_events') },
   ];
   const [viewerImages, setViewerImages] = useState<{ uri: string }[]>([]);
   const [viewerIndex, setViewerIndex] = useState(0);
@@ -146,7 +145,7 @@ export default function BalkonScreen() {
                 onPress={() => openViewer(menuForViewer, i)}
               >
                 <ExpoImage
-                  source={{ uri: p.imageUrl }}
+                  source={{ uri: p.imageUrl }} cachePolicy="memory-disk"
                   style={styles.menuImage}
                   contentFit="contain"
                   transition={200}
@@ -178,7 +177,7 @@ export default function BalkonScreen() {
                 onPress={() => openViewer(photosForViewer, i)}
               >
                 <ExpoImage
-                  source={{ uri: p.imageUrl }}
+                  source={{ uri: p.imageUrl }} cachePolicy="memory-disk"
                   style={styles.photo}
                   contentFit="cover"
                   transition={200}
@@ -190,10 +189,7 @@ export default function BalkonScreen() {
 
         {/* ─── Events ─── */}
         {activeTab === 'events' && (
-          <>
-            <PromoBanners restaurant="balkon" />
-            <EventsCarousel items={events} />
-          </>
+          <PromoBanners restaurant="balkon" />
         )}
 
         {/* ─── Info ─── */}
@@ -218,7 +214,7 @@ export default function BalkonScreen() {
       </ScrollView>
 
       {/* ─── Sticky Reservation Button ─── */}
-      <View style={[styles.reserveBar, { paddingBottom: insets.bottom + 16 }]}>
+      <View style={styles.reserveBar}>
         <TouchableOpacity style={styles.reserveBtn} activeOpacity={0.85} onPress={() => showContactAlert(t('restaurants.book_table'))}>
           <Text style={styles.reserveText}>{t('restaurants.book_table')}</Text>
         </TouchableOpacity>
@@ -414,6 +410,7 @@ const styles = StyleSheet.create({
     right: 0,
     paddingHorizontal: 20,
     paddingTop: 12,
+    paddingBottom: 12,
     backgroundColor: BrandColors.white,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: '#e0e0e0',

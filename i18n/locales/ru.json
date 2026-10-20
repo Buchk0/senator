@@ -1,4 +1,9 @@
 {
+  "venues": {
+    "senator": "Ресторан Senator",
+    "balkon": "Gastro Grill Balkon",
+    "hotel": "Отель Senator"
+  },
   "common": {
     "back": "Назад",
     "whatsapp": "WhatsApp",
@@ -8,7 +13,8 @@
   "promotions": {
     "title": "Акции",
     "subtitle": "Актуальные предложения наших ресторанов",
-    "empty": "Нет активных акций"
+    "empty": "Нет активных акций",
+    "title_full": "Акции / События"
   },
   "events": {
     "title": "События",
@@ -17,7 +23,8 @@
   },
   "photos": {
     "title": "Фотоотчёты",
-    "subtitle": "Моменты из наших ресторанов и пространств"
+    "subtitle": "Моменты из наших ресторанов и пространств",
+    "empty": "Фотографий пока нет"
   },
   "home": {
     "hero_title": "SENATOR - отель\nв центре событий!",
@@ -105,6 +112,12 @@
     }
   },
   "hotel": {
+    "promo_romance": {
+      "badge": "Специальный тариф",
+      "period": "Сезонное · 2–3 мес.",
+      "title": "Романтика над городом",
+      "description": "Проведите запоминающийся вечер в Hotel & Restaurant SENATOR"
+    },
     "famous_guests_title": "Знаменитые Гости",
     "prices": {
       "category": "Категория номера",

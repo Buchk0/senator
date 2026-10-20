@@ -1,30 +1,28 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { ComponentProps } from 'react';
+import { Image } from 'expo-image';
 import { router, usePathname } from 'expo-router';
 import { BrandColors } from '@/constants/theme';
-import { useTranslation } from 'react-i18next';
 
 const NAV_DARK = '#1a2035';
 
-type IconName = ComponentProps<typeof MaterialIcons>['name'];
-
 type TabSpec = {
   key: string;
-  icon: IconName;
-  i18nKey: string;
+  icon: number;
+  iconActive: number;
+  label: string;
+  subLabel?: string;
   route: string;
   matchPrefix: string;
 };
 
 const TABS: TabSpec[] = [
-  { key: 'home',    icon: 'home',         i18nKey: 'nav.home',    route: '/(tabs)',                     matchPrefix: '/' },
-  { key: 'hotel',   icon: 'apartment',    i18nKey: 'nav.hotel',   route: '/(tabs)/hotel',               matchPrefix: '/hotel' },
-  { key: 'senator', icon: 'restaurant',   i18nKey: 'nav.senator', route: '/(tabs)/restaurants/senator', matchPrefix: '/restaurants/senator' },
-  { key: 'balkon',  icon: 'lunch-dining', i18nKey: 'nav.balkon',  route: '/(tabs)/restaurants/balkon',  matchPrefix: '/restaurants/balkon' },
-  { key: 'profile', icon: 'person',       i18nKey: 'nav.profile', route: '/(tabs)/profile',             matchPrefix: '/profile' },
+  { key: 'home',    icon: require('@/assets/images/navbar/nav-home-black.svg'),    iconActive: require('@/assets/images/navbar/nav-home-white.svg'),    label: 'Home',           route: '/(tabs)',                     matchPrefix: '/' },
+  { key: 'hotel',   icon: require('@/assets/images/navbar/nav-hotel-black.svg'),   iconActive: require('@/assets/images/navbar/nav-hotel-white.svg'),   label: 'Hotel',          route: '/(tabs)/hotel',               matchPrefix: '/hotel' },
+  { key: 'senator', icon: require('@/assets/images/navbar/nav-senator-black.svg'), iconActive: require('@/assets/images/navbar/nav-senator-white.svg'), label: 'Restaurants', subLabel: 'SENATOR', route: '/(tabs)/restaurants/senator', matchPrefix: '/restaurants/senator' },
+  { key: 'balkon',  icon: require('@/assets/images/navbar/nav-balkon-black.svg'),  iconActive: require('@/assets/images/navbar/nav-balkon-white.svg'),  label: 'Restaurants', subLabel: 'BALKON',  route: '/(tabs)/restaurants/balkon',  matchPrefix: '/restaurants/balkon' },
+  { key: 'profile', icon: require('@/assets/images/navbar/nav-profile-black.svg'), iconActive: require('@/assets/images/navbar/nav-profile-white.svg'), label: 'Profile',       route: '/(tabs)/profile',             matchPrefix: '/profile' },
 ];
 
 function getActiveKey(pathname: string): string {
@@ -33,12 +31,13 @@ function getActiveKey(pathname: string): string {
   if (pathname.startsWith('/hotel')) return 'hotel';
   if (pathname.startsWith('/profile')) return 'profile';
   if (pathname === '/' || pathname === '') return 'home';
+  // Screens opened from the home quick-access buttons keep Home highlighted.
+  if (pathname.startsWith('/promotions') || pathname.startsWith('/events') || pathname.startsWith('/photos')) return 'home';
   return '';
 }
 
 export function CustomTabBar(_: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
-  const { t } = useTranslation();
   const pathname = usePathname();
   const activeKey = getActiveKey(pathname);
 
@@ -54,14 +53,21 @@ export function CustomTabBar(_: BottomTabBarProps) {
             activeOpacity={0.7}
           >
             <View style={[styles.pill, isFocused && styles.pillActive]}>
-              <MaterialIcons
-                name={tab.icon}
-                size={22}
-                color={isFocused ? BrandColors.white : BrandColors.black}
+              <Image
+                source={isFocused ? tab.iconActive : tab.icon}
+                style={styles.icon}
+                contentFit="contain"
               />
-              <Text style={[styles.label, isFocused && styles.labelActive]} numberOfLines={1}>
-                {t(tab.i18nKey as any)}
-              </Text>
+              <View>
+                <Text style={[styles.label, isFocused && styles.labelActive]} numberOfLines={1}>
+                  {tab.label}
+                </Text>
+                {tab.subLabel && (
+                  <Text style={[styles.label, isFocused && styles.labelActive]} numberOfLines={1}>
+                    {tab.subLabel}
+                  </Text>
+                )}
+              </View>
             </View>
           </TouchableOpacity>
         );
@@ -75,7 +81,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: BrandColors.white,
     paddingTop: 16,
-    paddingHorizontal: 8,
+    paddingHorizontal: 6,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.06,
@@ -87,25 +93,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   pill: {
+    flexGrow: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     paddingVertical: 6,
-    paddingHorizontal: 10,
+    paddingHorizontal: 2,
     borderRadius: 12,
     overflow: 'hidden',
-    gap: 3,
+    gap: 4,
     width: '100%',
   },
   pillActive: {
     backgroundColor: NAV_DARK,
   },
+  icon: {
+    width: 22,
+    height: 22,
+  },
   label: {
-    fontSize: 9,
+    fontSize: 10,
+    lineHeight: 12,
     fontWeight: '500',
+    textAlign: 'center',
     color: BrandColors.black,
   },
   labelActive: {
     color: BrandColors.white,
-    fontWeight: '600',
   },
 });

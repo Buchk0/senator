@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { collection, getDocs, orderBy, query, where } from 'firebase/firestore';
 import { useTranslation } from 'react-i18next';
 import { db } from '@/constants/firebase';
+import { contentCache } from '@/utils/content-cache';
 
 export type ConferenceMenuType = 'coffee_break' | 'business_lunch';
 
@@ -47,6 +48,19 @@ export function useConferenceMenu(type: ConferenceMenuType) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Already fetched in the background at app startup — read from that
+    // cache instead of re-querying Firestore on every mount.
+    if (contentCache.conferenceMenus) {
+      setMenus(
+        contentCache.conferenceMenus
+          .filter((d) => d.data.type === type)
+          .sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0))
+          .map((d) => toMenuItem(d.id, d.data, lang))
+      );
+      setLoading(false);
+      return;
+    }
+
     let cancelled = false;
 
     setLoading(true);

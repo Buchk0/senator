@@ -25,6 +25,10 @@ service firebase.storage {
       allow read: if true;
       allow write: if isAdmin();
     }
+    match /promoBanners/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
     match /events/{allPaths=**} {
       allow read: if true;
       allow write: if isAdmin();

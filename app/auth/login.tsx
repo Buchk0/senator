@@ -37,7 +37,7 @@ export default function Login() {
     return (
         <Pressable style={{ flex: 1 }} onPress={Keyboard.dismiss}>
             <ImageBackground
-                source={require('@/assets/images/restaurants-bc.png')}
+                source={require('@/assets/images/restaurants-bc.jpg')}
                 style={styles.bg}
                 resizeMode="cover"
             >

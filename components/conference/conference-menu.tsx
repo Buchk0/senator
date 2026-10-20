@@ -26,7 +26,7 @@ function PriceTag({ price }: { price: string }) {
 function CoffeeBreakCard({ menu }: { menu: ConferenceMenuItem }) {
   return (
     <View style={styles.coffeeCard}>
-      <Image source={{ uri: menu.imageUrl }} style={styles.coffeeImage} contentFit="cover" transition={200} />
+      <Image source={{ uri: menu.imageUrl }} cachePolicy="memory-disk" style={styles.coffeeImage} contentFit="cover" transition={200} />
       <PriceTag price={menu.price} />
       <View style={styles.coffeeTitleRow}>
         <Text style={styles.coffeeTitle}>{menu.title}</Text>
@@ -52,7 +52,7 @@ function BusinessLunchCard({ menu }: { menu: ConferenceMenuItem }) {
   return (
     <View style={styles.lunchCard}>
       <View>
-        <Image source={{ uri: menu.imageUrl }} style={styles.lunchImage} contentFit="cover" transition={200} />
+        <Image source={{ uri: menu.imageUrl }} cachePolicy="memory-disk" style={styles.lunchImage} contentFit="cover" transition={200} />
         {menu.title ? (
           <View style={styles.lunchBadge}>
             <Text style={styles.lunchBadgeText}>{menu.title}</Text>

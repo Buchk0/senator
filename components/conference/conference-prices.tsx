@@ -45,9 +45,21 @@ export function ConferencePrices() {
             {row.noteKey && <Text style={styles.note}>{tp(row.noteKey)}</Text>}
           </View>
           <View style={styles.colTime}>
-            {row.times.map((time) => (
-              <Text key={time} style={styles.time}>{row.literalTimes ? time : tp(time)}</Text>
-            ))}
+            {row.times.map((time) => {
+              const label = row.literalTimes ? time : tp(time);
+              return (
+                // Shrink instead of breaking a word (e.g. "дополнительный") across lines
+                <Text
+                  key={time}
+                  style={styles.time}
+                  numberOfLines={label.split('\n').length}
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.8}
+                >
+                  {label}
+                </Text>
+              );
+            })}
           </View>
           <View style={styles.colPrice}>
             {row.prices.length > 0 ? (
@@ -99,10 +111,10 @@ const styles = StyleSheet.create({
     borderTopColor: '#d9d9d9',
   },
   colName: {
-    flex: 1.5,
+    flex: 1.3,
   },
   colTime: {
-    flex: 1,
+    flex: 1.2,
     alignItems: 'center',
     textAlign: 'center',
   },

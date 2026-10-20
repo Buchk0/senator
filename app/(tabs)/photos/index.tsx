@@ -19,7 +19,7 @@ import { BackButton } from '@/components/navigation/back-button';
 import { useGallery } from '@/hooks/use-gallery';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const H_PADDING = 16;
+const H_PADDING = 12;
 const GAP = 8;
 const COLS = 3;
 const PHOTO_SIZE = (SCREEN_WIDTH - H_PADDING * 2 - GAP * (COLS - 1)) / COLS;
@@ -36,22 +36,20 @@ export default function PhotosScreen() {
     <View style={styles.root}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <ImageBackground
-          source={require('@/assets/images/restaurants-bc.png')}
-          style={styles.hero}
+          source={require('@/assets/images/home/background.jpg')}
+          style={[styles.hero, { paddingTop: insets.top + 140 }]}
           resizeMode="cover"
         >
           <View style={styles.heroOverlay} />
-          <View style={[styles.logoWrap, { top: insets.top + 16 }]}>
+          <View style={[styles.logoWrap, { top: insets.top + 12 }]}>
             <Image
               source={require('@/assets/images/logo.png')}
               style={styles.logo}
               resizeMode="contain"
             />
           </View>
-          <View style={styles.heroContent}>
-            <Text style={styles.heroTitle}>{t('photos.title')}</Text>
-            <Text style={styles.heroSub}>{t('photos.subtitle')}</Text>
-          </View>
+          <Text style={styles.heroTitle}>{t('photos.title')}</Text>
+          <Text style={styles.heroSub}>{t('photos.subtitle')}</Text>
         </ImageBackground>
 
         <View style={styles.grid}>
@@ -63,7 +61,7 @@ export default function PhotosScreen() {
               style={styles.photoTouch}
             >
               <ExpoImage
-                source={{ uri: p.imageUrl }}
+                source={{ uri: p.imageUrl }} cachePolicy="memory-disk"
                 style={styles.photo}
                 contentFit="cover"
                 transition={200}
@@ -71,6 +69,12 @@ export default function PhotosScreen() {
             </TouchableOpacity>
           ))}
         </View>
+
+        {photos.length === 0 && (
+          <View style={styles.emptyWrap}>
+            <Text style={styles.emptyText}>{t('photos.empty')}</Text>
+          </View>
+        )}
 
         <View style={{ height: 40 }} />
       </ScrollView>
@@ -95,11 +99,12 @@ const styles = StyleSheet.create({
   },
   hero: {
     width: '100%',
-    paddingBottom: 28,
+    paddingHorizontal: 16,
+    paddingBottom: 40,
   },
   heroOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.55)',
+    backgroundColor: 'rgba(0,0,0,0.4)',
   },
   logoWrap: {
     position: 'absolute',
@@ -108,42 +113,43 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logo: {
-    width: 72,
-    height: 40,
-  },
-  heroContent: {
-    paddingHorizontal: 24,
-    paddingTop: 120,
-    alignItems: 'center',
+    width: 64,
+    height: 36,
   },
   heroTitle: {
     color: BrandColors.white,
-    fontSize: 30,
+    fontSize: 28,
     fontWeight: '700',
-    textAlign: 'center',
   },
   heroSub: {
-    color: 'rgba(255,255,255,0.8)',
-    fontSize: 14,
-    textAlign: 'center',
-    marginTop: 8,
+    color: 'rgba(255,255,255,0.85)',
+    fontSize: 13,
+    marginTop: 4,
   },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     paddingHorizontal: H_PADDING,
-    paddingTop: 20,
+    paddingTop: 28,
     gap: GAP,
   },
   photoTouch: {
     width: PHOTO_SIZE,
     height: PHOTO_SIZE,
-    borderRadius: 12,
+    borderRadius: 20,
     overflow: 'hidden',
   },
   photo: {
     width: '100%',
     height: '100%',
     backgroundColor: '#eee',
+  },
+  emptyWrap: {
+    paddingVertical: 80,
+    alignItems: 'center',
+  },
+  emptyText: {
+    color: 'rgba(0,0,0,0.45)',
+    fontSize: 15,
   },
 });

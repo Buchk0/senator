@@ -40,15 +40,17 @@ type TabKey = 'photos' | 'info';
 
 export default function VipScreen() {
   const insets = useSafeAreaInsets();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  // Tab buttons always stay in English, like the navbar
+  const tEn = i18n.getFixedT('en');
   const [activeTab, setActiveTab] = useState<TabKey>('photos');
   const [viewerIndex, setViewerIndex] = useState(0);
   const [viewerVisible, setViewerVisible] = useState(false);
   const { showContactAlert } = useContactActions();
 
   const TABS: { key: TabKey; label: string }[] = [
-    { key: 'photos', label: t('vip.tab_photos') },
-    { key: 'info',   label: t('vip.tab_info') },
+    { key: 'photos', label: tEn('vip.tab_photos') },
+    { key: 'info',   label: tEn('vip.tab_info') },
   ];
 
   return (
@@ -140,7 +142,7 @@ export default function VipScreen() {
       </ScrollView>
 
       {/* ─── Sticky Book Button ─── */}
-      <View style={[styles.reserveBar, { paddingBottom: insets.bottom + 16 }]}>
+      <View style={styles.reserveBar}>
         <TouchableOpacity style={styles.reserveBtn} activeOpacity={0.85} onPress={() => showContactAlert(t('vip.book_btn'))}>
           <Text style={styles.reserveText}>{t('vip.book_btn')}</Text>
         </TouchableOpacity>
@@ -286,6 +288,7 @@ const styles = StyleSheet.create({
     right: 0,
     paddingHorizontal: 20,
     paddingTop: 12,
+    paddingBottom: 12,
     backgroundColor: BrandColors.white,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: '#e0e0e0',

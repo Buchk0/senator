@@ -26,6 +26,14 @@ service cloud.firestore {
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
+    // Promo banners on the Promotions / Events screens, per venue
+    // (hotel / senator / balkon): public read, writable only by admins.
+    match /promoBanners/{bannerId} {
+      allow read: if true;
+      allow write: if request.auth != null
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
     // Hotel events: public read (shown before login), writable only by admins.
     match /events/{eventId} {
       allow read: if true;

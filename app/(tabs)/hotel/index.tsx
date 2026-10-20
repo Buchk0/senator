@@ -10,6 +10,8 @@ import { BackButton } from '@/components/navigation/back-button';
 import { HotelInfo } from '@/components/hotel/hotel-info';
 import { HotelPrices } from '@/components/hotel/hotel-prices';
 import { HotelGuests } from '@/components/hotel/hotel-guests';
+import { HotelPromotions } from '@/components/hotel/hotel-promotions';
+import { useContactActions } from '@/hooks/use-contact-actions';
 
 const ROOMS = [
   { type: 'standard', image: require('@/assets/images/standart/standart-double/1.jpg') },
@@ -25,18 +27,17 @@ const NAVY = '#1a2035';
 
 export default function HotelTab() {
   const insets = useSafeAreaInsets();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  // Tab buttons always stay in English, like the navbar
+  const tEn = i18n.getFixedT('en');
+  const { showContactAlert } = useContactActions();
   // null = room categories list
   const [activeTab, setActiveTab] = useState<HotelSection | null>(null);
 
   const handleTabPress = (tab: HotelTabId) => {
-    // TODO: content for promotions is not defined yet
-    if (tab === 'promotions') return;
     setActiveTab((current) => (current === tab ? null : tab));
   };
 
-  // TODO: content for the bottom buttons is not defined yet
-  const handlePlaceholderPress = () => {};
 
   return (
     <View style={styles.container}>
@@ -56,7 +57,7 @@ export default function HotelTab() {
               activeOpacity={0.7}
               onPress={() => handleTabPress(tab)}
             >
-              <Text style={[styles.tabLabel, activeTab === tab && styles.tabLabelActive]} numberOfLines={1}>{t(`hotel.tab_${tab}`)}</Text>
+              <Text style={[styles.tabLabel, activeTab === tab && styles.tabLabelActive]} numberOfLines={1}>{tEn(`hotel.tab_${tab}`)}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -65,6 +66,8 @@ export default function HotelTab() {
           <HotelInfo />
         ) : activeTab === 'prices' ? (
           <HotelPrices />
+        ) : activeTab === 'promotions' ? (
+          <HotelPromotions />
         ) : activeTab === 'guests' ? (
           <HotelGuests />
         ) : (
@@ -96,7 +99,7 @@ export default function HotelTab() {
         </View>
         )}
 
-        {activeTab !== 'guests' && (
+        {activeTab !== 'guests' && activeTab !== 'promotions' && (
         <>
         <TouchableOpacity
           style={[styles.wideButton, styles.wideButtonDark]}
@@ -112,7 +115,7 @@ export default function HotelTab() {
         <TouchableOpacity
           style={[styles.wideButton, styles.wideButtonLight]}
           activeOpacity={0.85}
-          onPress={handlePlaceholderPress}
+          onPress={() => setActiveTab('info')}
         >
           <Image source={require('@/assets/images/hotel/icon-award.svg')} style={styles.awardIcon} contentFit="contain" />
           <Text style={styles.wideButtonLabel}>{t('hotel.awards')}</Text>
@@ -120,6 +123,18 @@ export default function HotelTab() {
         </>
         )}
       </ScrollView>
+
+      {activeTab === 'promotions' && (
+        <View style={styles.reserveBar}>
+          <TouchableOpacity
+            style={styles.reserveBtn}
+            activeOpacity={0.85}
+            onPress={() => showContactAlert(t('conference.book_btn'))}
+          >
+            <Text style={styles.reserveText}>{t('conference.book_btn')}</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 }
@@ -245,5 +260,34 @@ const styles = StyleSheet.create({
   },
   wideButtonLabelDark: {
     color: BrandColors.white,
+  },
+  reserveBar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    paddingBottom: 12,
+    backgroundColor: BrandColors.white,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: '#e0e0e0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  reserveBtn: {
+    backgroundColor: NAVY,
+    borderRadius: 50,
+    paddingVertical: 16,
+    alignItems: 'center',
+  },
+  reserveText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: BrandColors.gold,
+    letterSpacing: 0.4,
   },
 });

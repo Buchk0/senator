@@ -10,6 +10,8 @@ export interface QuickAccessItem {
   /** Custom icon from the design; falls back to iconName when not provided */
   iconSource?: ImageSource | number;
   iconName?: ComponentProps<typeof MaterialIcons>['name'];
+  /** Natural size of iconSource; without it the icon is stretched to fill the box */
+  iconSize?: { width: number; height: number };
   label: string;
   onPress: () => void;
 }
@@ -25,11 +27,13 @@ const COLUMNS = 3;
 function ItemIcon({ item, size }: { item: QuickAccessItem; size: number }) {
   if (item.iconSource) {
     return (
-      <Image
-        source={item.iconSource}
-        style={{ width: size, height: size }}
-        contentFit="contain"
-      />
+      <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
+        <Image
+          source={item.iconSource}
+          style={item.iconSize ?? { width: size, height: size }}
+          contentFit="contain"
+        />
+      </View>
     );
   }
   return <MaterialIcons name={item.iconName} size={size} color={BrandColors.white} />;
@@ -69,7 +73,10 @@ export function QuickAccess({ items, wideItems = [] }: QuickAccessProps) {
               style={styles.wideTile}
               activeOpacity={0.7}
             >
+              {/* No experimentalBlurMethod: on Android it also blurs this tile's own
+                  icon/text, which shows up as a white glow around them */}
               <BlurView intensity={60} tint="dark" style={StyleSheet.absoluteFillObject} />
+              <View style={styles.wideGoldTint} />
               <ItemIcon item={item} size={32} />
               <Text style={[styles.label, styles.wideLabel]}>{item.label}</Text>
             </TouchableOpacity>
@@ -103,8 +110,10 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 100,
     paddingHorizontal: 4,
+    // Top-anchored (not centered) so one- and two-line labels start on the same line
+    paddingTop: 14,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     gap: 8,
   },
   wideRow: {
@@ -125,6 +134,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '400',
     lineHeight: 17,
+  },
+  wideGoldTint: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(198,156,109,0.15)',
   },
   wideLabel: {
     flex: 1,

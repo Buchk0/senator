@@ -14,7 +14,7 @@ export function AuthGate() {
 
   return (
     <ImageBackground
-      source={require('@/assets/images/restaurants-bc.png')}
+      source={require('@/assets/images/restaurants-bc.jpg')}
       style={styles.bg}
       resizeMode="cover"
     >

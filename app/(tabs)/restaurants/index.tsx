@@ -39,7 +39,7 @@ export default function RestaurantsTab() {
 
   return (
     <ImageBackground
-      source={require('@/assets/images/restaurants-bc.png')}
+      source={require('@/assets/images/restaurants-bc.jpg')}
       style={styles.container}
       resizeMode="cover"
     >

@@ -41,17 +41,19 @@ type TabKey = 'info' | 'photos' | 'coffee' | 'lunch';
 
 export default function ConferenceScreen() {
   const insets = useSafeAreaInsets();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  // Tab buttons always stay in English, like the navbar
+  const tEn = i18n.getFixedT('en');
   const [activeTab, setActiveTab] = useState<TabKey>('info');
   const [viewerIndex, setViewerIndex] = useState(0);
   const [viewerVisible, setViewerVisible] = useState(false);
   const { showContactAlert } = useContactActions();
 
   const TABS: { key: TabKey; label: string }[] = [
-    { key: 'info',   label: t('conference.tab_info') },
-    { key: 'photos', label: t('conference.tab_photos') },
-    { key: 'coffee', label: t('conference.tab_coffee') },
-    { key: 'lunch',  label: t('conference.tab_lunch') },
+    { key: 'info',   label: tEn('conference.tab_info') },
+    { key: 'photos', label: tEn('conference.tab_photos') },
+    { key: 'coffee', label: tEn('conference.tab_coffee') },
+    { key: 'lunch',  label: tEn('conference.tab_lunch') },
   ];
 
   return (
@@ -148,7 +150,7 @@ export default function ConferenceScreen() {
       </ScrollView>
 
       {/* ─── Sticky Book Button ─── */}
-      <View style={[styles.reserveBar, { paddingBottom: insets.bottom + 16 }]}>
+      <View style={styles.reserveBar}>
         <TouchableOpacity style={styles.reserveBtn} activeOpacity={0.85} onPress={() => showContactAlert(t('conference.book_btn'))}>
           <Text style={styles.reserveText}>{t('conference.book_btn')}</Text>
         </TouchableOpacity>
@@ -295,6 +297,7 @@ const styles = StyleSheet.create({
     right: 0,
     paddingHorizontal: 20,
     paddingTop: 12,
+    paddingBottom: 12,
     backgroundColor: BrandColors.white,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: '#e0e0e0',
